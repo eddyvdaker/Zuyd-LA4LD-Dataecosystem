@@ -7,5 +7,8 @@ REMOVE THIS INSTRUCTION!:
 
 * Time Estimate: {TIME-ESTIMATE}
 
+** Requirements **
+* {REQUIREMENTS}
+
 **Other Notes:**
 {OTHER-NOTES}
