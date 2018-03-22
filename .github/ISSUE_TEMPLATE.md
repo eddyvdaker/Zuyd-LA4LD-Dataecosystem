@@ -6,8 +6,9 @@ REMOVE THIS INSTRUCTION!:
 {DESCRIPTION} 
 
 * Time Estimate: {TIME-ESTIMATE}
+* Wiki Link: {WIKI-LINK}
 
-** Requirements **
+**Requirements:**
 * {REQUIREMENTS}
 
 **Other Notes:**
