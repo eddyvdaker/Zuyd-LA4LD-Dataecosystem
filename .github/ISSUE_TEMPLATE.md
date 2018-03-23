@@ -6,11 +6,11 @@ REMOVE THIS INSTRUCTION!:
 
 {DESCRIPTION} 
 
-* Time Estimate: {TIME-ESTIMATE}
-* Wiki Link: {WIKI-LINK}
+**Time Estimate:** {TIME-ESTIMATE}
+[Wiki]({WIKI-LINK})
 
-**Requirements:**
+## Requirements:
 * {REQUIREMENTS}
 
-**Other Notes:**
+## Other Notes:
 {OTHER-NOTES}
