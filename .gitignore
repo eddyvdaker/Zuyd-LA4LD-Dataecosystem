@@ -1,4 +1,4 @@
-virtualenv
+venv
 _pycache_
 *.pyc
 *.swp
