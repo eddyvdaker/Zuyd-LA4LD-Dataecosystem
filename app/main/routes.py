@@ -6,9 +6,10 @@
     Routes for the data ecosystem
 """
 
-from app import app
+from app.main import bp
+from app import TDD_TEST_ENV
 
 
-@app.route('/')
+@bp.route('/')
 def index():
-    return '<p>Hello</p>'
+    return f'<p>{TDD_TEST_ENV}</p>'
