@@ -8,12 +8,19 @@
 
 from unittest import TestCase
 
+import app
+from config import Config
+
+
+class TestConfig(Config):
+    pass
+
 
 class UnitTest(TestCase):
     """Base TestCase object used for unit tests."""
 
     def setUp(self):
-        pass
+        self.app = app.create_app(TestConfig)
 
     def tearDown(self):
         pass

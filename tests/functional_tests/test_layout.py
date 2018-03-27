@@ -18,4 +18,4 @@ class LayoutTest(FunctionalTest):
 
         # User sees text 'Hello' on home page
         text = self.browser.find_element_by_tag_name('p').text
-        self.assertIn('Hello', text)
+        self.assertIn('this-is-a-test-value-for-tdd', text)
