@@ -8,7 +8,7 @@
 
 from .base import UnitTest
 
-from app import routes
+from app.main import routes
 
 
 class RouteTest(UnitTest):

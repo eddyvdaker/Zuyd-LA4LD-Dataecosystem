@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    app.routes
-    ~~~~~~~~~~
+    app.main.routes
+    ~~~~~~~~~~~~~~~
 
     Routes for the data ecosystem
 """
