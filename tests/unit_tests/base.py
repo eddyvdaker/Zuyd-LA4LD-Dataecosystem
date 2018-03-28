@@ -20,7 +20,7 @@ class UnitTest(TestCase):
     """Base TestCase object used for unit tests."""
 
     def setUp(self):
-        self.app = app.create_app(TestConfig)
+        self.app = app.app
 
     def tearDown(self):
         pass

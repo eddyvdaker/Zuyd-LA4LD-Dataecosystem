@@ -6,4 +6,4 @@ _pycache_
 *.sqlite3
 .env
 geckodriver.log
-.db
+*.db

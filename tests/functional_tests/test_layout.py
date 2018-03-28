@@ -17,5 +17,5 @@ class LayoutTest(FunctionalTest):
         self.browser.set_window_size(1024, 768)
 
         # User sees text 'Hello' on home page
-        text = self.browser.find_element_by_tag_name('p').text
-        self.assertIn('this-is-a-test-value-for-tdd', text)
+        text = self.browser.find_element_by_tag_name('div').text
+        self.assertIn('LA4LD', text)
