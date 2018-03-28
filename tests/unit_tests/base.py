@@ -44,7 +44,7 @@ class UnitTest(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def login(self, username=TEST_USERNAME, password=TEST_PASSWORD):
+    def login(self, username=TEST_USERNAME):
         user = User.query.filter_by(username=username).first()
         if user:
             login_user(user)

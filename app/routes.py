@@ -43,3 +43,8 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/test_error_handler')
+def test_error_handler():
+    pass
