@@ -45,9 +45,15 @@ class UnitTest(TestCase):
         db.drop_all()
 
     def login(self, username=TEST_USERNAME):
+        """
+        Logs in the user with the set username
+
+        :param username: <str> username to login with
+        """
         user = User.query.filter_by(username=username).first()
         if user:
             login_user(user)
 
     def logout(self):
+        """Logout the current user"""
         logout_user()
