@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+    errors
+    ~~~~~~
+
+    Error handling for the application.
+"""
+
 from flask import render_template
 from app import app, db
 
