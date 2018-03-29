@@ -48,3 +48,16 @@ def logout():
 @app.route('/test_error_handler')
 def test_error_handler():
     pass
+
+
+@app.route('/user/<username>')
+@login_required
+def profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    user_data = None
+    if str(user.username) == str(current_user.username):
+        user_data = 'abc'
+
+    test_data = f'user.username = {user.username}, current_user.username = {current_user.username}\n' \
+                f'user.username == current_user.username : {user.username == current_user.username}'
+    return render_template('profile.html', user=user, data=user_data, test_data=test_data)
