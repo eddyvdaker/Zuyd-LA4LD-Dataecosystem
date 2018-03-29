@@ -6,7 +6,7 @@
     Routes for the different parts of the data ecosystem.
 """
 
-from flask import flash, render_template, redirect, url_for, request
+from flask import abort, flash, render_template, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
@@ -45,9 +45,9 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/test_error_handler')
-def test_error_handler():
-    pass
+@app.route('/error/test_500')
+def error_test_500():
+    abort(500)
 
 
 @app.route('/user/<username>')

@@ -25,7 +25,7 @@ class ErrorTest(FunctionalTest):
 
     def test_500_page(self):
         # User triggers a bug
-        self.browser.get(self.live_server_url + '/test_error_handler')
+        self.browser.get(self.live_server_url + '/error/test_500')
         self.browser.set_window_size(1024, 768)
 
         # User gets a 500 Internal Server Error page

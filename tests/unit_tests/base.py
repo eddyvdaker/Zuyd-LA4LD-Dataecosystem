@@ -15,7 +15,7 @@ from app.models import User
 from config import Config
 
 BASE_DIR = basedir = os.path.abspath(os.path.dirname(__file__))
-BASE_URL = 'http://127.0.0.1:5000/'
+BASE_URL = 'http://127.0.0.1:5000'
 TEST_USERNAME = 'test'
 TEST_PASSWORD = 'test_password'
 TEST_EMAIL = 'test@test.com'

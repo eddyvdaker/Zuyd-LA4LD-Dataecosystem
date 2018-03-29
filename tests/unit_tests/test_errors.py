@@ -12,5 +12,9 @@ from .base import UnitTest, BASE_URL
 class TestErrorHandling(UnitTest):
 
     def test_404_page(self):
-        self.client.get(BASE_URL + 'kljty20y')
+        self.client.get(BASE_URL + '/kljty20y')
         self.assert_template_used('404.html')
+
+    def test_500_page(self):
+        self.client.get(BASE_URL + '/error/test_500')
+        self.assert_template_used('500.html')
