@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1 id="profile-header">Profile Page</h1>
+    <p id="welcome-text">Hello, {{ user.username }}</p>
+    <div id="user-data">
+        {% if data %}
+            <p>User data: {{ data }}</p>
+        {% endif %}
+    </div>
+    <p>{{ test_data }}</p>
+{% endblock %}

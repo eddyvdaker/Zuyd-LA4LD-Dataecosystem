@@ -15,7 +15,7 @@ from app.models import User
 from config import Config
 
 BASE_DIR = basedir = os.path.abspath(os.path.dirname(__file__))
-BASE_URL = 'http://127.0.0.1:5000/'
+BASE_URL = 'http://127.0.0.1:5000'
 TEST_USERNAME = 'test'
 TEST_PASSWORD = 'test_password'
 TEST_EMAIL = 'test@test.com'
@@ -44,10 +44,16 @@ class UnitTest(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def login(self, username=TEST_USERNAME, password=TEST_PASSWORD):
+    def login(self, username=TEST_USERNAME):
+        """
+        Logs in the user with the set username
+
+        :param username: <str> username to login with
+        """
         user = User.query.filter_by(username=username).first()
         if user:
             login_user(user)
 
     def logout(self):
+        """Logout the current user"""
         logout_user()

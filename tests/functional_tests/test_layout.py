@@ -85,3 +85,29 @@ class LayoutTest(FunctionalTest):
         warning = self.waitFor(lambda: self.browser.find_element_by_id(
             'messages')).text
         self.assertIn('Invalid username or password', warning)
+
+    def test_own_profile_page(self):
+        self.browser.get(self.live_server_url + '/user/ed')
+        self.browser.set_window_size(1024, 768)
+
+        self.login(username='ed', password='cat')
+        text = self.waitFor(lambda: self.browser.find_element_by_id(
+            'profile-header')).text
+        self.assertIn('Profile Page', text)
+
+        data = self.waitFor(lambda: self.browser.find_element_by_id(
+            'user-data')).text
+        self.assertIn('abc', data)
+
+    def test_other_profile_page(self):
+        self.browser.get(self.live_server_url + '/user/ed')
+        self.browser.set_window_size(1024, 768)
+
+        self.login(username='test', password='dog')
+        text = self.waitFor(lambda: self.browser.find_element_by_id(
+            'profile-header')).text
+        self.assertIn('Profile Page', text)
+
+        data = self.waitFor(lambda: self.browser.find_element_by_id(
+            'user-data')).text
+        self.assertNotIn('abc', data)

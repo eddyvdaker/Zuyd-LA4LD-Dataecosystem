@@ -7,3 +7,4 @@ _pycache_
 .env
 geckodriver.log
 *.db
+logs/
