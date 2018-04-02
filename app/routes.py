@@ -61,7 +61,7 @@ def profile():
 @app.route('/admin')
 @login_required
 def admin():
-    if current_user.role != 'admin':
+    if current_user.role.role != 'admin':
         abort(403)
     return render_template('admin.html', title='Admin Panel')
 
