@@ -19,10 +19,10 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    role = db.Column(db.Integer, db.ForeignKey('role.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
 
     def __repr__(self):
-        return f'<User {self.username}'
+        return f'<User {self.username}>'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -48,6 +48,7 @@ class User(UserMixin, db.Model):
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     role = db.Column(db.String(64), index=True, unique=True)
+    users = db.relationship('User', backref='role', lazy='dynamic')
 
 
 @login.user_loader
