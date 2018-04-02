@@ -59,4 +59,5 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('LA4LD - Startup')
 
+
 from app import models, routes, errors
