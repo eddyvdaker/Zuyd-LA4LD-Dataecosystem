@@ -51,20 +51,19 @@ def error_test_500():
     abort(500)
 
 
-@app.route('/user/<username>')
+@app.route('/profile')
 @login_required
-def profile(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    user_data = None
-    if str(user.username) == str(current_user.username):
-        user_data = 'abc'
+def profile():
+    user_data = 'abc'
+    return render_template('profile.html', title='Profile', data=user_data)
 
-    test_data = f'user.username = {user.username}, ' \
-                f'current_user.username = {current_user.username}\n' \
-                f'user.username == current_user.username ' \
-                f': {user.username == current_user.username}'
-    return render_template('profile.html', user=user, data=user_data,
-                           test_data=test_data)
+
+@app.route('/admin')
+@login_required
+def admin():
+    if current_user.role != 'admin':
+        abort(403)
+    return render_template('admin.html', title='Admin Panel')
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])

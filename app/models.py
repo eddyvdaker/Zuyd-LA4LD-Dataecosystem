@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    role = db.Column(db.Integer, db.ForeignKey('role.id'))
 
     def __repr__(self):
         return f'<User {self.username}'
@@ -42,6 +43,11 @@ class User(UserMixin, db.Model):
         except:
             return
         return User.query.get(id)
+
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    role = db.Column(db.String(64), index=True, unique=True)
 
 
 @login.user_loader

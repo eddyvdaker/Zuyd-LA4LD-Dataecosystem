@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1 id="profile-header">Profile Page</h1>
-    <p id="welcome-text">Hello, {{ user.username }}</p>
+    <p id="welcome-text">Hello, {{ current_user.username }}</p>
+    <p>Your role is {{ current_user.role }}</p>
     <div id="user-data">
         {% if data %}
             <p>User data: {{ data }}</p>
