@@ -15,4 +15,3 @@ class HomePageTest(UnitTest):
         """Tests if the login page uses the correct template."""
         self.client.get(BASE_URL + '/login')
         self.assert_template_used('login.html')
-
