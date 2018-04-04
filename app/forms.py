@@ -7,8 +7,11 @@
 """
 
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
+
+from app import app
 
 
 class LoginForm(FlaskForm):
@@ -28,3 +31,12 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
+
+
+class ImportForm(FlaskForm):
+    file = FileField('File', validators=[
+        FileRequired(),
+        FileAllowed(app.config['ALLOWED_EXTENSIONS'],
+                    'Incorrect format, JSON required!')
+    ])
+    submit = SubmitField('Import')

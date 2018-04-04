@@ -5,14 +5,17 @@
 
     Routes for the different parts of the data ecosystem.
 """
-
-from flask import abort, flash, render_template, redirect, url_for, request
+import os
+from flask import abort, flash, render_template, redirect, url_for, request, \
+    send_from_directory
 from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.utils import secure_filename
 from werkzeug.urls import url_parse
 
 from app import app, db
 from app.email import send_password_reset_email
-from app.forms import LoginForm, ResetPasswordRequestForm, ResetPasswordForm
+from app.forms import LoginForm, ResetPasswordRequestForm, ResetPasswordForm,\
+    ImportForm
 from app.models import User
 
 
@@ -58,12 +61,22 @@ def profile():
     return render_template('profile.html', title='Profile', data=user_data)
 
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    if current_user.role != 'admin':
+    user_import_form = ImportForm()
+    if current_user.role.role != 'admin':
         abort(403)
-    return render_template('admin.html', title='Admin Panel')
+
+    if user_import_form.validate_on_submit():
+        f = user_import_form.file.data
+        filename = secure_filename(f.filename)
+        if not os.path.exists(app.config['IMPORT_FOLDER']):
+            os.makedirs(app.config['IMPORT_FOLDER'])
+        f.save(os.path.join(app.config['IMPORT_FOLDER'], filename))
+        return redirect(url_for('uploaded_file', filename=filename))
+    return render_template('admin.html', title='Admin Panel',
+                           user_import_form=user_import_form)
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -95,3 +108,8 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['IMPORT_FOLDER'], filename)

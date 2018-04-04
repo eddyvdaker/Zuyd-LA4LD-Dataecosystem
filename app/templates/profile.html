@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <p id="welcome-text">Hello, {{ current_user.username }}</p>
-    <p>Your role is {{ current_user.role }}</p>
+    <p>Your role is {{ current_user.role.role }}</p>
     <div id="user-data">
         {% if data %}
             <p>User data: {{ data }}</p>
