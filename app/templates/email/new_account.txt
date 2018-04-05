@@ -1,0 +1,11 @@
+Dear {{ user.username }},
+
+A account has been created for you in the LA4LD system. Your login details are:
+username: {{ user.username }}
+password: {{ user.password }}
+
+Change your password as soon as possible.
+
+Sincerely,
+
+The LA4LD team
