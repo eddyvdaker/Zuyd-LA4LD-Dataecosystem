@@ -4,14 +4,6 @@
     <p>admin page</p>
     <hr>
     <h2>Import Users</h2>
-    {% if imported_users %}
-        <h3>Imported users:</h3>
-        <ul>
-        {% for user in imported_users %}
-            <li>username: {{ user.username }} ({{ user.email }}) - password: {{ user.password }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
     <form method="post" enctype="multipart/form-data">
         {{ user_import_form.hidden_tag() }}
         <p>
