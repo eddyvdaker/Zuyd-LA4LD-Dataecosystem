@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <p id="welcome-text">Hello, {{ current_user.username }}</p>
+    {% if current_user.is_anonymous %}
+        <p>Welcome to the LA4LD dataecosystem, please log in <a href="{{ url_for('login') }}">here</a>!</p>
+    {% else %}
+        <p>Hello, {{ current_user.username }}</p>
+    {% endif %}
 {% endblock %}
