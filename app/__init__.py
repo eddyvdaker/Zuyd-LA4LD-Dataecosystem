@@ -31,6 +31,9 @@ app.register_blueprint(errors_bp)
 from app.auth import bp as auth_bp
 app.register_blueprint(auth_bp)
 
+from app.admin import bp as admin_bp
+app.register_blueprint(admin_bp)
+
 if not app.debug:
     # Email logging
     if app.config['MAIL_SERVER']:
