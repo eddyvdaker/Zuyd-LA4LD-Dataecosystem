@@ -25,6 +25,9 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
+from app.errors import bp as errors_bp
+app.register_blueprint(errors_bp)
+
 if not app.debug:
     # Email logging
     if app.config['MAIL_SERVER']:
@@ -60,4 +63,4 @@ if not app.debug:
     app.logger.info('LA4LD - Startup')
 
 
-from app import models, routes, errors
+from app import models, routes
