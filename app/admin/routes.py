@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 from app import app, db
 from app.admin import bp
 from app.email import send_new_user_email
-from app.forms import ImportForm
+from app.main.forms import ImportForm
 from app.models import User, Role
 
 

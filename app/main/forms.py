@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-    forms
-    ~~~~~
+    main.forms
+    ~~~~~~~~~~
 
-    Generic forms used in different parts of the application.
+    Forms that do not fit with any of the more specific blueprints or are
+    core features of the application.
 """
 
 from flask_wtf import FlaskForm

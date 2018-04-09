@@ -34,6 +34,9 @@ app.register_blueprint(auth_bp)
 from app.admin import bp as admin_bp
 app.register_blueprint(admin_bp)
 
+from app.main import bp as main_bp
+app.register_blueprint(main_bp)
+
 if not app.debug:
     # Email logging
     if app.config['MAIL_SERVER']:
@@ -69,4 +72,4 @@ if not app.debug:
     app.logger.info('LA4LD - Startup')
 
 
-from app import models, routes
+from app import models
