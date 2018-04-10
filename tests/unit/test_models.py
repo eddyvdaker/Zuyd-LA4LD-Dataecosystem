@@ -7,7 +7,7 @@
 """
 from sqlalchemy.exc import IntegrityError
 
-from .base import UnitTest
+from tests.unit.base import UnitTest
 
 from app import db
 from app.models import User, Role
