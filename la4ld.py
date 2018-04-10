@@ -6,8 +6,11 @@
     A learning analytics for learning design data ecosystem build using Flask.
 """
 
-from app import app, db
+from app import create_app, db
 from app.models import User, Role
+
+
+app = create_app()
 
 
 @app.shell_context_processor

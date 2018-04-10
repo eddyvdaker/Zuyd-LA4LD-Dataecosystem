@@ -28,4 +28,3 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['zuyd.la4ld.dataecosystem@gmail.com']
     IMPORT_FOLDER = os.environ.get('IMPORT_FOLDER') or '/tmp/la4ld/imports/'
-    ALLOWED_EXTENSIONS = ['json', 'png']

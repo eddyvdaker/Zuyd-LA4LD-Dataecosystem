@@ -6,10 +6,9 @@
     Routes that do not fit with any of the more specific blueprints or are
     core features of the application.
 """
-from flask import abort, render_template, send_from_directory
+from flask import abort, current_app, render_template, send_from_directory
 from flask_login import current_user, login_required
 
-from app import app
 from app.main import bp
 
 
@@ -35,4 +34,4 @@ def profile():
 def uploaded_file(filename):
     if current_user.role.role != 'admin':
         abort(403)
-    return send_from_directory(app.config['IMPORT_FOLDER'], filename)
+    return send_from_directory(current_app.config['IMPORT_FOLDER'], filename)

@@ -7,15 +7,15 @@
 """
 import json
 import os
-from flask import abort, flash, redirect, render_template, url_for
+from flask import abort, current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from secrets import token_urlsafe
 from werkzeug.utils import secure_filename
 
-from app import app, db
+from app import db
 from app.admin import bp
+from app.admin.forms import ImportForm
 from app.email import send_new_user_email
-from app.main.forms import ImportForm
 from app.models import User, Role
 
 
@@ -31,7 +31,7 @@ def import_users(json_file, mail_details=False):
 
     :return:
     """
-    file = os.path.join(app.config['IMPORT_FOLDER'], json_file)
+    file = os.path.join(current_app.config['IMPORT_FOLDER'], json_file)
     with open(file, 'r') as f:
         try:
             users = json.load(f)['users']
@@ -74,11 +74,11 @@ def admin():
     if user_import_form.validate_on_submit():
         f = user_import_form.file.data
         filename = secure_filename(f.filename)
-        if not os.path.exists(app.config['IMPORT_FOLDER']):
-            os.makedirs(app.config['IMPORT_FOLDER'])
-        f.save(os.path.join(app.config['IMPORT_FOLDER'], filename))
+        if not os.path.exists(current_app.config['IMPORT_FOLDER']):
+            os.makedirs(current_app.config['IMPORT_FOLDER'])
+        f.save(os.path.join(current_app.config['IMPORT_FOLDER'], filename))
         imported_users = import_users(
-            os.path.join(app.config['IMPORT_FOLDER'], filename,),
+            os.path.join(current_app.config['IMPORT_FOLDER'], filename,),
             mail_details=False)
         if imported_users:
             flash('Imported Users (Copy to send to users)')
