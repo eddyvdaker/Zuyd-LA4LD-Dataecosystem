@@ -2,7 +2,7 @@
 
 {% block app_content %}
     {% if current_user.is_anonymous %}
-        <p>Welcome to the LA4LD dataecosystem, please log in <a href="{{ url_for('login') }}">here</a>!</p>
+        <p>Welcome to the LA4LD dataecosystem, please log in <a href="{{ url_for('auth.login') }}">here</a>!</p>
     {% else %}
         <p>Hello, {{ current_user.username }}</p>
     {% endif %}
