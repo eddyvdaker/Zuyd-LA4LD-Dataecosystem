@@ -5,7 +5,6 @@
 
     Unit tests for the error handling
 """
-
 from tests.unit.base import UnitTest
 from app.email import send_mail
 
