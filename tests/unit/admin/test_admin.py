@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    tests.unit.admin_test_admin
+    tests.unit.admin.test_admin
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Unit tests for the admin page
