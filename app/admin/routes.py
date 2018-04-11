@@ -19,27 +19,60 @@ from app.email import send_new_user_email
 from app.models import User, Role
 
 
-def import_users(json_file, mail_details=False):
+def upload_file(file):
+    """
+    Gets the file and filename from the form, makes sure it's secure, and
+    saves it to the filesystem.
+
+    :param file: <obj> file object containing the data
+    :return: Path to file
+    """
+    f = file.data
+    filename = secure_filename(f.filename)
+    if not os.path.exists(current_app.config['IMPORT_FOLDER']):
+        os.makedirs(current_app.config['IMPORT_FOLDER'])
+    f.save(os.path.join(current_app.config['IMPORT_FOLDER'], filename))
+
+    return os.path.join(current_app.config['IMPORT_FOLDER'], filename,)
+
+
+def read_json(json_file, field=None):
+    """
+    Reads the imported json file.
+
+    :param json_file: <str> The path to the json file
+    :param field: <str> The field that is search for inside the
+        json file, defaults to None
+    :return: The json data read from the file
+    """
+    with open(json_file, 'r') as f:
+        if field:
+            try:
+                data = json.load(f)[field]
+            except KeyError:
+                flash(f'Invalid file, missing key "{field}"')
+                return redirect(url_for('admin'))
+        else:
+            data = json.load(f)
+
+    return data
+
+
+def import_users(data, mail_details=False):
     """
     When an admin uploads a json file with users, the users will be
     created in the database, a password will be generated, and finally
     the created account details will be send to the user by email.
 
-    :param json_file: <str> path to the json input file
+    :param data: <str> Json data containing the user details
     :param mail_details: <bool> whether the users should receive a mail
         with their account credentials
 
     :return:
     """
-    file = os.path.join(current_app.config['IMPORT_FOLDER'], json_file)
-    with open(file, 'r') as f:
-        try:
-            users = json.load(f)['users']
-        except KeyError:
-            flash('Invalid file, missing key "users".')
-            return redirect(url_for('admin'))
+
     user_data = []
-    for row in users:
+    for row in data:
         user = User(username=row['username'], email=row['email'])
         db.session.add(user)
         db.session.commit()
@@ -48,6 +81,7 @@ def import_users(json_file, mail_details=False):
         user.role_id = r.id
         db.session.commit()
 
+        # Generate random initial password for imported user
         password = token_urlsafe()
         user.set_password(password)
         db.session.commit()
@@ -72,14 +106,9 @@ def admin():
     if current_user.role.role != 'admin':
         abort(403)
     if user_import_form.validate_on_submit():
-        f = user_import_form.file.data
-        filename = secure_filename(f.filename)
-        if not os.path.exists(current_app.config['IMPORT_FOLDER']):
-            os.makedirs(current_app.config['IMPORT_FOLDER'])
-        f.save(os.path.join(current_app.config['IMPORT_FOLDER'], filename))
-        imported_users = import_users(
-            os.path.join(current_app.config['IMPORT_FOLDER'], filename,),
-            mail_details=False)
+        file = upload_file(user_import_form.file)
+        user_data = read_json(file, field='users')
+        imported_users = import_users(user_data)
         if imported_users:
             flash('Imported Users (Copy to send to users)')
             for row in imported_users:
