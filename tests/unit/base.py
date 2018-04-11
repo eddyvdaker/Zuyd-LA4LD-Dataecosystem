@@ -5,8 +5,6 @@
 
     Base functionality for running unit tests
 """
-from flask_login import login_user, logout_user
-from flask_testing import TestCase as FlaskTestCase
 from unittest import TestCase, main
 
 import app as flask_app
@@ -23,61 +21,36 @@ class TestConfig(Config):
 class UnitTest(TestCase):
 
     def setUp(self):
-        self.app = flask_app.create_app(TestConfig)
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        db.create_all()
-
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
-
-
-class ViewUnitTest(FlaskTestCase):
-
-    def create_app(self):
         app = flask_app.create_app(TestConfig)
-        return app
-
-    def setUp(self):
-        self.app = self.create_app()
-        self.app_context = self.app.app_context()
+        self.app = app.test_client()
+        self.app_context = app.app_context()
         self.app_context.push()
-        db.create_all()
+        # self.app_test_client = self.app.test_client()
+        with self.app_context:
+            db.create_all()
+
+        # Create test roles
+        roles = ['admin', 'student', 'teacher']
+        for role in roles:
+            r = Role(role=role)
+            db.session.add(r)
+        db.session.commit()
+
+        # Create test users
+        for i, role in enumerate(roles):
+            u = User(username=f'usr{i}', email=f'usr{i}@la4ld-test.com')
+            db.session.add(u)
+            db.session.commit()
+
+            u.set_password('cat')
+            r = Role.query.filter_by(role=role).first()
+            u.role_id = r.id
+            db.session.commit()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
-
-    def create_roles(self):
-        r1 = Role(role='admin')
-        r2 = Role(role='student')
-        r3 = Role(role='teacher')
-        db.session.add_all([r1, r2, r3])
-        db.session.commit()
-
-    def create_user(self, role):
-        nr_users = len(User.query.all())
-        user = User(username=f'usr{nr_users + 1}',
-                    email=f'usr{nr_users}@la4ld-test.com')
-        db.session.add(user)
-        db.session.commit()
-
-        user.set_password('cat')
-        user.role_id = Role.query.filter_by(role=role).first()
-        db.session.commit()
-        return user
-
-    def login_user(self, role='admin'):
-        if len(Role.query.all()) == 0:
-            self.create_roles()
-        user = self.create_user(role)
-        login_user(user)
-
-    def logout_user(self):
-        logout_user()
 
 
 if __name__ == '__main__':
