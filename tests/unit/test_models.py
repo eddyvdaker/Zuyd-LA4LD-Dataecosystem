@@ -5,12 +5,13 @@
 
     Unit tests for the SQLAlchemy models
 """
+from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
 from tests.unit.base import UnitTest
 
 from app import db
-from app.models import User, Role
+from app.models import User, Role, Module
 
 
 class UserModelTest(UnitTest):
@@ -82,3 +83,19 @@ class RoleModelTest(UnitTest):
             role = Role(role='test_role')
             db.session.add(role)
             db.session.commit()
+
+
+class ModuleModelTest(UnitTest):
+
+    def test_create_module(self):
+        """Test if new modules can be created"""
+        module = Module(
+            code='tm01',
+            name='testmodule01',
+            description='This is a test module',
+            start=datetime(2009, 10, 1),
+            end=datetime(2010, 10, 1),
+            faculty='Faculteit ICT',
+        )
+        db.session.add(module)
+        db.session.commit()

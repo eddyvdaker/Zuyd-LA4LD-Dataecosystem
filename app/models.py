@@ -52,6 +52,16 @@ class Role(db.Model):
     users = db.relationship('User', backref='role', lazy='dynamic')
 
 
+class Module(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(128), index=True)
+    name = db.Column(db.String(128), index=True)
+    description = db.Column(db.String(128))
+    start = db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
+    faculty = db.Column(db.String(128))
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
