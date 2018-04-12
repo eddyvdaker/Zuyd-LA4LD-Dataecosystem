@@ -1,19 +1,6 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <p>admin page</p>
-    <hr>
-    <h2>Import Users</h2>
-    <form method="post" enctype="multipart/form-data">
-        {{ user_import_form.hidden_tag() }}
-        <p>
-            {{ user_import_form.file() }}
-            {% for error in user_import_form.file.errors %}
-                <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ user_import_form.submit() }}
-        </p>
-    </form>
+    <h3>User Settings</h3>
+    <p><a href="{{ url_for('admin.import_users') }}">Import Users</a></p>
 {% endblock %}

@@ -76,7 +76,7 @@ class TestAdminUpload(UnitTest):
             ]
         }, 'test.json')
 
-        resp = self.app.post('/admin', buffered=True,
+        resp = self.app.post('/admin/users/import_users', buffered=True,
                              content_type='multipart/form-data',
                              data=data)
 
