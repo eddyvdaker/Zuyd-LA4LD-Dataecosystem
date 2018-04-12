@@ -107,7 +107,7 @@ def admin():
     return render_template('admin/admin.html', title='Admin Panel')
 
 
-@bp.route('/admin/users/import_users', methods=['GET', 'POST'])
+@bp.route('/admin/users_import', methods=['GET', 'POST'])
 @login_required
 def import_users():
     user_import_form = ImportForm()
@@ -123,6 +123,14 @@ def import_users():
                 flash(f'User: {row["username"]} ({row["email"]}) - '
                       f'Password: {row["password"]}')
         return redirect(url_for('admin.admin'))
-
     return render_template('admin/import_users.html', title='Admin Panel: Import Users',
                            user_import_form=user_import_form)
+
+
+@bp.route('/admin/users_overview')
+def users_overview():
+    if current_user.role.role != 'admin':
+        abort(403)
+    users = User.query.all()
+    return render_template('admin/users_overview.html', title='Users Overview',
+                           users=users)

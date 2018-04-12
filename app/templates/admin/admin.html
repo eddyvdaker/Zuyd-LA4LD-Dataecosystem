@@ -2,5 +2,8 @@
 
 {% block app_content %}
     <h3>User Settings</h3>
-    <p><a href="{{ url_for('admin.import_users') }}">Import Users</a></p>
+    <ul>
+        <li><a href="{{ url_for('admin.import_users') }}">Import Users</a></li>
+        <li><a href="{{ url_for('admin.users_overview') }}">Users Overview</a></li>
+    </ul>
 {% endblock %}

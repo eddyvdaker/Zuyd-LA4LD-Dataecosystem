@@ -39,12 +39,12 @@ class TestAdminView(UnitTest):
 
 class TestAdminUpload(UnitTest):
 
-    def generate_test_file(self, input, filename):
+    def generate_test_file(self, input_data, filename):
         """
         Gets input and filename and returns a dictionary where the file
         field represents an encoded file.
 
-        :param input: <str> Content of the file
+        :param input_data: <str> Content of the file
         :param filename: <str> Name of the file
         :return: Dict with encoded file in file field
         """
@@ -52,11 +52,11 @@ class TestAdminUpload(UnitTest):
         """"""
         return {
             'field': 'value',
-            'file': (BytesIO(str(input).encode('utf-8')), filename)
+            'file': (BytesIO(str(input_data).encode('utf-8')), filename)
         }
 
     def test_file_upload(self):
-        """Test if files uploaded can be found on the filesystem"""
+        """Test if files can be uploaded with POST"""
         with self.app.session_transaction() as sess:
             sess['user_id'] = 1
             sess['_fresh'] = True
@@ -76,8 +76,20 @@ class TestAdminUpload(UnitTest):
             ]
         }, 'test.json')
 
-        resp = self.app.post('/admin/users/import_users', buffered=True,
+        resp = self.app.post('/admin/users_import', buffered=True,
                              content_type='multipart/form-data',
                              data=data)
 
         assert resp.status_code == 200
+
+
+class TestUsersOverview(UnitTest):
+
+    def test_users_overview_route(self):
+        """Test if the users overview route works"""
+        with self.app.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['_fresh'] = True
+        resp = self.app.get('/admin/users_overview')
+        assert b'Users Overview' in resp.data
+        assert b'usr1' in resp.data
