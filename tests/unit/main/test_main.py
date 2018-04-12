@@ -23,7 +23,7 @@ class TestProfileView(UnitTest):
         with self.app.session_transaction() as sess:
             sess['user_id'] = 1
             sess['_fresh'] = True
-        resp = self.app.get('profile')
+        resp = self.app.get('/profile')
         assert b'Profile' in resp.data
 
     def test_profile_route_redirect(self):
@@ -31,5 +31,5 @@ class TestProfileView(UnitTest):
         Test if unauthenticated users get redirected when browsing to the
         profile page.
         """
-        resp = self.app.get('profile')
+        resp = self.app.get('/profile')
         assert resp.status_code == 302

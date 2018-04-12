@@ -58,7 +58,7 @@ def read_json(json_file, field=None):
     return data
 
 
-def import_users(data, mail_details=False):
+def import_users_to_db(data, mail_details=False):
     """
     When an admin uploads a json file with users, the users will be
     created in the database, a password will be generated, and finally
@@ -99,22 +99,38 @@ def import_users(data, mail_details=False):
     return user_data
 
 
-@bp.route('/admin', methods=['GET', 'POST'])
+@bp.route('/admin')
 @login_required
 def admin():
+    if current_user.role.role != 'admin':
+        abort(403)
+    return render_template('admin/admin.html', title='Admin Panel')
+
+
+@bp.route('/admin/users_import', methods=['GET', 'POST'])
+@login_required
+def import_users():
     user_import_form = ImportForm()
     if current_user.role.role != 'admin':
         abort(403)
     if user_import_form.validate_on_submit():
         file = upload_file(user_import_form.file)
         user_data = read_json(file, field='users')
-        imported_users = import_users(user_data)
+        imported_users = import_users_to_db(user_data)
         if imported_users:
             flash('Imported Users (Copy to send to users)')
             for row in imported_users:
                 flash(f'User: {row["username"]} ({row["email"]}) - '
                       f'Password: {row["password"]}')
         return redirect(url_for('admin.admin'))
+    return render_template('admin/import_users.html', title='Admin Panel: Import Users',
+                           user_import_form=user_import_form)
 
-    return render_template('admin/admin.html', title='Admin Panel',
-                           user_import_form=user_import_form,)
+
+@bp.route('/admin/users_overview')
+def users_overview():
+    if current_user.role.role != 'admin':
+        abort(403)
+    users = User.query.all()
+    return render_template('admin/users_overview.html', title='Users Overview',
+                           users=users)

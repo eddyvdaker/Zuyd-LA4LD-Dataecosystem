@@ -5,7 +5,6 @@
 
     Forms for the authentication blueprint of the application.
 """
-
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
@@ -28,3 +27,16 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
+
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('Current Password',
+                                 validators=[DataRequired()])
+    new_password = PasswordField('New Password',
+                                 validators=[DataRequired()])
+    new_password_2 = PasswordField('Retype New Password',
+                                   validators=[
+                                       DataRequired(),
+                                       EqualTo('new_password')
+                                   ])
+    submit = SubmitField('Change Password')

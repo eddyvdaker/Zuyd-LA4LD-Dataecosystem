@@ -30,3 +30,34 @@ class TestLoginView(UnitTest):
             sess['_fresh'] = True
         resp = self.app.get('login')
         assert resp.status_code == 302
+
+
+class TestChangingPassword(UnitTest):
+
+    def test_change_password_route(self):
+        """Tests if the change password route is available"""
+        with self.app.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['_fresh'] = True
+        resp = self.app.get('/change_password')
+        assert b'Change Password' in resp.data
+
+    def test_change_password_route_logged_out(self):
+        """
+        Tests if a logged out user is redirected to the login page for
+        the change password route
+        """
+        resp = self.app.get('/change_password')
+        assert resp.status_code == 302
+
+    def test_changing_password(self):
+        """Tests if changing password view post requests works"""
+        with self.app.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['_fresh'] = True
+        data = {'old_password': 'cat', 'new_password': 'dog',
+                'new_password_2': 'dog', 'submit': 'Change Password'}
+        resp = self.app.post('/change_password', data=data,
+                             content_type='application/x-www-form-urlencoded')
+        assert resp.status_code == 200
+

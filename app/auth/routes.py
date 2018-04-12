@@ -6,14 +6,14 @@
     Routes used for authentication.
 """
 from flask import flash, redirect, render_template, request, url_for
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 
 from app import db
 from app.auth import bp
 from app.auth.email import send_password_reset_email
 from app.auth.forms import LoginForm, ResetPasswordForm, \
-    ResetPasswordRequestForm
+    ResetPasswordRequestForm, ChangePasswordForm
 from app.models import User
 
 
@@ -70,3 +70,20 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
+
+
+@bp.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if not current_user.check_password(form.old_password.data):
+            flash('Wrong password')
+            return redirect(url_for('auth.change_password'))
+        current_user.set_password(form.new_password.data)
+        flash('Password changed')
+        db.session.commit()
+        return redirect(url_for('auth.change_password'))
+
+    return render_template('auth/change_password.html',
+                           title="Change Password", form=form)
