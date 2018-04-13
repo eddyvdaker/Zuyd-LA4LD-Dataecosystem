@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <table class="table table-striped">
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Faculty</th>
+        </tr>
+
+    {% for module in modules %}
+        <tr>
+            <td>{{ module.code }}</td>
+            <td>{{ module.name }}</td>
+            <td>{{ module.description }}</td>
+            <td>{{ module.start }}</td>
+            <td>{{ module.end }}</td>
+            <td>{{ module.faculty }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
