@@ -25,8 +25,14 @@ def error_test_500():
 @bp.route('/profile')
 @login_required
 def profile():
-    user_data = 'abc'
-    return render_template('profile.html', title='Profile', data=user_data)
+    modules_as_student = current_user.get_modules_of_student()
+    modules_as_teacher = current_user.get_modules_of_teacher()
+    modules_as_examiner = current_user.get_modules_of_examiner()
+
+    return render_template('profile.html', title='Profile',
+                           modules_as_student=modules_as_student,
+                           modules_as_teacher=modules_as_teacher,
+                           modules_as_examiner=modules_as_examiner)
 
 
 @bp.route('/uploads/<filename>')

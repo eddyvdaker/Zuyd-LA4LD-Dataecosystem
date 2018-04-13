@@ -7,6 +7,7 @@
 """
 import json
 import os
+from datetime import datetime
 from flask import abort, current_app, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from secrets import token_urlsafe
@@ -16,7 +17,7 @@ from app import db
 from app.admin import bp
 from app.admin.forms import ImportForm
 from app.email import send_new_user_email
-from app.models import User, Role
+from app.models import User, Module, Role
 
 
 def upload_file(file):
@@ -60,11 +61,9 @@ def read_json(json_file, field=None):
 
 def import_users_to_db(data, mail_details=False):
     """
-    When an admin uploads a json file with users, the users will be
-    created in the database, a password will be generated, and finally
-    the created account details will be send to the user by email.
+    Writes the data from from the json file to the db
 
-    :param data: <str> Json data containing the user details
+    :param data: <dict> Json data containing the user details
     :param mail_details: <bool> whether the users should receive a mail
         with their account credentials
 
@@ -99,6 +98,28 @@ def import_users_to_db(data, mail_details=False):
     return user_data
 
 
+def import_modules_to_db(data):
+    """
+    Writes the data from the json file to the db.
+
+    :param data: <dict> Dictionary containing the module data
+    :return: Number of imported modules
+    """
+    for row in data:
+        module = Module(
+            code=row['code'],
+            name=row['name'],
+            description=row['description'],
+            start=datetime.strptime(row['start'], '%Y-%m-%d'),
+            end=datetime.strptime(row['end'], '%Y-%m-%d'),
+            faculty=row['faculty']
+        )
+        db.session.add(module)
+        db.session.commit()
+
+    return len(data)
+
+
 @bp.route('/admin')
 @login_required
 def admin():
@@ -110,11 +131,11 @@ def admin():
 @bp.route('/admin/users_import', methods=['GET', 'POST'])
 @login_required
 def import_users():
-    user_import_form = ImportForm()
+    form = ImportForm()
     if current_user.role.role != 'admin':
         abort(403)
-    if user_import_form.validate_on_submit():
-        file = upload_file(user_import_form.file)
+    if form.validate_on_submit():
+        file = upload_file(form.file)
         user_data = read_json(file, field='users')
         imported_users = import_users_to_db(user_data)
         if imported_users:
@@ -123,8 +144,9 @@ def import_users():
                 flash(f'User: {row["username"]} ({row["email"]}) - '
                       f'Password: {row["password"]}')
         return redirect(url_for('admin.admin'))
-    return render_template('admin/import_users.html', title='Admin Panel: Import Users',
-                           user_import_form=user_import_form)
+    return render_template('admin/import.html',
+                           title='Admin Panel: Import Users',
+                           form=form)
 
 
 @bp.route('/admin/users_overview')
@@ -132,5 +154,32 @@ def users_overview():
     if current_user.role.role != 'admin':
         abort(403)
     users = User.query.all()
-    return render_template('admin/users_overview.html', title='Users Overview',
+    return render_template('admin/users_overview.html',
+                           title='Admin Panel: Users Overview',
                            users=users)
+
+
+@bp.route('/admin/modules_import', methods=['GET', 'POST'])
+def import_modules():
+    form = ImportForm()
+    if current_user.role.role != 'admin':
+        abort(403)
+    if form.validate_on_submit():
+        file = upload_file(form.file)
+        module_data = read_json(file, field='modules')
+        import_status = import_modules_to_db(module_data)
+        flash(f'{import_status} modules imported')
+        return redirect(url_for('admin.admin'))
+    return render_template('admin/import.html',
+                           title='Admin Panel: Import Modules',
+                           form=form)
+
+
+@bp.route('/admin/modules_overview')
+def modules_overview():
+    if current_user.role.role != 'admin':
+        abort(403)
+    modules = Module.query.all()
+    return render_template('admin/modules_overview.html',
+                           title='Admin Panel: Modules Overview',
+                           modules=modules)
