@@ -17,7 +17,7 @@ from app import db
 from app.admin import bp
 from app.admin.forms import ImportForm
 from app.email import send_new_user_email
-from app.models import User, Module, Role
+from app.models import User, Grade, Module, Result, Role
 
 
 def upload_file(file):
@@ -100,7 +100,7 @@ def import_users_to_db(data, mail_details=False):
 
 def import_modules_to_db(data):
     """
-    Writes the data from the json file to the db.
+    Writes the module data from the json file to the db.
 
     :param data: <dict> Dictionary containing the module data
     :return: Number of imported modules
@@ -116,6 +116,30 @@ def import_modules_to_db(data):
         )
         db.session.add(module)
         db.session.commit()
+
+    return len(data)
+
+
+def import_results_to_db(data):
+    """
+    Writes the results data from the json file to the db
+
+    :param data: <dict> Dictionary containing results data
+    :return: Number of imported results
+    """
+    for row in data:
+        user = User.query.filter_by(username=row['username']).first()
+        module = Module.query.filter_by(code='tm01').order_by(
+            Module.start.desc()).first()
+        r = Result(identifier=user.hash_identifier(), module=module.id)
+        db.session.add(r)
+        db.session.commit()
+
+        for grade in row['grades']:
+            g = Grade(name=grade['name'], score=grade['score'],
+                      weight=grade['weight'], result=r.id)
+            db.session.add(g)
+            db.session.commit()
 
     return len(data)
 
@@ -183,3 +207,19 @@ def modules_overview():
     return render_template('admin/modules_overview.html',
                            title='Admin Panel: Modules Overview',
                            modules=modules)
+
+
+@bp.route('/admin/results_import', methods=['GET', 'POST'])
+def import_results():
+    form = ImportForm()
+    if current_user.role.role != 'admin':
+        abort(403)
+    if form.validate_on_submit():
+        file = upload_file(form.file)
+        results_data = read_json(file, field='results')
+        import_status = import_results_to_db(results_data)
+        flash(f'{import_status} results imported')
+        return redirect(url_for('admin.admin'))
+    return render_template('admin/import.html',
+                           title='Admin Panel: Import Results',
+                           form=form)

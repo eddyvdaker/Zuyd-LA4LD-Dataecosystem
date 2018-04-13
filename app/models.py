@@ -176,6 +176,8 @@ class Module(db.Model):
         backref=db.backref('examiners_module_id', lazy='dynamic'),
         lazy='dynamic'
     )
+    results = db.relationship('Result', backref='result_module',
+                              lazy='dynamic')
 
     def __repr__(self):
         return f'<Module {self.code}>'
@@ -198,6 +200,24 @@ class Module(db.Model):
             (examiner_module.c.examiner_id == User.id)).filter(
             examiner_module.c.module_id == self.id
         ).all()
+
+
+class Result(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    identifier = db.Column(db.String(128))
+    module = db.Column(db.Integer, db.ForeignKey('module.id'))
+    grades = db.relationship('Grade', backref='grade_result', lazy='dynamic')
+
+    def __repr__(self):
+        return f'<Result {self.id}>'
+
+
+class Grade(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    score = db.Column(db.Float())
+    weight = db.Column(db.Float())
+    result = db.Column(db.String(128), db.ForeignKey('result.id'))
 
 
 @login.user_loader
