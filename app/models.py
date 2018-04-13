@@ -5,9 +5,10 @@
 
     The models for the data stored in the database.
 """
+import hashlib
+import jwt
 from flask import current_app
 from flask_login import UserMixin
-import jwt
 from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -133,6 +134,11 @@ class User(UserMixin, db.Model):
         except:
             return
         return User.query.get(id)
+
+    def hash_identifier(self):
+        return hashlib.sha512(str(
+            self.username + current_app.config['HASH_KEY']).encode('utf-8')
+        ).hexdigest()
 
 
 class Role(db.Model):
