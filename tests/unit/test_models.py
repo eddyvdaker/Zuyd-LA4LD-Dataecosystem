@@ -27,6 +27,12 @@ class UserModelTest(UnitTest):
         db.session.add(role)
         db.session.commit()
 
+    def create_test_module(self):
+        module = Module(code='tm01')
+        db.session.add(module)
+        db.session.commit()
+        return module
+
     def test_create_user(self):
         """Tests the creation of a new user"""
         self.create_test_user()
@@ -64,6 +70,30 @@ class UserModelTest(UnitTest):
         right_token = user.verify_reset_password_token(token)
         if not right_token:
             raise Exception('right token not verified')
+
+    def test_add_to_module_as_student(self):
+        """Tests if students can be added to modules"""
+        user = self.create_test_user()
+        module = self.create_test_module()
+        user.add_to_module(module)
+        assert user.student_of_module(module)
+        assert module in user.get_modules_of_student()
+
+    def test_add_to_module_as_teacher(self):
+        """Tests if teachers can be added to modules"""
+        user = self.create_test_user()
+        module = self.create_test_module()
+        user.add_to_module(module, module_role='teacher')
+        assert user.teacher_of_module(module)
+        assert module in user.get_modules_of_teacher()
+
+    def test_add_to_module_as_examiner(self):
+        """Tests if examiners can be added to modules"""
+        user = self.create_test_user()
+        module = self.create_test_module()
+        user.add_to_module(module, module_role='examiner')
+        assert user.examiner_of_module(module)
+        assert module in user.get_modules_of_examiner()
 
 
 class RoleModelTest(UnitTest):

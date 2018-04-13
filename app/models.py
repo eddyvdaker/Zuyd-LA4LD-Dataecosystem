@@ -110,7 +110,7 @@ class User(UserMixin, db.Model):
 
     def examiner_of_module(self, module):
         return self.module_as_examiner.filter(
-            examiner_module.c.module_id == Module.id).count() > 0
+            examiner_module.c.module_id == module.id).count() > 0
 
     def get_modules_of_examiner(self):
         return Module.query.join(
