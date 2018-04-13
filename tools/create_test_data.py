@@ -8,7 +8,7 @@
 from datetime import datetime
 
 from app import create_app, db
-from app.models import User, Module, Role
+from app.models import User, Grade, Module, Result, Role
 
 roles = ['admin', 'student', 'teacher']
 
@@ -93,9 +93,37 @@ def create_modules():
     db.session.commit()
 
 
+def add_users_to_modules():
+    tm01 = Module.query.filter_by(code='tm01').first()
+    tm02 = Module.query.filter_by(code='tm02').first()
+    student = User.query.filter_by(username='student').first()
+    teacher = User.query.filter_by(username='teacher').first()
+
+    student.add_to_module(tm01)
+    teacher.add_to_module(tm01, module_role='examiner')
+    teacher.add_to_module(tm02, module_role='teacher')
+    db.session.commit()
+
+
+def add_results():
+    student = User.query.filter_by(username='student').first()
+    tm01 = Module.query.filter_by(code='tm01').first()
+
+    r = Result(identifier=student.hash_identifier(), module=tm01.id)
+    db.session.add(r)
+    db.session.commit()
+
+    g1 = Grade(name='pi1', score=6, weight=1, result=r.id)
+    g2 = Grade(name='pi10', score=8, weight=4, result=r.id)
+    db.session.add_all([g1, g2])
+    db.session.commit()
+
+
 if __name__ == '__main__':
     app = create_app()
     with app.app_context():
         create_roles()
         create_users()
         create_modules()
+        add_users_to_modules()
+        add_results()

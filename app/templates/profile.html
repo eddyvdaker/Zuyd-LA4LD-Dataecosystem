@@ -7,7 +7,8 @@
     <p><a href="{{ url_for('auth.change_password') }}">Change Password</a></p>
     <hr>
     <h3>Info</h3>
-    <p>Your role is {{ current_user.role.role }}</p>
+    <p>Your role is: {{ current_user.role.role }}</p>
+    <p>Your identifier is: {{ current_user.hash_identifier() }}</p>
     {% if modules_as_student %}
     <div id="modules-as-student">
         <br>
@@ -35,6 +36,8 @@
         {% endfor %}
         </table>
     </div>
+    {% endif %}
+    {% if modules_as_teacher %}
     <div id="modules-as-teacher">
         <br>
         <hr>
@@ -61,6 +64,8 @@
         {% endfor %}
         </table>
     </div>
+    {% endif %}
+    {% if modules_as_examiner %}
     <div id="modules-as-examiner">
         <br>
         <hr>

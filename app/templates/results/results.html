@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% if results %}
+        <table class="table table-striped">
+            <tr>
+                <th>Module</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Weight</th>
+            </tr>
+
+        {% for result in results %}
+            <tr>
+                <td>{{ result.grade_result.result_module.code }}</td>
+                <td>{{ result.name }}</td>
+                <td>{{ result.score }}</td>
+                <td>{{ result.weight }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>No results</p>
+    {% endif %}
+{% endblock %}
