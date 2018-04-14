@@ -170,7 +170,8 @@ def import_users():
         return redirect(url_for('admin.admin'))
     return render_template('admin/import.html',
                            title='Admin Panel: Import Users',
-                           form=form)
+                           form=form, example_gist_code=
+                           'f73e48eea2c3672dec92adc2dd2627ef')
 
 
 @bp.route('/admin/users_overview')
@@ -196,7 +197,8 @@ def import_modules():
         return redirect(url_for('admin.admin'))
     return render_template('admin/import.html',
                            title='Admin Panel: Import Modules',
-                           form=form)
+                           form=form, example_gist_code=
+                           '3c1848ce491d9061fec9ae18ae5069e0')
 
 
 @bp.route('/admin/modules_overview')
@@ -222,4 +224,5 @@ def import_results():
         return redirect(url_for('admin.admin'))
     return render_template('admin/import.html',
                            title='Admin Panel: Import Results',
-                           form=form)
+                           form=form, example_gist_code=
+                           'd504fb80b48c28e2e1495e76ea33814e')

@@ -14,13 +14,5 @@
         </p>
     </form>
     <p>Import expects JSON files in the following format:</p>
-    {% if 'Users' in title %}
-        <script src="https://gist.github.com/eddyvdaker/f73e48eea2c3672dec92adc2dd2627ef.js"></script>
-    {% endif %}
-    {% if 'Modules' in title %}
-        <script src="https://gist.github.com/eddyvdaker/3c1848ce491d9061fec9ae18ae5069e0.js"></script>
-    {% endif %}
-    {% if 'Results' in title %}
-        <script src="https://gist.github.com/eddyvdaker/d504fb80b48c28e2e1495e76ea33814e.js"></script>
-    {% endif %}
+    <script src="https://gist.github.com/eddyvdaker/{{ example_gist_code }}.js"></script>
 {% endblock %}
