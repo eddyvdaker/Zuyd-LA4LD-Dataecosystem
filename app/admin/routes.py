@@ -188,17 +188,22 @@ def users_overview():
 @bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
     form = EditUserForm()
+    roles = Role.query.all()
+    form.role.choices = [(x.role, x.role) for x in roles]
     if current_user.role.role != 'admin':
         abort(403)
     user = User.query.filter_by(id=user_id).first()
     if form.validate_on_submit():
         user.username = form.username.data
         user.email = form.email.data
+        user.role = Role.query.filter_by(role=form.role.data).first()
         db.session.commit()
         flash('The changes have been saved.')
+        return redirect(url_for('admin.admin'))
     elif request.method == 'GET':
         form.username.data = user.username
         form.email.data = user.email
+        form.role.data = user.role.role
     return render_template('admin/edit_user.html', form=form)
 
 

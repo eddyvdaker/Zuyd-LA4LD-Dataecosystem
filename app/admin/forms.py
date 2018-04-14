@@ -8,7 +8,7 @@
 """
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import SubmitField, StringField, FieldList, DateField
+from wtforms import SubmitField, StringField, SelectField, DateField
 from wtforms.validators import DataRequired, Email
 
 
@@ -23,6 +23,7 @@ class ImportForm(FlaskForm):
 class EditUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    role = SelectField('Role', validators=[DataRequired()])
     submit = SubmitField('Save Changes')
 
 
