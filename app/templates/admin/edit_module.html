@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.code.label }}<br>
+            {{ form.code(size=32) }}<br>
+            {% for error in form.code.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name(size=32) }}<br>
+            {% for error in form.name.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description(size=32) }}<br>
+            {% for error in form.description.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.start.label }}<br>
+            {{ form.start(size=32) }} <small> Dates in YYYY-MM-DD format.</small><br>
+            {% for error in form.start.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.end.label }}<br>
+            {{ form.end(size=32) }} <small> Dates in YYYY-MM-DD format.</small><br>
+            {% for error in form.end.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.faculty.label }}<br>
+            {{ form.faculty(size=32) }}<br>
+            {% for error in form.faculty.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

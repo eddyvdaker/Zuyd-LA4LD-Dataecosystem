@@ -8,14 +8,15 @@
 import json
 import os
 from datetime import datetime
-from flask import abort, current_app, flash, redirect, render_template, url_for
+from flask import abort, current_app, flash, redirect, render_template, \
+    request, url_for
 from flask_login import current_user, login_required
 from secrets import token_urlsafe
 from werkzeug.utils import secure_filename
 
 from app import db
 from app.admin import bp
-from app.admin.forms import ImportForm
+from app.admin.forms import ImportForm, EditUserForm, EditModuleForm
 from app.email import send_new_user_email
 from app.models import User, Grade, Module, Result, Role
 
@@ -184,6 +185,23 @@ def users_overview():
                            users=users)
 
 
+@bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
+def edit_user(user_id):
+    form = EditUserForm()
+    if current_user.role.role != 'admin':
+        abort(403)
+    user = User.query.filter_by(id=user_id).first()
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        db.session.commit()
+        flash('The changes have been saved.')
+    elif request.method == 'GET':
+        form.username.data = user.username
+        form.email.data = user.email
+    return render_template('admin/edit_user.html', form=form)
+
+
 @bp.route('/admin/modules_import', methods=['GET', 'POST'])
 def import_modules():
     form = ImportForm()
@@ -209,6 +227,33 @@ def modules_overview():
     return render_template('admin/modules_overview.html',
                            title='Admin Panel: Modules Overview',
                            modules=modules)
+
+
+@bp.route('/admin/edit_module/<module_id>', methods=['GET', 'POST'])
+def edit_module(module_id):
+    form = EditModuleForm()
+    if current_user.role.role != 'admin':
+        abort(403)
+    module = Module.query.filter_by(id=module_id).first()
+    if form.validate_on_submit():
+        module.code = form.code.data
+        module.name = form.description.data
+        module.description = form.description.data
+        module.start = form.start.data
+        flash(f'start: {form.start.data}')
+        module.end = form.end.data
+        flash(f'end: {form.end.data}')
+        module.faculty = form.faculty.data
+        db.session.commit()
+        flash('The changes have been saved.')
+    elif request.method == 'GET':
+        form.code.data = module.code
+        form.name.data = module.name
+        form.description.data = module.description
+        form.start.data = module.start
+        form.end.data = module.end
+        form.faculty.data = module.faculty
+    return render_template('admin/edit_module.html', form=form)
 
 
 @bp.route('/admin/results_import', methods=['GET', 'POST'])
