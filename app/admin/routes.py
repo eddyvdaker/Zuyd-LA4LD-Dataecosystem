@@ -11,6 +11,7 @@ from datetime import datetime
 from flask import abort, current_app, flash, redirect, render_template, \
     request, url_for
 from flask_login import current_user, login_required
+from sqlalchemy.exc import IntegrityError
 from secrets import token_urlsafe
 from werkzeug.utils import secure_filename
 
@@ -72,31 +73,35 @@ def import_users_to_db(data, mail_details=False):
     """
 
     user_data = []
+    users_skipped_data = []
     for row in data:
-        user = User(username=row['username'], email=row['email'])
-        db.session.add(user)
-        db.session.commit()
+        try:
+            user = User(username=row['username'], email=row['email'])
+            db.session.add(user)
+            db.session.commit()
 
-        r = Role.query.filter_by(role=row['role']).first()
-        user.role_id = r.id
-        db.session.commit()
+            r = Role.query.filter_by(role=row['role']).first()
+            user.role_id = r.id
+            db.session.commit()
 
-        # Generate random initial password for imported user
-        password = token_urlsafe()
-        user.set_password(password)
-        db.session.commit()
+            # Generate random initial password for imported user
+            password = token_urlsafe()
+            user.set_password(password)
+            db.session.commit()
+            new_user = {'username': user.username,
+                        'password': password,
+                        'email': user.email}
 
-        new_user = {'username': user.username,
-                    'password': password,
-                    'email': user.email}
+            if mail_details:
+                if 'la4ld-test.com' not in user.email:
+                    send_new_user_email(new_user)
+            else:
+                user_data.append(new_user)
+        except IntegrityError:
+            db.session.rollback()
+            users_skipped_data.append(row['username'])
 
-        if mail_details:
-            if 'la4ld-test.com' not in user.email:
-                send_new_user_email(new_user)
-        else:
-            user_data.append(new_user)
-
-    return user_data
+    return user_data, users_skipped_data
 
 
 def import_modules_to_db(data):
@@ -162,12 +167,20 @@ def import_users():
     if form.validate_on_submit():
         file = upload_file(form.file)
         user_data = read_json(file, field='users')
-        imported_users = import_users_to_db(user_data)
+        imported_users, skipped_users = import_users_to_db(user_data)
+        flash(f'Imported {len(imported_users)} of {len(user_data)} Users.')
+        current_app.logger.info(f'User Import: imported {len(imported_users)}'
+                                f' of {len(user_data)} users')
         if imported_users:
-            flash('Imported Users (Copy to send to users)')
+            flash('Imported Users (Copy to send to users):')
             for row in imported_users:
                 flash(f'User: {row["username"]} ({row["email"]}) - '
                       f'Password: {row["password"]}')
+        if skipped_users:
+            flash('Skipped Users:')
+            for row in skipped_users:
+                flash(f'{row} skipped')
+
         return redirect(url_for('admin.admin'))
     return render_template('admin/import.html',
                            title='Admin Panel: Import Users',
@@ -217,6 +230,7 @@ def import_modules():
         module_data = read_json(file, field='modules')
         import_status = import_modules_to_db(module_data)
         flash(f'{import_status} modules imported')
+        current_app.logger.info(f'{import_status} modules imported')
         return redirect(url_for('admin.admin'))
     return render_template('admin/import.html',
                            title='Admin Panel: Import Modules',
