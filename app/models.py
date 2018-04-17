@@ -179,6 +179,8 @@ class Module(db.Model):
     )
     results = db.relationship('Result', backref='result_module',
                               lazy='dynamic')
+    schedules = db.relationship('Schedule', backref='schedule_module',
+                                lazy='dynamic')
 
     def __repr__(self):
         return f'<Module {self.code}>'
@@ -219,6 +221,24 @@ class Grade(db.Model):
     score = db.Column(db.Float())
     weight = db.Column(db.Float())
     result = db.Column(db.String(128), db.ForeignKey('result.id'))
+
+
+class Schedule(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(256))
+    module = db.Column(db.Integer, db.ForeignKey('module.id'))
+    items = db.relationship('ScheduleItem', backref='item_schedule',
+                            lazy='dynamic')
+
+
+class ScheduleItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(128))
+    description = db.Column(db.String(256))
+    start = db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
+    room = db.Column(db.String(128))
+    schedule = db.Column(db.Integer, db.ForeignKey('schedule.id'))
 
 
 @login.user_loader

@@ -53,6 +53,9 @@ def create_app(config_class=Config):
     from app.attendance import bp as attendance_bp
     app.register_blueprint(attendance_bp)
 
+    from app.schedule import bp as schedule_bp
+    app.register_blueprint(schedule_bp)
+
     if not app.debug and not app.testing:
         # Email logging
         if app.config['MAIL_SERVER']:

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<p>
+    Description: {{ schedule.description }}<br>
+    Module: {{ module.name }} ({{ module.code }})
+</p>
+<h3>Schedule Items</h3>
+<table class="table table-striped">
+    <tr>
+        <th>Item</th>
+        <th>Description</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Room</th>
+    </tr>
+    {% if schedule.items.all() %}
+        {% for item in schedule.items.all() %}
+            <tr>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.start }}</td>
+                <td>{{ item.end }}</td>
+                <td>{{ item.room }}</td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+</table>
+{% endblock %}
