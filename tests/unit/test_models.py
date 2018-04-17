@@ -17,7 +17,7 @@ from app.models import User, Role, Module
 class UserModelTest(UnitTest):
 
     def create_test_user(self):
-        user = User(username='abc', email='abc@abc.com')
+        user = User(username='abc', email='abc@abc.com', card_number="123")
         db.session.add(user)
         db.session.commit()
         return user

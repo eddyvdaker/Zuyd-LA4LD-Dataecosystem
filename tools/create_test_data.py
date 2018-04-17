@@ -17,19 +17,22 @@ users = [
         'username': 'student',
         'email': 'student@la4ld-test.com',
         'role': 'student',
-        'password': 'cat'
+        'password': 'la4ld',
+        'cardnr': '964972'
     },
     {
         'username': 'admin',
         'email': 'admin@la4ld-test.com',
         'role': 'admin',
-        'password': 'cat'
+        'password': 'la4ld',
+        'cardnr': '2521110'
     },
     {
         'username': 'teacher',
         'email': 'teacher@la4ld-test.com',
         'role': 'teacher',
-        'password': 'cat'
+        'password': 'la4ld',
+        'cardnr': '895328'
     }
 ]
 
@@ -64,7 +67,8 @@ def create_users():
     for user in users:
         u = User(
             username=user['username'],
-            email=user['email']
+            email=user['email'],
+            card_number=user['cardnr']
         )
         db.session.add(u)
         db.session.commit()
@@ -121,6 +125,7 @@ def add_results():
 
 if __name__ == '__main__':
     app = create_app()
+    app.config['TESTING'] = True
     with app.app_context():
         create_roles()
         create_users()

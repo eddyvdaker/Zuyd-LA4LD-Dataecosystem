@@ -41,6 +41,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    card_number = db.Column(db.String(128), index=True, unique=True)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     module_as_student = db.relationship(
         'Module', secondary=student_module,

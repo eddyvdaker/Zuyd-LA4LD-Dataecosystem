@@ -76,7 +76,8 @@ def import_users_to_db(data, mail_details=False):
     users_skipped_data = []
     for row in data:
         try:
-            user = User(username=row['username'], email=row['email'])
+            user = User(username=row['username'], email=row['email'],
+                        card_number=row['cardnr'])
             db.session.add(user)
             db.session.commit()
 
@@ -90,7 +91,8 @@ def import_users_to_db(data, mail_details=False):
             db.session.commit()
             new_user = {'username': user.username,
                         'password': password,
-                        'email': user.email}
+                        'email': user.email,
+                        'cardnr': user.card_number}
 
             if mail_details:
                 if 'la4ld-test.com' not in user.email:
@@ -174,8 +176,8 @@ def import_users():
         if imported_users:
             flash('Imported Users (Copy to send to users):')
             for row in imported_users:
-                flash(f'User: {row["username"]} ({row["email"]}) - '
-                      f'Password: {row["password"]}')
+                flash(f'User: {row["username"]} (email: {row["email"]}, card: '
+                      f'{row["cardnr"]}) - Password: {row["password"]}')
         if skipped_users:
             flash('Skipped Users:')
             for row in skipped_users:
@@ -210,6 +212,7 @@ def edit_user(user_id):
         user.username = form.username.data
         user.email = form.email.data
         user.role = Role.query.filter_by(role=form.role.data).first()
+        user.card_number = form.card_number.data
         db.session.commit()
         flash('The changes have been saved.')
         return redirect(url_for('admin.admin'))
@@ -217,6 +220,7 @@ def edit_user(user_id):
         form.username.data = user.username
         form.email.data = user.email
         form.role.data = user.role.role
+        form.card_number.data = user.card_number
     return render_template('admin/edit_user.html', form=form)
 
 

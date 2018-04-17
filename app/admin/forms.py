@@ -24,6 +24,7 @@ class EditUserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     role = SelectField('Role', validators=[DataRequired()])
+    card_number = StringField('Card Number', validators=[DataRequired()])
     submit = SubmitField('Save Changes')
 
 
