@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<p>
+    <strong>Description:</strong> {{ schedule.description }}<br>
+    <strong>Module:</strong> {{ module.name }} ({{ module.code }})<br>
+    <a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">Edit schedule</a>
+</p>
+<h3>Schedule Items</h3>
+<table class="table table-striped">
+    <tr>
+        <th>Item</th>
+        <th>Description</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Room</th>
+        <th></th>
+    </tr>
+    {% if schedule.items.all() %}
+        {% for item in schedule.items.all() %}
+            <tr>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.start }}</td>
+                <td>{{ item.end }}</td>
+                <td>{{ item.room }}</td>
+                <td><a href="{{ url_for('admin.edit_schedule_item', schedule_id=schedule.id, item_id=item.id) }}">Edit</a></td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+</table>
+{% endblock %}

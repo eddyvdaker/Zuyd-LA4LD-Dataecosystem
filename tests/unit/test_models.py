@@ -11,13 +11,14 @@ from sqlalchemy.exc import IntegrityError
 from tests.unit.base import UnitTest
 
 from app import db
-from app.models import User, Role, Module
+from app.models import User, Role, Module, Result, Grade, Schedule, \
+    ScheduleItem
 
 
 class UserModelTest(UnitTest):
 
     def create_test_user(self):
-        user = User(username='abc', email='abc@abc.com')
+        user = User(username='abc', email='abc@abc.com', card_number="123")
         db.session.add(user)
         db.session.commit()
         return user
@@ -128,4 +129,35 @@ class ModuleModelTest(UnitTest):
             faculty='Faculteit ICT',
         )
         db.session.add(module)
+        db.session.commit()
+
+
+class ResultModulTest(UnitTest):
+
+    def test_create_result(self):
+        r = Result(identifier='alksdjfklt1034', module=1)
+        db.session.add(r)
+        db.session.commit()
+
+        g = Grade(name='pi1', score=6, weight=1, result=r.id)
+        db.session.add(g)
+        db.session.commit()
+
+
+class ScheduleModelTest(UnitTest):
+
+    def test_create_schedule(self):
+        s = Schedule(description='test desc.', module=1)
+        db.session.add(s)
+        db.session.commit()
+
+        i = ScheduleItem(
+            title='test title',
+            description='test desc.',
+            start=datetime(2009, 10, 1),
+            end=datetime(2010, 10, 1),
+            room='room1',
+            schedule=s.id
+        )
+        db.session.add(i)
         db.session.commit()

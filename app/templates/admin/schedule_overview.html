@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<table class="table table-striped">
+    <tr>
+        <th>ID</th>
+        <th>Description</th>
+        <th>Module</th>
+        <th></th>
+    </tr>
+{% for schedule in schedules %}
+    <tr>
+        <td>{{ schedule.id }}</td>
+        <td>{{ schedule.description }}</td>
+        <td>{{ schedule.module }}</td>
+        <td><a href="{{ url_for('admin.single_schedule', schedule_id=schedule.id) }}">Details</a></td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}
