@@ -3,7 +3,8 @@
 {% block app_content %}
 <p>
     <strong>Description:</strong> {{ schedule.description }}<br>
-    <strong>Module:</strong> {{ module.name }} ({{ module.code }})
+    <strong>Module:</strong> {{ module.name }} ({{ module.code }})<br>
+    <a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">Edit schedule</a>
 </p>
 <h3>Schedule Items</h3>
 <table class="table table-striped">
@@ -13,6 +14,7 @@
         <th>Start</th>
         <th>End</th>
         <th>Room</th>
+        <th></th>
     </tr>
     {% if schedule.items.all() %}
         {% for item in schedule.items.all() %}
@@ -22,6 +24,7 @@
                 <td>{{ item.start }}</td>
                 <td>{{ item.end }}</td>
                 <td>{{ item.room }}</td>
+                <td><a href="{{ url_for('admin.edit_schedule_item', schedule_id=schedule.id, item_id=item.id) }}">Edit</a></td>
             </tr>
         {% endfor %}
     {% endif %}

@@ -17,9 +17,11 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from app.admin import bp
-from app.admin.forms import ImportForm, EditUserForm, EditModuleForm
+from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
+    EditScheduleForm, EditScheduleItemForm
 from app.email import send_new_user_email
-from app.models import User, Grade, Module, Result, Role
+from app.models import User, Grade, Module, Result, Role, Schedule, \
+    ScheduleItem
 
 
 def upload_file(file):
@@ -176,18 +178,17 @@ def import_users():
         if imported_users:
             flash('Imported Users (Copy to send to users):')
             for row in imported_users:
-                flash(f'User: {row["username"]} (email: {row["email"]}, card: '
-                      f'{row["cardnr"]}) - Password: {row["password"]}')
+                flash(f'User: {row["username"]} (email: {row["email"]}, card:'
+                      f' {row["cardnr"]}) - Password: {row["password"]}')
         if skipped_users:
             flash('Skipped Users:')
             for row in skipped_users:
                 flash(f'{row} skipped')
 
         return redirect(url_for('admin.admin'))
-    return render_template('admin/import.html',
-                           title='Admin Panel: Import Users',
-                           form=form, example_gist_code=
-                           'f73e48eea2c3672dec92adc2dd2627ef')
+    return render_template(
+        'admin/import.html', title='Admin Panel: Import Users', form=form,
+        example_gist_code='f73e48eea2c3672dec92adc2dd2627ef')
 
 
 @bp.route('/admin/users_overview')
@@ -195,9 +196,9 @@ def users_overview():
     if current_user.role.role != 'admin':
         abort(403)
     users = User.query.all()
-    return render_template('admin/users_overview.html',
-                           title='Admin Panel: Users Overview',
-                           users=users)
+    return render_template(
+        'admin/users_overview.html', title='Admin Panel: Users Overview',
+        users=users)
 
 
 @bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
@@ -236,10 +237,9 @@ def import_modules():
         flash(f'{import_status} modules imported')
         current_app.logger.info(f'{import_status} modules imported')
         return redirect(url_for('admin.admin'))
-    return render_template('admin/import.html',
-                           title='Admin Panel: Import Modules',
-                           form=form, example_gist_code=
-                           '3c1848ce491d9061fec9ae18ae5069e0')
+    return render_template(
+        'admin/import.html', title='Admin Panel: Import Modules',
+        form=form, example_gist_code='3c1848ce491d9061fec9ae18ae5069e0')
 
 
 @bp.route('/admin/modules_overview')
@@ -247,9 +247,9 @@ def modules_overview():
     if current_user.role.role != 'admin':
         abort(403)
     modules = Module.query.all()
-    return render_template('admin/modules_overview.html',
-                           title='Admin Panel: Modules Overview',
-                           modules=modules)
+    return render_template(
+        'admin/modules_overview.html', title='Admin Panel: Modules Overview',
+        modules=modules)
 
 
 @bp.route('/admin/edit_module/<module_id>', methods=['GET', 'POST'])
@@ -290,7 +290,75 @@ def import_results():
         import_status = import_results_to_db(results_data)
         flash(f'{import_status} results imported')
         return redirect(url_for('admin.admin'))
-    return render_template('admin/import.html',
-                           title='Admin Panel: Import Results',
-                           form=form, example_gist_code=
-                           'd504fb80b48c28e2e1495e76ea33814e')
+    return render_template(
+        'admin/import.html', title='Admin Panel: Import Results', form=form,
+        example_gist_code='d504fb80b48c28e2e1495e76ea33814e')
+
+
+@bp.route('/admin/schedule_overview')
+def schedule_overview():
+    if current_user.role.role != 'admin':
+        abort(403)
+    schedules = Schedule.query.all()
+    return render_template(
+        'admin/schedule_overview.html', title='Schedule Overview',
+        schedules=schedules)
+
+
+@bp.route('/admin/schedule/<schedule_id>')
+def single_schedule(schedule_id):
+    if current_user.role.role != 'admin':
+        abort(403)
+    schedule = Schedule.query.filter_by(id=schedule_id).first()
+    module = Module.query.filter_by(id=schedule.module).first()
+    return render_template(
+        'admin/single_schedule.html', schedule=schedule,
+        title=f'Schedule: {schedule_id}', module=module)
+
+
+@bp.route('/admin/edit_schedule/<schedule_id>', methods=['GET', 'POST'])
+def edit_schedule(schedule_id):
+    form = EditScheduleForm()
+    schedule = Schedule.query.filter_by(id=schedule_id).first()
+    module = Module.query.all()
+    form.module.choices = [
+        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in module]
+    if current_user.role.role != 'admin':
+        abort(403)
+    if form.validate_on_submit():
+        schedule.description = form.description.data
+        schedule.module = form.module.data
+        db.session.commit()
+        return redirect(url_for(
+            'admin.single_schedule', schedule_id=schedule_id))
+    elif request.method == 'GET':
+        form.description.data = schedule.description
+        form.module.data = schedule.module
+    return render_template(
+        'admin/edit_schedule.html', title='Edit Schedule', form=form)
+
+
+@bp.route(
+    '/admin/edit_schedule/<schedule_id>/<item_id>', methods=['GET', 'POST'])
+def edit_schedule_item(schedule_id, item_id):
+    form = EditScheduleItemForm()
+    item = ScheduleItem.query.filter_by(id=item_id).first()
+    if current_user.role.role != 'admin':
+        abort(403)
+    if form.validate_on_submit():
+        item.title = form.title.data
+        item.description = form.description.data
+        item.start = form.start.data
+        item.end = form.end.data
+        item.room = form.room.data
+        db.session.commit()
+        return redirect(url_for(
+            'admin.single_schedule', schedule_id=schedule_id))
+    elif request.method == 'GET':
+        form.title.data = item.title
+        form.description.data = item.description
+        form.start.data = item.start
+        form.end.data = item.end
+        form.room.data = item.room
+    return render_template(
+        'admin/edit_schedule_item.html', title='Edit Schedule Item', form=form)
