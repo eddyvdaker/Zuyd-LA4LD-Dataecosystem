@@ -11,7 +11,7 @@ from app import create_app, db
 from app.models import User, Grade, Module, Result, Role, Schedule, \
     ScheduleItem
 
-roles = ['admin', 'student', 'teacher']
+roles = ['admin', 'student', 'teacher', 'system']
 
 users = [
     {

@@ -3,11 +3,13 @@
     attendance.routes
     ~~~~~~~~~~~~~~~~~
 
-    Routes used for showing attendance.
+    Routes and API endpoints used for showing attendance.
 """
+from flask import jsonify, url_for
+
 from app.attendance import bp
+from app.api.auth import token_auth
+from app.models import Schedule
 
 
-@bp.route('/attendance/test')
-def attendance_test():
-    return 'test'
+

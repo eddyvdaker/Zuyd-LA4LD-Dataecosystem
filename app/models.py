@@ -10,7 +10,7 @@ import hashlib
 import jwt
 import os
 from datetime import datetime, timedelta
-from flask import current_app
+from flask import current_app, url_for
 from flask_login import UserMixin
 from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -254,6 +254,18 @@ class Schedule(db.Model):
     items = db.relationship('ScheduleItem', backref='item_schedule',
                             lazy='dynamic')
 
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'description': self.description,
+            'module_id': self.module,
+            '_links': {
+                'self': url_for(
+                    'schedule.api_single_schedule', schedule_id=self.id)
+            }
+        }
+        return data
+
 
 class ScheduleItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -263,6 +275,17 @@ class ScheduleItem(db.Model):
     end = db.Column(db.DateTime)
     room = db.Column(db.String(128))
     schedule = db.Column(db.Integer, db.ForeignKey('schedule.id'))
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'start': self.start,
+            'end': self.end,
+            'room': self.room
+        }
+        return data
 
 
 @login.user_loader
