@@ -263,12 +263,11 @@ def edit_module(module_id):
         module.name = form.description.data
         module.description = form.description.data
         module.start = form.start.data
-        flash(f'start: {form.start.data}')
         module.end = form.end.data
-        flash(f'end: {form.end.data}')
         module.faculty = form.faculty.data
         db.session.commit()
         flash('The changes have been saved.')
+        return redirect(url_for('admin.modules_overview'))
     elif request.method == 'GET':
         form.code.data = module.code
         form.name.data = module.name

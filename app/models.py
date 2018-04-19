@@ -5,9 +5,12 @@
 
     The models for the data stored in the database.
 """
+import base64
 import hashlib
 import jwt
-from flask import current_app
+import os
+from datetime import datetime, timedelta
+from flask import current_app, url_for
 from flask_login import UserMixin
 from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -42,6 +45,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     card_number = db.Column(db.String(128), index=True, unique=True)
+    token = db.Column(db.String(32), index=True, unique=True)
+    token_expiration = db.Column(db.DateTime)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     module_as_student = db.relationship(
         'Module', secondary=student_module,
@@ -141,6 +146,25 @@ class User(UserMixin, db.Model):
             self.username + current_app.config['HASH_KEY']).encode('utf-8')
         ).hexdigest()
 
+    def get_token(self, expires_in=3600):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(seconds=60):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        db.session.add(self)
+        return self.token
+
+    def revoke_token(self):
+        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+    @staticmethod
+    def check_token(token):
+        user = User.query.filter_by(token=token).first()
+        if user is None or user.token_expiration < datetime.utcnow():
+            return None
+        return user
+
 
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -230,6 +254,18 @@ class Schedule(db.Model):
     items = db.relationship('ScheduleItem', backref='item_schedule',
                             lazy='dynamic')
 
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'description': self.description,
+            'module_id': self.module,
+            '_links': {
+                'self': url_for(
+                    'schedule.api_single_schedule', schedule_id=self.id)
+            }
+        }
+        return data
+
 
 class ScheduleItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -239,6 +275,17 @@ class ScheduleItem(db.Model):
     end = db.Column(db.DateTime)
     room = db.Column(db.String(128))
     schedule = db.Column(db.Integer, db.ForeignKey('schedule.id'))
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'start': self.start,
+            'end': self.end,
+            'room': self.room
+        }
+        return data
 
 
 @login.user_loader
