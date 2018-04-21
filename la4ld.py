@@ -8,7 +8,7 @@
 
 from app import create_app, db
 from app.models import User, Grade, Module, Result, Role, Schedule, \
-    ScheduleItem
+    ScheduleItem, Group, Attendance
 
 
 app = create_app()
@@ -18,4 +18,5 @@ app = create_app()
 def make_shell_context():
     return {'db': db, 'User': User, 'Grade': Grade, 'Module': Module,
             'Result': Result, 'Role': Role, 'Schedule': Schedule,
-            'ScheduleItem': ScheduleItem}
+            'ScheduleItem': ScheduleItem, 'Group': Group,
+            'Attendance': Attendance}

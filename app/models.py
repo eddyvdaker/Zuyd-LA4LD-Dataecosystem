@@ -17,13 +17,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login
 
-
 student_module = db.Table(
     'student_module',
     db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('module_id', db.Integer, db.ForeignKey('module.id'))
 )
-
 
 teacher_module = db.Table(
     'teacher_module',
@@ -31,11 +29,22 @@ teacher_module = db.Table(
     db.Column('module_id', db.Integer, db.ForeignKey('module.id'))
 )
 
-
 examiner_module = db.Table(
     'examiner_module',
     db.Column('examiner_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('module_id', db.Integer, db.ForeignKey('module.id'))
+)
+
+module_group = db.Table(
+    'module_group',
+    db.Column('module_id', db.Integer, db.ForeignKey('module.id')),
+    db.Column('group_id', db.Integer, db.ForeignKey('group.id'))
+)
+
+student_group = db.Table(
+    'student_group',
+    db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('group_id', db.Integer, db.ForeignKey('group.id'))
 )
 
 
@@ -62,6 +71,12 @@ class User(UserMixin, db.Model):
         'Module', secondary=examiner_module,
         primaryjoin=(examiner_module.c.examiner_id == id),
         backref=db.backref('examiner_id', lazy='dynamic'), lazy='dynamic'
+    )
+    groups = db.relationship(
+        'Group', secondary=student_group,
+        primaryjoin=(student_group.c.student_id == id),
+        backref=db.backref('group_student_id', lazy='dynamic'),
+        lazy='dynamic'
     )
 
     def __repr__(self):
@@ -126,6 +141,25 @@ class User(UserMixin, db.Model):
             examiner_module.c.examiner_id == self.id
         ).all()
 
+    def add_to_group(self, group):
+        if not self.student_in_group(group):
+            self.groups.append(group)
+
+    def remove_from_group(self, group):
+        if self.student_in_group(group):
+            self.groups.remove(group)
+
+    def student_in_group(self, group):
+        return self.groups.filter(
+            student_group.c.group_id == group.id).count() > 0
+
+    def groups_of_student(self):
+        return Group.query.join(
+            student_group,
+            (student_group.c.group_id == Group.id)).filter(
+            student_group.c.student_id == self.id
+        ).all()
+
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
@@ -135,8 +169,9 @@ class User(UserMixin, db.Model):
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, current_app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
+            id = jwt.decode(
+                token, current_app.config['SECRET_KEY'],
+                algorithms=['HS256'])['reset_password']
         except:
             return
         return User.query.get(id)
@@ -201,10 +236,14 @@ class Module(db.Model):
         backref=db.backref('examiners_module_id', lazy='dynamic'),
         lazy='dynamic'
     )
-    results = db.relationship('Result', backref='result_module',
-                              lazy='dynamic')
-    schedules = db.relationship('Schedule', backref='schedule_module',
-                                lazy='dynamic')
+    groups = db.relationship(
+        'Group', secondary=module_group,
+        primaryjoin=(module_group.c.module_id == id),
+        backref=db.backref('group_module_id', lazy='dynamic'),
+        lazy='dynamic'
+    )
+    results = db.relationship(
+        'Result', backref='result_module', lazy='dynamic')
 
     def __repr__(self):
         return f'<Module {self.code}>'
@@ -247,18 +286,56 @@ class Grade(db.Model):
     result = db.Column(db.String(128), db.ForeignKey('result.id'))
 
 
+class Group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(128))
+    active = db.Column(db.Boolean)
+    modules = db.relationship(
+        'Module', secondary=module_group,
+        primaryjoin=(module_group.c.group_id == id),
+        backref=db.backref('module_group_id', lazy='dynamic'),
+        lazy='dynamic'
+    )
+    students = db.relationship(
+        'User', secondary=student_group,
+        primaryjoin=(student_group.c.group_id == id),
+        backref=db.backref('student_group_id', lazy='dynamic'),
+        lazy='dynamic'
+    )
+    schedules = db.relationship(
+        'Schedule', backref='group_schedule', lazy='dynamic')
+
+    def module_in_group(self, module):
+        return self.modules.filter(
+            module_group.c.module_id == module.id).count() > 0
+
+    def add_module_to_group(self, module):
+        if not self.module_in_group(module):
+            self.modules.append(module)
+
+    def remove_module_from_group(self, module):
+        if self.module_in_group(module):
+            self.modules.remove(module)
+
+    def get_modules_of_group(self):
+        return Module.query.join(
+            module_group, (module_group.c.module_id == Module.id)).filter(
+            module_group.c.group_id == self.id
+        ).all()
+
+
 class Schedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(256))
-    module = db.Column(db.Integer, db.ForeignKey('module.id'))
-    items = db.relationship('ScheduleItem', backref='item_schedule',
-                            lazy='dynamic')
+    group = db.Column(db.Integer, db.ForeignKey('group.id'))
+    items = db.relationship(
+        'ScheduleItem', backref='item_schedule', lazy='dynamic')
 
     def to_dict(self):
         data = {
             'id': self.id,
             'description': self.description,
-            'module_id': self.module,
+            'group_id': self.group,
             '_links': {
                 'self': url_for(
                     'schedule.api_single_schedule', schedule_id=self.id)
@@ -275,6 +352,8 @@ class ScheduleItem(db.Model):
     end = db.Column(db.DateTime)
     room = db.Column(db.String(128))
     schedule = db.Column(db.Integer, db.ForeignKey('schedule.id'))
+    student_attendance = db.relationship(
+        'Attendance', backref='item_attendance', lazy='dynamic')
 
     def to_dict(self):
         data = {
@@ -286,6 +365,12 @@ class ScheduleItem(db.Model):
             'room': self.room
         }
         return data
+
+
+class Attendance(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    identifier = db.Column(db.String(128))
+    schedule_item_id = db.Column(db.Integer, db.ForeignKey('schedule_item.id'))
 
 
 @login.user_loader

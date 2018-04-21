@@ -9,7 +9,7 @@ from datetime import datetime
 
 from app import create_app, db
 from app.models import User, Grade, Module, Result, Role, Schedule, \
-    ScheduleItem
+    ScheduleItem, Group
 
 roles = ['admin', 'student', 'teacher', 'system']
 
@@ -19,7 +19,8 @@ users = [
         'email': 'student@la4ld-test.com',
         'role': 'student',
         'password': 'la4ld',
-        'cardnr': '964972'
+        'cardnr': '964972',
+        'groups': ['ict1']
     },
     {
         'username': 'admin',
@@ -56,11 +57,28 @@ modules = [
     }
 ]
 
+groups = [
+    {
+        'code': 'ict1',
+        'active': True,
+        'modules': ['tm01', 'tm02']
+    },
+    {
+        'code': 'bm01-1',
+        'active': True,
+        'modules': ['tm01']
+    },
+    {
+        'code': 'ict1',
+        'active': False,
+        'modules': ['tm02']
+    }
+]
 
 schedules = [
     {
         'description': 'tm01 schedule',
-        'module': 'tm01',
+        'group': 'ict1',
         'items': [
             {
                 'title': 'tm01 - WK1 LESSON 1',
@@ -72,15 +90,15 @@ schedules = [
             {
                 'title': 'tm01 - WK1 LESSON 2',
                 'description': 'Second lesson of tm01',
-                'start': datetime(2010, 10, 3, 15, 0),
-                'end': datetime(2010, 10, 3, 16, 0),
+                'start': datetime(2017, 10, 3, 15, 0),
+                'end': datetime(2019, 10, 3, 16, 0),
                 'room': 'B2.221'
             }
         ]
     },
     {
         'description': 'tm02 schedule',
-        'module': 'tm02',
+        'group': 'bm01-1',
         'items': [
             {
                 'title': 'tm02 - HC 1',
@@ -161,10 +179,22 @@ def add_results():
     db.session.commit()
 
 
+def add_groups():
+    for group in groups:
+        grp = Group(code=group['code'], active=group['active'])
+        db.session.add(grp)
+        db.session.commit()
+
+        for module in group['modules']:
+            m = Module.query.filter_by(code=module).first()
+            grp.add_module_to_group(m)
+        db.session.commit()
+
+
 def add_schedule():
     for schedule in schedules:
-        m = Module.query.filter_by(code=schedule['module']).first()
-        s = Schedule(description=schedule['description'], module=m.id)
+        grp = Group.query.filter_by(code=schedule['group']).first()
+        s = Schedule(description=schedule['description'], group=grp.id)
         db.session.add(s)
         db.session.commit()
 
@@ -181,6 +211,14 @@ def add_schedule():
             db.session.commit()
 
 
+def add_student_to_group():
+    s = User.query.filter_by(username='student').first()
+    for group in users[0]['groups']:
+        grp = Group.query.filter_by(code=group, active=True).first()
+        s.add_to_group(grp)
+        db.session.commit()
+
+
 if __name__ == '__main__':
     app = create_app()
     app.config['TESTING'] = True
@@ -190,4 +228,5 @@ if __name__ == '__main__':
         create_modules()
         add_users_to_modules()
         add_results()
+        add_groups()
         add_schedule()
