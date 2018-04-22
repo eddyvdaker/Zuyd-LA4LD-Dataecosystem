@@ -328,6 +328,7 @@ class Schedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(256))
     group = db.Column(db.Integer, db.ForeignKey('group.id'))
+    module = db.Column(db.Integer, db.ForeignKey('module.id'))
     items = db.relationship(
         'ScheduleItem', backref='item_schedule', lazy='dynamic')
 

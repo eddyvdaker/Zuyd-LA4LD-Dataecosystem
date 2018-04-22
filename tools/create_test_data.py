@@ -77,8 +77,9 @@ groups = [
 
 schedules = [
     {
-        'description': 'tm01 schedule',
+        'description': 'ict1 - tm01 schedule',
         'group': 'ict1',
+        'module': 'tm01',
         'items': [
             {
                 'title': 'tm01 - WK1 LESSON 1',
@@ -97,8 +98,9 @@ schedules = [
         ]
     },
     {
-        'description': 'tm02 schedule',
-        'group': 'bm01-1',
+        'description': 'ict1 - tm02 schedule',
+        'group': 'ict1',
+        'module': 'tm02',
         'items': [
             {
                 'title': 'tm02 - HC 1',
@@ -106,6 +108,20 @@ schedules = [
                 'start': datetime(2010, 12, 6, 13, 0),
                 'end': datetime(2010, 12, 6, 13, 30),
                 'room': 'A1.120'
+            }
+        ]
+    },
+    {
+        'description': 'bm01-1 - tm01 schedule',
+        'group': 'bm01-1',
+        'module': 'tm01',
+        'items': [
+            {
+                'title': 'tm01 - lesson 1',
+                'description': 'First lesson of tm01',
+                'start': datetime(2017, 5, 5, 12, 0),
+                'end': datetime(2019, 1, 1, 1, 1),
+                'room': 'C1.005'
             }
         ]
     }
@@ -194,7 +210,10 @@ def add_groups():
 def add_schedule():
     for schedule in schedules:
         grp = Group.query.filter_by(code=schedule['group']).first()
-        s = Schedule(description=schedule['description'], group=grp.id)
+        m = Module.query.filter_by(
+            code=schedule['module']).first()
+        s = Schedule(
+            description=schedule['description'], group=grp.id, module=m.id)
         db.session.add(s)
         db.session.commit()
 
