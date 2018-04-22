@@ -17,6 +17,13 @@
             <span style="color: red;">{{ error }}</span>
         {% endfor %}
     </p>
+    <p>
+        {{ form.group.label }}<br>
+        {{ form.group() }}<br>
+        {% for error in form.group.errors %}
+            <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+    </p>
     <p>{{ form.submit() }}</p>
 </form>
 {% endblock %}

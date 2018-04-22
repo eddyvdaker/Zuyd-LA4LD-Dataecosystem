@@ -285,6 +285,9 @@ class Grade(db.Model):
     weight = db.Column(db.Float())
     result = db.Column(db.String(128), db.ForeignKey('result.id'))
 
+    def __repr__(self):
+        return f'<Grade {self.id}>'
+
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -304,6 +307,9 @@ class Group(db.Model):
     )
     schedules = db.relationship(
         'Schedule', backref='group_schedule', lazy='dynamic')
+
+    def __repr__(self):
+        return f'<Group {self.id}>'
 
     def module_in_group(self, module):
         return self.modules.filter(
@@ -332,6 +338,9 @@ class Schedule(db.Model):
     items = db.relationship(
         'ScheduleItem', backref='item_schedule', lazy='dynamic')
 
+    def __repr__(self):
+        return f'<Schedule {self.id}>'
+
     def to_dict(self):
         data = {
             'id': self.id,
@@ -356,6 +365,9 @@ class ScheduleItem(db.Model):
     student_attendance = db.relationship(
         'Attendance', backref='item_attendance', lazy='dynamic')
 
+    def __repr__(self):
+        return f'<ScheduleItem {self.id}>'
+
     def to_dict(self):
         data = {
             'id': self.id,
@@ -372,6 +384,12 @@ class Attendance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     identifier = db.Column(db.String(128))
     schedule_item_id = db.Column(db.Integer, db.ForeignKey('schedule_item.id'))
+
+    def __repr__(self):
+        return f'<Attendance {self.id}>'
+
+    def get_schedule_item(self):
+        return ScheduleItem.query.filter_by(id=self.schedule_item_id).first()
 
 
 @login.user_loader

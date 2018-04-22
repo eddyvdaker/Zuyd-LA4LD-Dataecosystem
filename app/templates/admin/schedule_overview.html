@@ -6,6 +6,7 @@
         <th>ID</th>
         <th>Description</th>
         <th>Module</th>
+        <th>Group</th>
         <th></th>
     </tr>
 {% for schedule in schedules %}
@@ -13,6 +14,7 @@
         <td>{{ schedule.id }}</td>
         <td>{{ schedule.description }}</td>
         <td>{{ schedule.module }}</td>
+        <td>{{ schedule.group }}</td>
         <td><a href="{{ url_for('admin.single_schedule', schedule_id=schedule.id) }}">Details</a></td>
     </tr>
 {% endfor %}
