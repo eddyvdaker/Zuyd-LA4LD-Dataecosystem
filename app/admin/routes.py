@@ -21,7 +21,7 @@ from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
     EditScheduleForm, EditScheduleItemForm
 from app.email import send_new_user_email
 from app.models import User, Grade, Module, Result, Role, Schedule, \
-    ScheduleItem
+    ScheduleItem, Group
 
 
 def upload_file(file):
@@ -310,8 +310,9 @@ def single_schedule(schedule_id):
         abort(403)
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     module = Module.query.filter_by(id=schedule.module).first()
+    group = Group.query.filter_by(id=schedule.group).first()
     return render_template(
-        'admin/single_schedule.html', schedule=schedule,
+        'admin/single_schedule.html', schedule=schedule, group=group,
         title=f'Schedule: {schedule_id}', module=module)
 
 
@@ -319,20 +320,25 @@ def single_schedule(schedule_id):
 def edit_schedule(schedule_id):
     form = EditScheduleForm()
     schedule = Schedule.query.filter_by(id=schedule_id).first()
-    module = Module.query.all()
+    modules = Module.query.all()
     form.module.choices = [
-        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in module]
+        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in modules]
+    groups = Group.query.all()
+    form.group.choices = [
+        (int(x.id), f'{x.id}: {x.code} ({x.active})') for x in groups]
     if current_user.role.role != 'admin':
         abort(403)
     if form.validate_on_submit():
         schedule.description = form.description.data
         schedule.module = form.module.data
+        schedule.group = form.group.data
         db.session.commit()
         return redirect(url_for(
             'admin.single_schedule', schedule_id=schedule_id))
     elif request.method == 'GET':
         form.description.data = schedule.description
         form.module.data = schedule.module
+        form.group.data = schedule.group
     return render_template(
         'admin/edit_schedule.html', title='Edit Schedule', form=form)
 

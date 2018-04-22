@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from flask import jsonify, redirect, render_template, url_for
 
 from app.api.auth import token_auth
-from app.models import Module, Schedule, ScheduleItem
+from app.models import Module, Schedule, ScheduleItem, Group
 from app.schedule import bp
 from app.schedule.forms import SelectSchedule
 
@@ -25,16 +25,18 @@ def schedule():
             description=form.schedule.data).first().id
         return redirect(url_for(
             'schedule.single_schedule', schedule_id=schedule_id))
-    return render_template('schedule/select_schedule.html', form=form,
-                           title='Select Schedule')
+    return render_template(
+        'schedule/select_schedule.html', form=form, title='Select Schedule')
 
 
 @bp.route('/schedule/<schedule_id>')
 def single_schedule(schedule_id):
     selected_schedule = Schedule.query.filter_by(id=schedule_id).first()
     module = Module.query.filter_by(id=selected_schedule.module).first()
-    return render_template('schedule/single_schedule.html',
-                           schedule=selected_schedule, module=module)
+    group = Group.query.filter_by(id=selected_schedule.group).first()
+    return render_template(
+        'schedule/single_schedule.html', schedule=selected_schedule,
+        module=module, group=group)
 
 
 @bp.route('/api/schedules', methods=['GET'])
@@ -66,6 +68,7 @@ def api_single_schedule(schedule_id):
 
 
 @bp.route('/api/schedules/current')
+@token_auth.login_required
 def api_current_schedule_items(in_advance=900):
     schedule_items = ScheduleItem.query.all()
     items = []

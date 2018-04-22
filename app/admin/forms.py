@@ -42,6 +42,7 @@ class EditModuleForm(FlaskForm):
 class EditScheduleForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired()])
     module = SelectField('Module', validators=[DataRequired()], coerce=int)
+    group = SelectField('Group', validators=[DataRequired()], coerce=int)
     submit = SubmitField('Save Changes')
 
 

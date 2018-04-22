@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% if attended %}
+    <table class="table table-striped">
+        <tr>
+            <th>Attended</th>
+            <th>Description</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Room</th>
+        </tr>
+
+    {% for row in attended %}
+        <tr>
+            <td>{{ row.get_schedule_item().title }}</td>
+            <td>{{ row.get_schedule_item().description }}</td>
+            <td>{{ row.get_schedule_item().start }}</td>
+            <td>{{ row.get_schedule_item().end }}</td>
+            <td>{{ row.get_schedule_item().room }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No results</p>
+{% endif %}
+{% endblock %}

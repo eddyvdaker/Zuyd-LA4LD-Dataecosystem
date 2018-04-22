@@ -4,6 +4,7 @@
 <p>
     <strong>Description:</strong> {{ schedule.description }}<br>
     <strong>Module:</strong> {{ module.name }} ({{ module.code }})<br>
+    <strong>Group:</strong> {{ group.code }}<br>
     <a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">Edit schedule</a>
 </p>
 <h3>Schedule Items</h3>
