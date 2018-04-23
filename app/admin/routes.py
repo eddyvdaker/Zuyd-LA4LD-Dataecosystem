@@ -317,6 +317,7 @@ def import_results():
         results_data = read_json(file, field='results')
         import_status = import_results_to_db(results_data)
         flash(f'{import_status} results imported')
+        current_app.logger.info(f'{import_status} results imported')
         return redirect(url_for('admin.admin'))
     return render_template(
         'admin/import.html', title='Admin Panel: Import Results', form=form,
@@ -333,6 +334,7 @@ def import_schedule():
         schedule_data = read_json(file, field='schedule')
         import_status = import_schedules_to_db(schedule_data)
         flash(f'{import_status} schedules imported')
+        current_app.logger.info(f'{import_status} schedules imported')
         return redirect(url_for('admin.admin'))
     return render_template(
         'admin/import.html', title='Admin Panel: Import Schedules', form=form,
@@ -412,3 +414,13 @@ def edit_schedule_item(schedule_id, item_id):
         form.room.data = item.room
     return render_template(
         'admin/edit_schedule_item.html', title='Edit Schedule Item', form=form)
+
+
+@bp.route('/admin/logs', methods=['GET'])
+def show_logs():
+    base_dir = os.path.abspath(os.path.dirname('__main__'))
+    log_file = os.path.join(base_dir, 'logs/la4ld.log')
+    with open(log_file, 'r') as f:
+        log_data = f.read().splitlines()
+
+    return render_template('admin/logs.html', title='Logs', logs=log_data)

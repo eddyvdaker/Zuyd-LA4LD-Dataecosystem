@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+{% for line in logs %}
+    {{ line }}<br>
+{% endfor %}
+{% endblock %}
