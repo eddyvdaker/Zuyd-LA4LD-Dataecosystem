@@ -17,7 +17,8 @@ class Config(object):
     """Application configuration."""
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     HASH_KEY = os.environ.get('HASH_KEY') or 'you-will-never-guess'
-    TDD_TEST_ENV = os.environ.get('TDD_TEST_ENV') or 'tdd-value-not-loaded-from-file'
+    TDD_TEST_ENV = os.environ.get('TDD_TEST_ENV') or \
+                   'tdd-value-not-loaded-from-file'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
