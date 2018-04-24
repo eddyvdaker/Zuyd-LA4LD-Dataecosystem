@@ -154,7 +154,36 @@ def import_results_to_db(data):
     return len(data)
 
 
-@bp.route('/admin')
+def import_schedules_to_db(data):
+    """
+    Writes the schedule data from the json file to the db
+
+    :param data: <dict> Dictionary containing schedule data
+    :return: Number of imported schedules
+    """
+    for row in data:
+        s = Schedule(description=row['description'])
+        grp = Group.query.filter_by(code=row['group']).first()
+        s.group = grp.id
+        module = Module.query.filter_by(code=row['module']).first()
+        s.module = module.id
+        db.session.add(s)
+        db.session.commit()
+
+        for item in row['items']:
+            si = ScheduleItem(
+                title=item['title'],
+                description=item['description'],
+                start=datetime.strptime(item['start'], '%Y-%m-%d %H:%M'),
+                end=datetime.strptime(item['end'], '%Y-%m-%d %H:%M'),
+                room=item['room'],
+                schedule=s.id)
+            db.session.add(si)
+            db.session.commit()
+    return len(data)
+
+
+@bp.route('/admin', methods=['GET'])
 @login_required
 def admin():
     if current_user.role.role != 'admin':
@@ -191,7 +220,7 @@ def import_users():
         example_gist_code='f73e48eea2c3672dec92adc2dd2627ef')
 
 
-@bp.route('/admin/users_overview')
+@bp.route('/admin/users_overview', methods=['GET'])
 def users_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -242,7 +271,7 @@ def import_modules():
         form=form, example_gist_code='3c1848ce491d9061fec9ae18ae5069e0')
 
 
-@bp.route('/admin/modules_overview')
+@bp.route('/admin/modules_overview', methods=['GET'])
 def modules_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -288,13 +317,31 @@ def import_results():
         results_data = read_json(file, field='results')
         import_status = import_results_to_db(results_data)
         flash(f'{import_status} results imported')
+        current_app.logger.info(f'{import_status} results imported')
         return redirect(url_for('admin.admin'))
     return render_template(
         'admin/import.html', title='Admin Panel: Import Results', form=form,
         example_gist_code='d504fb80b48c28e2e1495e76ea33814e')
 
 
-@bp.route('/admin/schedule_overview')
+@bp.route('/admin/schedule_import', methods=['GET', 'POST'])
+def import_schedule():
+    form = ImportForm()
+    if current_user.role.role != 'admin':
+        abort(403)
+    if form.validate_on_submit():
+        file = upload_file(form.file)
+        schedule_data = read_json(file, field='schedule')
+        import_status = import_schedules_to_db(schedule_data)
+        flash(f'{import_status} schedules imported')
+        current_app.logger.info(f'{import_status} schedules imported')
+        return redirect(url_for('admin.admin'))
+    return render_template(
+        'admin/import.html', title='Admin Panel: Import Schedules', form=form,
+        example_gist_code='b410ae801de3fae1d8ab6ec4347a6800')
+
+
+@bp.route('/admin/schedule_overview', methods=['GET'])
 def schedule_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -304,7 +351,7 @@ def schedule_overview():
         schedules=schedules)
 
 
-@bp.route('/admin/schedule/<schedule_id>')
+@bp.route('/admin/schedule/<schedule_id>', methods=['GET'])
 def single_schedule(schedule_id):
     if current_user.role.role != 'admin':
         abort(403)
@@ -367,3 +414,13 @@ def edit_schedule_item(schedule_id, item_id):
         form.room.data = item.room
     return render_template(
         'admin/edit_schedule_item.html', title='Edit Schedule Item', form=form)
+
+
+@bp.route('/admin/logs', methods=['GET'])
+def show_logs():
+    base_dir = os.path.abspath(os.path.dirname('__main__'))
+    log_file = os.path.join(base_dir, 'logs/la4ld.log')
+    with open(log_file, 'r') as f:
+        log_data = f.read().splitlines()
+
+    return render_template('admin/logs.html', title='Logs', logs=log_data)

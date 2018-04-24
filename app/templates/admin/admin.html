@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<h3>General Settigns</h3>
+<ul>
+    <li><a href="{{ url_for('admin.show_logs') }}">View Logs</a></li>
+</ul>
 <h3>User Settings</h3>
 <ul>
     <li><a href="{{ url_for('admin.import_users') }}">Import Users</a></li>
@@ -17,6 +21,7 @@
 </ul>
 <h3>Schedule Settings</h3>
 <ul>
+    <li><a href="{{ url_for('admin.import_schedule') }}">Import Schedules</a></li>
     <li><a href="{{ url_for('admin.schedule_overview') }}">Schedule Overview</a></li>
 </ul>
 {% endblock %}
