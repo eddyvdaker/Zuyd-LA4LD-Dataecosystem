@@ -221,6 +221,7 @@ def import_users():
 
 
 @bp.route('/admin/users_overview', methods=['GET'])
+@login_required
 def users_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -231,6 +232,7 @@ def users_overview():
 
 
 @bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
+@login_required
 def edit_user(user_id):
     form = EditUserForm()
     roles = Role.query.all()
@@ -251,10 +253,33 @@ def edit_user(user_id):
         form.email.data = user.email
         form.role.data = user.role.role
         form.card_number.data = user.card_number
-    return render_template('admin/edit_user.html', form=form)
+    return render_template(
+        'admin/edit_user.html', form=form, title='Admin Panel: Edit User')
+
+
+@bp.route('/admin/add_user', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    form = EditUserForm()
+    roles = Role.query.all()
+    form.role.choices = [(x.role, x.role) for x in roles]
+    if current_user.role.role != 'admin':
+        abort(403)
+    if form.validate_on_submit():
+        u = User(
+            username=form.username.data,
+            email=form.email.data,
+            role=Role.query.filter_by(role=form.role.data).first(),
+            card_number=form.card_number.data)
+        db.session.add(u)
+        db.session.commit()
+        return redirect(url_for('admin.users_overview'))
+    return render_template(
+        'admin/edit_user.html', form=form, title='Admin Panel: New User')
 
 
 @bp.route('/admin/modules_import', methods=['GET', 'POST'])
+@login_required
 def import_modules():
     form = ImportForm()
     if current_user.role.role != 'admin':
@@ -272,6 +297,7 @@ def import_modules():
 
 
 @bp.route('/admin/modules_overview', methods=['GET'])
+@login_required
 def modules_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -282,6 +308,7 @@ def modules_overview():
 
 
 @bp.route('/admin/edit_module/<module_id>', methods=['GET', 'POST'])
+@login_required
 def edit_module(module_id):
     form = EditModuleForm()
     if current_user.role.role != 'admin':
@@ -308,6 +335,7 @@ def edit_module(module_id):
 
 
 @bp.route('/admin/results_import', methods=['GET', 'POST'])
+@login_required
 def import_results():
     form = ImportForm()
     if current_user.role.role != 'admin':
@@ -325,6 +353,7 @@ def import_results():
 
 
 @bp.route('/admin/schedule_import', methods=['GET', 'POST'])
+@login_required
 def import_schedule():
     form = ImportForm()
     if current_user.role.role != 'admin':
@@ -342,6 +371,7 @@ def import_schedule():
 
 
 @bp.route('/admin/schedule_overview', methods=['GET'])
+@login_required
 def schedule_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -352,6 +382,7 @@ def schedule_overview():
 
 
 @bp.route('/admin/schedule/<schedule_id>', methods=['GET'])
+@login_required
 def single_schedule(schedule_id):
     if current_user.role.role != 'admin':
         abort(403)
@@ -364,7 +395,10 @@ def single_schedule(schedule_id):
 
 
 @bp.route('/admin/edit_schedule/<schedule_id>', methods=['GET', 'POST'])
+@login_required
 def edit_schedule(schedule_id):
+    if current_user.role.role != 'admin':
+        abort(403)
     form = EditScheduleForm()
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     modules = Module.query.all()
@@ -392,7 +426,10 @@ def edit_schedule(schedule_id):
 
 @bp.route(
     '/admin/edit_schedule/<schedule_id>/<item_id>', methods=['GET', 'POST'])
+@login_required
 def edit_schedule_item(schedule_id, item_id):
+    if current_user.role.role != 'admin':
+        abort(403)
     form = EditScheduleItemForm()
     item = ScheduleItem.query.filter_by(id=item_id).first()
     if current_user.role.role != 'admin':
@@ -417,7 +454,10 @@ def edit_schedule_item(schedule_id, item_id):
 
 
 @bp.route('/admin/logs', methods=['GET'])
+@login_required
 def show_logs():
+    if current_user.role.role != 'admin':
+        abort(403)
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     log_file = os.path.join(base_dir, 'logs/la4ld.log')
     with open(log_file, 'r') as f:
@@ -427,11 +467,15 @@ def show_logs():
 
 
 @bp.route('/downloads/logs', methods=['GET'])
+@login_required
 def download_logs():
-    base_dir = os.path.abspath(os.path.dirname('__main__'))
-    log_file = os.path.join(base_dir, 'logs/la4ld.log')
-    return send_file(
-        log_file,
-        mimetype='text/plain',
-        attachment_filename='la4ld.log',
-        as_attachment=True)
+    if current_user.role.role != 'admin':
+        abort(403)
+    else:
+        base_dir = os.path.abspath(os.path.dirname('__main__'))
+        log_file = os.path.join(base_dir, 'logs/la4ld.log')
+        return send_file(
+            log_file,
+            mimetype='text/plain',
+            attachment_filename='la4ld.log',
+            as_attachment=True)

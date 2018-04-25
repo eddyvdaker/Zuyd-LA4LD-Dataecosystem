@@ -6,13 +6,14 @@
     Routes used for the results overview of the application.
 """
 from flask import render_template
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from app.models import Result
 from app.results import bp
 
 
 @bp.route('/results')
+@login_required
 def results():
     user = Result.query.filter_by(
         identifier=current_user.hash_identifier())
