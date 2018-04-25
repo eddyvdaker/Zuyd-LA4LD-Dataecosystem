@@ -9,7 +9,7 @@ import json
 import os
 from datetime import datetime
 from flask import abort, current_app, flash, redirect, render_template, \
-    request, url_for
+    request, url_for, send_file
 from flask_login import current_user, login_required
 from sqlalchemy.exc import IntegrityError
 from secrets import token_urlsafe
@@ -424,3 +424,14 @@ def show_logs():
         log_data = f.read().splitlines()
 
     return render_template('admin/logs.html', title='Logs', logs=log_data)
+
+
+@bp.route('/downloads/logs', methods=['GET'])
+def download_logs():
+    base_dir = os.path.abspath(os.path.dirname('__main__'))
+    log_file = os.path.join(base_dir, 'logs/la4ld.log')
+    return send_file(
+        log_file,
+        mimetype='text/plain',
+        attachment_filename='la4ld.log',
+        as_attachment=True)
