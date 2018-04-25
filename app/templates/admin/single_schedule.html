@@ -5,9 +5,10 @@
     <strong>Description:</strong> {{ schedule.description }}<br>
     <strong>Module:</strong> {{ module.name }} ({{ module.code }})<br>
     <strong>Group:</strong> {{ group.code }}<br>
-    <a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">Edit schedule</a>
+    <a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">Edit schedule</a><br>
 </p>
 <h3>Schedule Items</h3>
+<a href="{{ url_for('admin.add_schedule_item', schedule_id=schedule.id) }}"><button type="button" class="btn btn-dark">Add Schedule Item</button></a><br><br>
 <table class="table table-striped">
     <tr>
         <th>Item</th>

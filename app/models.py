@@ -329,6 +329,12 @@ class Group(db.Model):
             module_group.c.group_id == self.id
         ).all()
 
+    def get_students_of_group(self):
+        return User.query.join(
+            student_group, (student_group.c.student_id == User.id)).filter(
+            student_group.c.group_id == self.id
+        ).all()
+
 
 class Schedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)

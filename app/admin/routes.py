@@ -9,7 +9,7 @@ import json
 import os
 from datetime import datetime
 from flask import abort, current_app, flash, redirect, render_template, \
-    request, url_for
+    request, url_for, send_file
 from flask_login import current_user, login_required
 from sqlalchemy.exc import IntegrityError
 from secrets import token_urlsafe
@@ -194,9 +194,9 @@ def admin():
 @bp.route('/admin/users_import', methods=['GET', 'POST'])
 @login_required
 def import_users():
-    form = ImportForm()
     if current_user.role.role != 'admin':
         abort(403)
+    form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
         user_data = read_json(file, field='users')
@@ -221,6 +221,7 @@ def import_users():
 
 
 @bp.route('/admin/users_overview', methods=['GET'])
+@login_required
 def users_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -231,12 +232,13 @@ def users_overview():
 
 
 @bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
+@login_required
 def edit_user(user_id):
+    if current_user.role.role != 'admin':
+        abort(403)
     form = EditUserForm()
     roles = Role.query.all()
     form.role.choices = [(x.role, x.role) for x in roles]
-    if current_user.role.role != 'admin':
-        abort(403)
     user = User.query.filter_by(id=user_id).first()
     if form.validate_on_submit():
         user.username = form.username.data
@@ -251,14 +253,37 @@ def edit_user(user_id):
         form.email.data = user.email
         form.role.data = user.role.role
         form.card_number.data = user.card_number
-    return render_template('admin/edit_user.html', form=form)
+    return render_template(
+        'admin/edit_user.html', form=form, title='Admin Panel: Edit User')
+
+
+@bp.route('/admin/add_user', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = EditUserForm()
+    roles = Role.query.all()
+    form.role.choices = [(x.role, x.role) for x in roles]
+    if form.validate_on_submit():
+        u = User(
+            username=form.username.data,
+            email=form.email.data,
+            role=Role.query.filter_by(role=form.role.data).first(),
+            card_number=form.card_number.data)
+        db.session.add(u)
+        db.session.commit()
+        return redirect(url_for('admin.users_overview'))
+    return render_template(
+        'admin/edit_user.html', form=form, title='Admin Panel: New User')
 
 
 @bp.route('/admin/modules_import', methods=['GET', 'POST'])
+@login_required
 def import_modules():
-    form = ImportForm()
     if current_user.role.role != 'admin':
         abort(403)
+    form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
         module_data = read_json(file, field='modules')
@@ -272,6 +297,7 @@ def import_modules():
 
 
 @bp.route('/admin/modules_overview', methods=['GET'])
+@login_required
 def modules_overview():
     if current_user.role.role != 'admin':
         abort(403)
@@ -282,10 +308,11 @@ def modules_overview():
 
 
 @bp.route('/admin/edit_module/<module_id>', methods=['GET', 'POST'])
+@login_required
 def edit_module(module_id):
-    form = EditModuleForm()
     if current_user.role.role != 'admin':
         abort(403)
+    form = EditModuleForm()
     module = Module.query.filter_by(id=module_id).first()
     if form.validate_on_submit():
         module.code = form.code.data
@@ -307,11 +334,33 @@ def edit_module(module_id):
     return render_template('admin/edit_module.html', form=form)
 
 
-@bp.route('/admin/results_import', methods=['GET', 'POST'])
-def import_results():
-    form = ImportForm()
+@bp.route('/admin/add_module', methods=['GET', 'POST'])
+@login_required
+def add_module():
     if current_user.role.role != 'admin':
         abort(403)
+    form = EditModuleForm()
+    if form.validate_on_submit():
+        m = Module(
+            code=form.code.data,
+            name=form.name.data,
+            description=form.description.data,
+            start=form.start.data,
+            end=form.end.data,
+            faculty=form.faculty.data)
+        db.session.add(m)
+        db.session.commit()
+        return redirect(url_for('admin.modules_overview'))
+    return render_template(
+        'admin/edit_module.html', form=form, title='Admin Panel: Add Module')
+
+
+@bp.route('/admin/results_import', methods=['GET', 'POST'])
+@login_required
+def import_results():
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
         results_data = read_json(file, field='results')
@@ -324,11 +373,38 @@ def import_results():
         example_gist_code='d504fb80b48c28e2e1495e76ea33814e')
 
 
-@bp.route('/admin/schedule_import', methods=['GET', 'POST'])
-def import_schedule():
-    form = ImportForm()
+@bp.route('/admin/group_overview', methods=['GET'])
+@login_required
+def group_overview():
     if current_user.role.role != 'admin':
         abort(403)
+    groups = Group.query.all()
+    for i, group in enumerate(groups):
+        groups[i].modules_list = ', '.join(map(
+            str, [x.code for x in group.get_modules_of_group()]))
+    return render_template(
+        'admin/group_overview.html', title='Admin Panel: Group Overview',
+        groups=groups)
+
+
+@bp.route('/admin/group/<group_id>', methods=['GET'])
+@login_required
+def single_group(group_id):
+    if current_user.role.role != 'admin':
+        abort(403)
+    group = Group.query.filter_by(id=group_id).first()
+    return render_template(
+        'admin/single_group.html', title=f'Admin Panel: Group {group.id}',
+        group=group,
+    )
+
+
+@bp.route('/admin/schedule_import', methods=['GET', 'POST'])
+@login_required
+def import_schedule():
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
         schedule_data = read_json(file, field='schedule')
@@ -342,16 +418,18 @@ def import_schedule():
 
 
 @bp.route('/admin/schedule_overview', methods=['GET'])
+@login_required
 def schedule_overview():
     if current_user.role.role != 'admin':
         abort(403)
     schedules = Schedule.query.all()
     return render_template(
-        'admin/schedule_overview.html', title='Schedule Overview',
+        'admin/schedule_overview.html', title='Admin Panel: Schedule Overview',
         schedules=schedules)
 
 
 @bp.route('/admin/schedule/<schedule_id>', methods=['GET'])
+@login_required
 def single_schedule(schedule_id):
     if current_user.role.role != 'admin':
         abort(403)
@@ -360,11 +438,14 @@ def single_schedule(schedule_id):
     group = Group.query.filter_by(id=schedule.group).first()
     return render_template(
         'admin/single_schedule.html', schedule=schedule, group=group,
-        title=f'Schedule: {schedule_id}', module=module)
+        title=f'Admin Panel: Schedule {schedule_id}', module=module)
 
 
 @bp.route('/admin/edit_schedule/<schedule_id>', methods=['GET', 'POST'])
+@login_required
 def edit_schedule(schedule_id):
+    if current_user.role.role != 'admin':
+        abort(403)
     form = EditScheduleForm()
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     modules = Module.query.all()
@@ -373,8 +454,6 @@ def edit_schedule(schedule_id):
     groups = Group.query.all()
     form.group.choices = [
         (int(x.id), f'{x.id}: {x.code} ({x.active})') for x in groups]
-    if current_user.role.role != 'admin':
-        abort(403)
     if form.validate_on_submit():
         schedule.description = form.description.data
         schedule.module = form.module.data
@@ -387,16 +466,43 @@ def edit_schedule(schedule_id):
         form.module.data = schedule.module
         form.group.data = schedule.group
     return render_template(
-        'admin/edit_schedule.html', title='Edit Schedule', form=form)
+        'admin/edit_schedule.html', title='Admin Panel: Edit Schedule',
+        form=form)
+
+
+@bp.route('/admin/add_schedule', methods=['GET', 'POST'])
+@login_required
+def add_schedule():
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = EditScheduleForm()
+    modules = Module.query.all()
+    form.module.choices = [
+        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in modules]
+    groups = Group.query.all()
+    form.group.choices = [
+        (int(x.id), f'{x.id}: {x.code} ({x.active})') for x in groups]
+    if form.validate_on_submit():
+        s = Schedule(
+            description=form.description.data,
+            module=form.module.data,
+            group=form.group.data)
+        db.session.add(s)
+        db.session.commit()
+        return redirect(url_for('admin.schedule_overview'))
+    return render_template(
+        'admin/edit_schedule.html', title='Admin Panel: Add Schedule',
+        form=form)
 
 
 @bp.route(
     '/admin/edit_schedule/<schedule_id>/<item_id>', methods=['GET', 'POST'])
+@login_required
 def edit_schedule_item(schedule_id, item_id):
-    form = EditScheduleItemForm()
-    item = ScheduleItem.query.filter_by(id=item_id).first()
     if current_user.role.role != 'admin':
         abort(403)
+    form = EditScheduleItemForm()
+    item = ScheduleItem.query.filter_by(id=item_id).first()
     if form.validate_on_submit():
         item.title = form.title.data
         item.description = form.description.data
@@ -413,14 +519,60 @@ def edit_schedule_item(schedule_id, item_id):
         form.end.data = item.end
         form.room.data = item.room
     return render_template(
-        'admin/edit_schedule_item.html', title='Edit Schedule Item', form=form)
+        'admin/edit_schedule_item.html', form=form,
+        title='Admin Panel:Edit Schedule Item')
+
+
+@bp.route(
+    '/admin/add_schedule_item/<schedule_id>', methods=['GET', 'POST'])
+@login_required
+def add_schedule_item(schedule_id):
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = EditScheduleItemForm()
+    schedule = Schedule.query.filter_by(id=schedule_id).first()
+    if form.validate_on_submit():
+        si = ScheduleItem(
+            title=form.title.data,
+            description=form.description.data,
+            start=form.start.data,
+            end=form.end.data,
+            room=form.room.data,
+            schedule=schedule.id)
+        db.session.add(si)
+        db.session.commit()
+        return redirect(url_for(
+            'admin.single_schedule', schedule_id=schedule_id))
+    return render_template(
+        'admin/edit_schedule_item.html', form=form,
+        title='Admin Panel: New Schedule Item')
 
 
 @bp.route('/admin/logs', methods=['GET'])
+@login_required
 def show_logs():
+    if current_user.role.role != 'admin':
+        abort(403)
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     log_file = os.path.join(base_dir, 'logs/la4ld.log')
     with open(log_file, 'r') as f:
         log_data = f.read().splitlines()
 
-    return render_template('admin/logs.html', title='Logs', logs=log_data)
+    return render_template(
+        'admin/logs.html', title='Admin Panel: Logs', logs=log_data)
+
+
+@bp.route('/downloads/logs', methods=['GET'])
+@login_required
+def download_logs():
+    if current_user.role.role != 'admin':
+        abort(403)
+    else:
+        base_dir = os.path.abspath(os.path.dirname('__main__'))
+        log_file = os.path.join(base_dir, 'logs/la4ld.log')
+        return send_file(
+            log_file,
+            mimetype='text/plain',
+            attachment_filename='la4ld.log',
+            as_attachment=True,
+            cache_timeout=-1)

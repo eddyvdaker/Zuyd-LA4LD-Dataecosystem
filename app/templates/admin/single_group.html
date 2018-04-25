@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<p>
+    <strong>Code:</strong> {{ group.code }}<br>
+    <strong>Active:</strong> {{ group.active }}<br>
+</p>
+<h3>Modules</h3>
+<table class="table table-striped">
+    <tr>
+        <th>ID</th>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Faculty</th>
+        <th></th>
+    </tr>
+
+{% for module in group.get_modules_of_group() %}
+    <tr>
+        <td>{{ module.id }}</td>
+        <td>{{ module.code }}</td>
+        <td>{{ module.name }}</td>
+        <td>{{ module.description }}</td>
+        <td>{{ module.start }}</td>
+        <td>{{ module.end }}</td>
+        <td>{{ module.faculty }}</td>
+        <td><a href="{{ url_for('admin.edit_module', module_id=module.id) }}">Edit</a></td>
+    </tr>
+{% endfor %}
+</table>
+<h3>Students</h3>
+<table class="table table-striped">
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Card Number</th>
+        <th></th>
+    </tr>
+{% for user in group.get_students_of_group() %}
+    <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role.role }}</td>
+        <td>{{ user.card_number }}</td>
+        <td><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">Edit</a></td>
+    </tr>
+{% endfor %}
+</table>
+<h3>Schedules</h3>
+<table class="table table-striped">
+    <tr>
+        <th>ID</th>
+        <th>Description</th>
+        <th>Module</th>
+        <th>Group</th>
+        <th></th>
+    </tr>
+{% for schedule in group.schedules.all() %}
+    <tr>
+        <td>{{ schedule.id }}</td>
+        <td>{{ schedule.description }}</td>
+        <td>{{ schedule.module }}</td>
+        <td>{{ schedule.group }}</td>
+        <td><a href="{{ url_for('admin.single_schedule', schedule_id=schedule.id) }}">Details</a></td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

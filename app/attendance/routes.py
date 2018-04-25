@@ -6,7 +6,7 @@
     Routes and API endpoints used for showing attendance.
 """
 from flask import jsonify, request, render_template
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from app import db
 from app.attendance import bp
@@ -30,6 +30,7 @@ def api_attend_lesson(item_id):
 
 
 @bp.route('/attendance', methods=['GET'])
+@login_required
 def attendance():
     attended = Attendance.query.filter_by(
         identifier=current_user.hash_identifier()).all()
