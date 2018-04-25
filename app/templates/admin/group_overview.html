@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<a href="{{ url_for('admin.add_schedule') }}"><button type="button" class="btn btn-dark">Add Schedule</button></a><br><br>
+<table class="table table-striped">
+    <tr>
+        <th>ID</th>
+        <th>Code</th>
+        <th>Active</th>
+        <th>Module</th>
+        <th></th>
+    </tr>
+{% for group in groups %}
+    <tr>
+        <td>{{ group.id }}</td>
+        <td>{{ group.code }}</td>
+        <td>{{ group.active }}</td>
+        <td>{{ group.modules_list }}</td>
+        <td><a href="{{ url_for('admin.single_schedule', schedule_id=group.id) }}">Details</a></td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

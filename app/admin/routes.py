@@ -373,6 +373,20 @@ def import_results():
         example_gist_code='d504fb80b48c28e2e1495e76ea33814e')
 
 
+@bp.route('/admin/group_overview', methods=['GET'])
+@login_required
+def group_overview():
+    if current_user.role.role != 'admin':
+        abort(403)
+    groups = Group.query.all()
+    for i, group in enumerate(groups):
+        groups[i].modules_list = ', '.join(map(
+            str, [x.code for x in group.get_modules_of_group()]))
+    return render_template(
+        'admin/group_overview.html', title='Admin Panel: Group Overview',
+        groups=groups)
+
+
 @bp.route('/admin/schedule_import', methods=['GET', 'POST'])
 @login_required
 def import_schedule():
