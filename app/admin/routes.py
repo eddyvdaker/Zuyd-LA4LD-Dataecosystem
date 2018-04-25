@@ -334,6 +334,27 @@ def edit_module(module_id):
     return render_template('admin/edit_module.html', form=form)
 
 
+@bp.route('/admin/add_module', methods=['GET', 'POST'])
+@login_required
+def add_module():
+    form = EditModuleForm()
+    if current_user.role.role != 'admin':
+        abort(403)
+    if form.validate_on_submit():
+        m = Module(
+            code=form.code.data,
+            name=form.name.data,
+            description=form.description.data,
+            start=form.start.data,
+            end=form.end.data,
+            faculty=form.faculty.data)
+        db.session.add(m)
+        db.session.commit()
+        return redirect(url_for('admin.modules_overview'))
+    return render_template(
+        'admin/edit_module.html', form=form, title='Admin Panel: Add Module')
+
+
 @bp.route('/admin/results_import', methods=['GET', 'POST'])
 @login_required
 def import_results():
