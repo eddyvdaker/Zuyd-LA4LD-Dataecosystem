@@ -387,6 +387,18 @@ def group_overview():
         groups=groups)
 
 
+@bp.route('/admin/group/<group_id>', methods=['GET'])
+@login_required
+def single_group(group_id):
+    if current_user.role.role != 'admin':
+        abort(403)
+    group = Group.query.filter_by(id=group_id).first()
+    return render_template(
+        'admin/single_group.html', title=f'Admin Panel: Group {group.id}',
+        group=group,
+    )
+
+
 @bp.route('/admin/schedule_import', methods=['GET', 'POST'])
 @login_required
 def import_schedule():
