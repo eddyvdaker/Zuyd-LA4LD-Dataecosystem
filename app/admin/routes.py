@@ -96,12 +96,30 @@ def import_users_to_db(data, mail_details=False):
                         'email': user.email,
                         'cardnr': user.card_number}
 
+            for group in row['groups']:
+                user.add_to_group(Group.query.filter_by(
+                    code=group).first())
+            for module in row['student_of']:
+                user.add_to_module(
+                    Module.query.filter_by(code=module).first(),
+                    module_role='student')
+            for module in row['teacher_of']:
+                user.add_to_module(
+                    Module.query.filter_by(code=module).first(),
+                    module_role='teacher')
+            for module in row['examiner_of']:
+                user.add_to_module(
+                    Module.query.filter_by(code=module).first(),
+                    module_role='examiner')
+
+            db.session.commit()
+
             if mail_details:
                 if 'la4ld-test.com' not in user.email:
                     send_new_user_email(new_user)
             else:
                 user_data.append(new_user)
-        except IntegrityError:
+        except IntegrityError or KeyError:
             db.session.rollback()
             users_skipped_data.append(row['username'])
 
@@ -116,16 +134,19 @@ def import_modules_to_db(data):
     :return: Number of imported modules
     """
     for row in data:
-        module = Module(
-            code=row['code'],
-            name=row['name'],
-            description=row['description'],
-            start=datetime.strptime(row['start'], '%Y-%m-%d'),
-            end=datetime.strptime(row['end'], '%Y-%m-%d'),
-            faculty=row['faculty']
-        )
-        db.session.add(module)
-        db.session.commit()
+        try:
+            module = Module(
+                code=row['code'],
+                name=row['name'],
+                description=row['description'],
+                start=datetime.strptime(row['start'], '%Y-%m-%d'),
+                end=datetime.strptime(row['end'], '%Y-%m-%d'),
+                faculty=row['faculty']
+            )
+            db.session.add(module)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
 
     return len(data)
 
@@ -180,6 +201,25 @@ def import_schedules_to_db(data):
                 schedule=s.id)
             db.session.add(si)
             db.session.commit()
+    return len(data)
+
+
+def import_groups_to_db(data):
+    """
+    Writes the group data from the json file to the db
+
+    :param data: <dict> Dictionary containing group data
+    :return: Number of imported groups
+    """
+    for row in data:
+        grp = Group(code=row['code'], active=row['active'])
+        db.session.add(grp)
+        db.session.commit()
+
+        for module in row['modules']:
+            grp.add_module_to_group(
+                Module.query.filter_by(code=module).first())
+        db.session.commit()
     return len(data)
 
 
@@ -399,6 +439,24 @@ def single_group(group_id):
     )
 
 
+@bp.route('/admin/group_import', methods=['GET', 'POST'])
+@login_required
+def import_group():
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = ImportForm()
+    if form.validate_on_submit():
+        file = upload_file(form.file)
+        group_data = read_json(file, field='groups')
+        import_status = import_groups_to_db(group_data)
+        flash(f'{import_status} groups imported')
+        current_app.logger.info(f'{import_status} groups imported')
+        return redirect(url_for('admin.admin'))
+    return render_template(
+        'admin/import.html', title='Admin Panel: Import Groups', form=form,
+        example_gist_code='b410ae801de3fae1d8ab6ec4347a6800')
+
+
 @bp.route('/admin/schedule_import', methods=['GET', 'POST'])
 @login_required
 def import_schedule():
@@ -407,7 +465,7 @@ def import_schedule():
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
-        schedule_data = read_json(file, field='schedule')
+        schedule_data = read_json(file, field='schedules')
         import_status = import_schedules_to_db(schedule_data)
         flash(f'{import_status} schedules imported')
         current_app.logger.info(f'{import_status} schedules imported')
