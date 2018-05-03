@@ -271,6 +271,21 @@ def users_overview():
         users=users)
 
 
+@bp.route('/admin/user/<user_id>', methods=['GET'])
+@login_required
+def single_user(user_id):
+    if current_user.role.role != 'admin':
+        abort(403)
+    user = User.query.filter_by(id=user_id).first()
+    groups = user.groups_of_student()
+    for i, group in enumerate(groups):
+        groups[i].modules_list = ', '.join(map(
+            str, [x.code for x in group.get_modules_of_group()]))
+    return render_template(
+        'admin/single_user.html', title=f'Admin Panel: User {user_id}',
+        user=user, groups=groups)
+
+
 @bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_user(user_id):
@@ -287,7 +302,7 @@ def edit_user(user_id):
         user.card_number = form.card_number.data
         db.session.commit()
         flash('The changes have been saved.')
-        return redirect(url_for('admin.admin'))
+        return redirect(url_for('admin.single_user', user_id=user.id))
     elif request.method == 'GET':
         form.username.data = user.username
         form.email.data = user.email
