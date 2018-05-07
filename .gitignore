@@ -10,3 +10,4 @@ geckodriver.log
 logs/
 app/static/
 *.json
+fact-store.txt

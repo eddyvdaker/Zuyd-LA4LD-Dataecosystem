@@ -31,4 +31,4 @@ class Config(object):
     ADMINS = ['zuyd.la4ld.dataecosystem@gmail.com']
     IMPORT_FOLDER = os.environ.get('IMPORT_FOLDER') or '/tmp/la4ld/imports/'
     FACT_STORE = os.environ.get('FACT_STORE') or \
-                 os.path.join(basedir, 'fact-store.json')
+                 os.path.join(basedir, 'fact-store.txt')
