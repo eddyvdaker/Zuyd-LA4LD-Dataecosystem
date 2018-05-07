@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<p>
+    <strong>Username:</strong> {{ user.username }}<br>
+    <strong>Email:</strong> {{ user.email }}<br>
+    <strong>User Role:</strong> {{ user.role.role }}<br>
+    <strong>User Card number:</strong> {{ user.card_number }}<br>
+    <a href="{{ url_for('admin.edit_user', user_id=user.id) }}">Edit User</a><br>
+</p>
+{% if user.groups_of_student() %}
+<div id="groups-of-student">
+    <br>
+    <hr>
+    <h3>Groups of student</h3>
+    <table class="table table-striped">
+        <tr>
+            <th>id</th>
+            <th>code</th>
+            <th>active</th>
+            <th>Modules</th>
+            <th></th>
+        </tr>
+    {% for group in groups %}
+        <tr>
+            <td>{{ group.id }}</td>
+            <td>{{ group.code }}</td>
+            <td>{{ group.active }}</td>
+            <td>{{ group.modules_list }}</td>
+            <td><a href="{{ url_for('admin.single_group', group_id=group.id) }}">Details</a></td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+{% if user.get_modules_of_student() %}
+<div id="modules-as-student">
+    <br>
+    <hr>
+    <h3>Modules as Student</h3>
+    <table class="table table-striped">
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Faculty</th>
+        </tr>
+
+    {% for module in user.get_modules_of_student() %}
+        <tr>
+            <td>{{ module.code }}</td>
+            <td>{{ module.name }}</td>
+            <td>{{ module.description }}</td>
+            <td>{{ module.start }}</td>
+            <td>{{ module.end }}</td>
+            <td>{{ module.faculty }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+{% endif %}
+{% if user.get_modules_of_teacher() %}
+<div id="modules-as-teacher">
+    <br>
+    <hr>
+    <h3>Modules as Teacher</h3>
+    <table class="table table-striped">
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Faculty</th>
+        </tr>
+
+    {% for module in user.get_modules_of_teacher() %}
+        <tr>
+            <td>{{ module.code }}</td>
+            <td>{{ module.name }}</td>
+            <td>{{ module.description }}</td>
+            <td>{{ module.start }}</td>
+            <td>{{ module.end }}</td>
+            <td>{{ module.faculty }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+{% endif %}
+{% if user.get_modules_of_examiner() %}
+<div id="modules-as-examiner">
+    <br>
+    <hr>
+    <h3>Modules as Examiner</h3>
+    <table class="table table-striped">
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Faculty</th>
+        </tr>
+
+    {% for module in user.get_modules_of_examiner() %}
+        <tr>
+            <td>{{ module.code }}</td>
+            <td>{{ module.name }}</td>
+            <td>{{ module.description }}</td>
+            <td>{{ module.start }}</td>
+            <td>{{ module.end }}</td>
+            <td>{{ module.faculty }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+{% endif %}
+{% endblock %}
