@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    errors
-    ~~~~~~
+    email
+    ~~~~~
 
-    Error handling for the application.
+    Helper functions for sending emails.
 """
 
 from flask import current_app, render_template
