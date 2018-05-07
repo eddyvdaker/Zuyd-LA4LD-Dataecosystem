@@ -19,6 +19,6 @@ def write_xapi():
     user = g.current_user
     if user.role.role != 'admin' and user.role.role != 'system':
         abort(403)
-    with open(current_app.config['FACT_STORE'], 'w+') as f:
-        f.writelines([str(data)])
+    with open(current_app.config['FACT_STORE'], 'a+') as f:
+        f.writelines([str(data) + '\n'])
     return jsonify(data)

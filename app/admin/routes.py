@@ -649,3 +649,43 @@ def download_logs():
             attachment_filename='la4ld.log',
             as_attachment=True,
             cache_timeout=-1)
+
+
+@bp.route('/admin/fact-store', methods=['GET'])
+@login_required
+def show_fact_store():
+    if current_user.role.role != 'admin':
+        abort(403)
+    base_dir = os.path.abspath(os.path.dirname('__main__'))
+    fact_store_file = os.path.join(base_dir, current_app.config['FACT_STORE'])
+    try:
+        with open(fact_store_file, 'r') as f:
+            fact_store_data = f.read().splitlines()
+    except FileNotFoundError:
+        fact_store_data = ['No Fact-Store Data']
+
+    return render_template(
+        'admin/fact-store.html', title='Admin Panel: Fact-Store',
+        fact_store=fact_store_data)
+
+
+@bp.route('/downloads/fact-store', methods=['GET'])
+@login_required
+def download_fact_store():
+    if current_user.role.role != 'admin':
+        abort(403)
+    else:
+
+        base_dir = os.path.abspath(os.path.dirname('__main__'))
+        fact_store_file = os.path.join(
+            base_dir, current_app.config['FACT_STORE'])
+        if os.path.exists(fact_store_file):
+            return send_file(
+                fact_store_file,
+                mimetype='text/plain',
+                attachment_filename='fact-store.txt',
+                as_attachment=True,
+                cache_timeout=-1)
+        else:
+            flash('No Fact-Store data available')
+            return redirect(url_for('admin.show_fact_store'))
