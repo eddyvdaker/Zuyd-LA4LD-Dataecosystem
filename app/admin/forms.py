@@ -9,7 +9,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField, StringField, SelectField, DateField, \
-    DateTimeField
+    DateTimeField, BooleanField
 from wtforms.validators import DataRequired, Email
 
 
@@ -52,4 +52,10 @@ class EditScheduleItemForm(FlaskForm):
     start = DateTimeField('Start', validators=[DataRequired()])
     end = DateTimeField('End', validators=[DataRequired()])
     room = StringField('Room')
+    submit = SubmitField('Save Changes')
+
+
+class EditGroupForm(FlaskForm):
+    code = StringField('Group', validators=[DataRequired()])
+    active = BooleanField('Active')
     submit = SubmitField('Save Changes')

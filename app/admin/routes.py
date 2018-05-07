@@ -18,7 +18,7 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.admin import bp
 from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
-    EditScheduleForm, EditScheduleItemForm
+    EditScheduleForm, EditScheduleItemForm, EditGroupForm
 from app.email import send_new_user_email
 from app.models import User, Grade, Module, Result, Role, Schedule, \
     ScheduleItem, Group
@@ -470,6 +470,42 @@ def import_group():
     return render_template(
         'admin/import.html', title='Admin Panel: Import Groups', form=form,
         example_gist_code='b410ae801de3fae1d8ab6ec4347a6800')
+
+
+@bp.route('/admin/add_group', methods=['GET', 'POST'])
+@login_required
+def add_group():
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = EditGroupForm()
+    if form.validate_on_submit():
+        group = Group(code=form.code.data, active=form.active.data)
+        db.session.add(group)
+        db.session.commit()
+        flash(f'Group {form.code.data} with id {group.id} added')
+        redirect(url_for('admin.group_overview'))
+    return render_template(
+        'admin/edit_group.html', title='Admin Panel: Add Group', form=form)
+
+
+@bp.route('/admin/edit_group/<group_id>', methods=['GET', 'POST'])
+@login_required
+def edit_group(group_id):
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = EditGroupForm()
+    group = Group.query.filter_by(id=group_id).first()
+    if form.validate_on_submit():
+        group.code = form.code.data
+        group.active = form.active.data
+        db.session.commit()
+        flash(f'Group {form.code.data} with id {group.id} updated')
+        return redirect(url_for('admin.single_group', group_id=group_id))
+    else:
+        form.code.data = group.code
+        form.active.data = group.active
+    return render_template(
+        'admin/edit_group.html', title='Admin Panel: Edit Group', form=form)
 
 
 @bp.route('/admin/schedule_import', methods=['GET', 'POST'])
