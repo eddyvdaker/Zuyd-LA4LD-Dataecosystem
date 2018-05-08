@@ -12,6 +12,8 @@ from wtforms import SubmitField, StringField, SelectField, DateField, \
     DateTimeField, BooleanField
 from wtforms.validators import DataRequired, Email
 
+from app.forms import MultiCheckboxField
+
 
 class ImportForm(FlaskForm):
     file = FileField('File', validators=[
@@ -58,4 +60,23 @@ class EditScheduleItemForm(FlaskForm):
 class EditGroupForm(FlaskForm):
     code = StringField('Group', validators=[DataRequired()])
     active = BooleanField('Active')
+    submit = SubmitField('Save Changes')
+
+
+class ManageGroupMembershipForm(FlaskForm):
+    action = SelectField(
+        'Action', validators=[DataRequired()],
+        choices=[('add', 'Add'), ('remove', 'Remove')])
+    users_list = MultiCheckboxField('Users', validators=[])
+    groups_list = MultiCheckboxField('Groups', validators=[])
+    submit = SubmitField('Save Changes')
+
+
+class ManageModuleMembershipForm(FlaskForm):
+    action = SelectField(
+        'Action', validators=[DataRequired()],
+        choices=[('add', 'Add'), ('remove', 'Remove')])
+    users_list = MultiCheckboxField('Users', validators=[])
+    modules_list = MultiCheckboxField('Modules', validators=[])
+    roles = SelectField('Role', validators=[DataRequired()])
     submit = SubmitField('Save Changes')

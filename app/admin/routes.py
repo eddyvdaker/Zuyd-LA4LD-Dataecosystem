@@ -18,7 +18,8 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.admin import bp
 from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
-    EditScheduleForm, EditScheduleItemForm, EditGroupForm
+    EditScheduleForm, EditScheduleItemForm, EditGroupForm, \
+    ManageGroupMembershipForm, ManageModuleMembershipForm
 from app.email import send_new_user_email
 from app.models import User, Grade, Module, Result, Role, Schedule, \
     ScheduleItem, Group
@@ -711,7 +712,6 @@ def download_fact_store():
     if current_user.role.role != 'admin':
         abort(403)
     else:
-
         base_dir = os.path.abspath(os.path.dirname('__main__'))
         fact_store_file = os.path.join(
             base_dir, current_app.config['FACT_STORE'])
@@ -725,3 +725,65 @@ def download_fact_store():
         else:
             flash('No Fact-Store data available')
             return redirect(url_for('admin.show_fact_store'))
+
+
+@bp.route('/admin/manage-groups', methods=['GET', 'POST'])
+@login_required
+def manage_group_membership():
+    if current_user.role.role != 'admin':
+        abort(403)
+    groups = Group.query.all()
+    users = User.query.all()
+    form = ManageGroupMembershipForm()
+    form.users_list.choices = [(x.id, x.username) for x in users]
+    form.groups_list.choices = [(x.id, x.code) for x in groups]
+    if request.method == 'POST':
+        for user_id in form.users_list.data:
+            user = User.query.filter_by(id=user_id).first()
+            for group_id in form.groups_list.data:
+                group = Group.query.filter_by(id=group_id).first()
+                if form.action.data == 'add':
+                    user.add_to_group(group)
+                    flash('Added users to groups.')
+                elif form.action.data == 'remove':
+                    user.remove_from_group(group)
+                    flash('Removed users from groups')
+            db.session.commit()
+        return redirect(url_for('admin.manage_group_membership'))
+    return render_template(
+        'admin/manage_groups.html', title='Admin Panel: Manage Groups',
+        form=form)
+
+
+@bp.route('/admin/manage-modules', methods=['GET', 'POST'])
+@login_required
+def manage_module_membership():
+    if current_user.role.role != 'admin':
+        abort(403)
+    modules = Module.query.all()
+    users = User.query.all()
+    form = ManageModuleMembershipForm()
+    form.users_list.choices = [(x.id, x.username) for x in users]
+    form.modules_list.choices = [
+        (x.id, f'{x.id}: {x.code} ({x.start}-{x.end})') for x in modules]
+    form.roles.choices = [
+        ('student', 'student'),
+        ('teacher', 'teacher'),
+        ('examiner', 'examiner')]
+    if request.method == 'POST':
+        for user_id in form.users_list.data:
+            user = User.query.filter_by(id=user_id).first()
+            for module_id in form.modules_list.data:
+                module = Module.query.filter_by(id=module_id).first()
+                if form.action.data == 'add':
+                    user.add_to_module(module, module_role=form.roles.data)
+                    flash(f'Added {form.roles.data} to modules')
+                elif form.action.data == 'remove':
+                    user.remove_from_module(
+                        module, module_role=form.roles.data)
+                    flash(f'Removed {form.roles.data} from modules')
+            db.session.commit()
+        return redirect(url_for('admin.manage_module_membership'))
+    return render_template(
+        'admin/manage_modules.html', title='Admin Panel: Manage Modules',
+        form=form)
