@@ -9,8 +9,10 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField, StringField, SelectField, DateField, \
-    DateTimeField
+    DateTimeField, BooleanField
 from wtforms.validators import DataRequired, Email
+
+from app.forms import MultiCheckboxField
 
 
 class ImportForm(FlaskForm):
@@ -52,4 +54,29 @@ class EditScheduleItemForm(FlaskForm):
     start = DateTimeField('Start', validators=[DataRequired()])
     end = DateTimeField('End', validators=[DataRequired()])
     room = StringField('Room')
+    submit = SubmitField('Save Changes')
+
+
+class EditGroupForm(FlaskForm):
+    code = StringField('Group', validators=[DataRequired()])
+    active = BooleanField('Active')
+    submit = SubmitField('Save Changes')
+
+
+class ManageGroupMembershipForm(FlaskForm):
+    action = SelectField(
+        'Action', validators=[DataRequired()],
+        choices=[('add', 'Add'), ('remove', 'Remove')])
+    users_list = MultiCheckboxField('Users', validators=[])
+    groups_list = MultiCheckboxField('Groups', validators=[])
+    submit = SubmitField('Save Changes')
+
+
+class ManageModuleMembershipForm(FlaskForm):
+    action = SelectField(
+        'Action', validators=[DataRequired()],
+        choices=[('add', 'Add'), ('remove', 'Remove')])
+    users_list = MultiCheckboxField('Users', validators=[])
+    modules_list = MultiCheckboxField('Modules', validators=[])
+    roles = SelectField('Role', validators=[DataRequired()])
     submit = SubmitField('Save Changes')

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.action.label }}{{ form.action() }} {{ form.submit() }}
+    </p>
+    <div class="row">
+        <div class="col-sm-4">
+            <strong>{{ form.users_list.label }}</strong><br>
+            {{ form.users_list() }}
+        </div>
+        <div class="col-sm-4">
+            <strong>{{ form.groups_list.label }}</strong><br>
+            {{ form.groups_list() }}
+        </div>
+    </div>
+</form>
+{% endblock %}

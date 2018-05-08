@@ -4,6 +4,7 @@
 <p>
     <strong>Code:</strong> {{ group.code }}<br>
     <strong>Active:</strong> {{ group.active }}<br>
+    <a href="{{ url_for('admin.edit_group', group_id=group.id) }}">Edit</a>
 </p>
 <h3>Modules</h3>
 <table class="table table-striped">
