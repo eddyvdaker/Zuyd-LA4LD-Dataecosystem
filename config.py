@@ -30,5 +30,6 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['zuyd.la4ld.dataecosystem@gmail.com']
     IMPORT_FOLDER = os.environ.get('IMPORT_FOLDER') or '/tmp/la4ld/imports/'
+    EXPORT_FOLDER = os.environ.get('EXPORT_FOLDER') or '/tmp/la4ld/exports/'
     FACT_STORE = os.environ.get('FACT_STORE') or \
                  os.path.join(basedir, 'fact-store.txt')
