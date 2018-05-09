@@ -10,7 +10,8 @@
 <p>
     <strong>Your role is:</strong> {{ current_user.role.role }}<br>
     <strong>Your card number:</strong> {{ current_user.card_number }}<br>
-    <strong>Your identifier is:</strong> {{ current_user.hash_identifier() }}
+    <strong>Your identifier is:</strong> {{ current_user.hash_identifier() }}<br><br>
+    <a href="{{ url_for('main.download_own_data') }}"><button type="button" class="btn btn-dark">Export Data</button></a>
 </p>
 {% if modules_as_student %}
 <div id="modules-as-student">
