@@ -11,7 +11,6 @@ from tests.end_to_end.base import EndToEndTest
 class TestErrors(EndToEndTest):
 
     def test_403(self):
-        pass
         # User logs in as student user
         self.loginUser('student', 'la4ld')
 

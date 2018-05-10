@@ -75,7 +75,7 @@ class EndToEndTest(TestCase):
         password_input = self.browser.find_element_by_id('password')
         submit_input = self.browser.find_element_by_id('submit')
 
-        username_input.send_keys('student')
-        password_input.send_keys('la4ld')
+        username_input.send_keys(username)
+        password_input.send_keys(password)
         submit_input.send_keys(Keys.ENTER)
         sleep(0.5)
