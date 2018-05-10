@@ -22,14 +22,18 @@ def wants_json_response():
 def forbidden_error(error):
     if wants_json_response():
         return api_error_response(403)
-    return render_template('errors/403.html'), 403
+    return render_template(
+        'errors/403.html', title='403 - Forbidden'
+    ), 403
 
 
 @bp.app_errorhandler(404)
 def not_found_error(error):
     if wants_json_response():
         return api_error_response(404)
-    return render_template('errors/404.html'), 404
+    return render_template(
+        'errors/404.html', title='404 - File Not Found'
+    ), 404
 
 
 @bp.app_errorhandler(500)
@@ -37,4 +41,6 @@ def internal_error(error):
     db.session.rollback()
     if wants_json_response():
         return api_error_response(500)
-    return render_template('errors/500.html'), 500
+    return render_template(
+        'errors/500.html', title='500 - Internal Server Error'
+    ), 500
