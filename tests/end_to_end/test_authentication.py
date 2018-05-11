@@ -98,7 +98,7 @@ class TestAuthentication(EndToEndTest):
 
         # User logs out
         self.browser.get(self.live_server_url + '/logout')
-        
+
         # User is redirected to home page
         text = self.waitFor(
             lambda: self.browser.find_element_by_tag_name('p').text
