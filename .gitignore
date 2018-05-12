@@ -11,3 +11,4 @@ logs/
 app/static/
 *.json
 fact-store.txt
+messages.pot

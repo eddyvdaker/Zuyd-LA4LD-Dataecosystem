@@ -20,7 +20,7 @@ from app.forms import MultiCheckboxField
 class ImportForm(FlaskForm):
     file = FileField(_l('File'), validators=[
         FileRequired(),
-        FileAllowed(['json'], _('Incorrect format, JSON required!'))
+        FileAllowed(['json'], _l('Incorrect format, JSON required!'))
     ])
     submit = SubmitField(_l('Import'))
 
@@ -68,7 +68,7 @@ class EditGroupForm(FlaskForm):
 class ManageGroupMembershipForm(FlaskForm):
     action = SelectField(
         'Action', validators=[DataRequired()],
-        choices=[('add', _('Add')), ('remove', _('Remove'))])
+        choices=[('add', _l('Add')), ('remove', _l('Remove'))])
     users_list = MultiCheckboxField(_l('Users'), validators=[])
     groups_list = MultiCheckboxField(_l('Groups'), validators=[])
     submit = SubmitField(_l('Save Changes'))
@@ -77,7 +77,7 @@ class ManageGroupMembershipForm(FlaskForm):
 class ManageModuleMembershipForm(FlaskForm):
     action = SelectField(
         'Action', validators=[DataRequired()],
-        choices=[('add', _('Add')), ('remove', _('Remove'))])
+        choices=[('add', _l('Add')), ('remove', _l('Remove'))])
     users_list = MultiCheckboxField(_l('Users'), validators=[])
     modules_list = MultiCheckboxField(_l('Modules'), validators=[])
     roles = SelectField(_l('Role'), validators=[DataRequired()])

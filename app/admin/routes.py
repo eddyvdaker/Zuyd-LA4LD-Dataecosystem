@@ -57,7 +57,7 @@ def read_json(json_file, field=None):
             try:
                 data = json.load(f)[field]
             except KeyError:
-                flash(_(f'Invalid file, missing key "{field}"'))
+                flash(_(f'Invalid file, missing key )' + field))
                 return redirect(url_for('admin'))
         else:
             data = json.load(f)
@@ -243,20 +243,23 @@ def import_users():
         file = upload_file(form.file)
         user_data = read_json(file, field='users')
         imported_users, skipped_users = import_users_to_db(user_data)
-        flash(_(f'Imported {len(imported_users)} of {len(user_data)} Users.'))
+        # STRING NOT TRANSLATED YET (STR WITH VARIABLES)
+        flash(f'Imported {len(imported_users)} of {len(user_data)} Users.')
         current_app.logger.info(f'User Import: imported {len(imported_users)}'
                                 f' of {len(user_data)} users')
         if imported_users:
             flash(_('Imported Users (Copy to send to users):'))
             for row in imported_users:
-                flash(_(
+                # STRING NOT TRANSLATED YET (STR WITH VARIABLES)
+                flash(
                     f'User: {row["username"]} (email: {row["email"]}, card:'
                     f' {row["cardnr"]}) - Password: {row["password"]}'
-                ))
+                )
         if skipped_users:
             flash(_('Skipped Users:'))
             for row in skipped_users:
-                flash(_(f'{row} skipped'))
+                # STRING NOT TRANSLATED YET (STR WITH VARIABLES)
+                flash(f'{row} skipped')
 
         return redirect(url_for('admin.admin'))
     return render_template(
@@ -288,8 +291,8 @@ def single_user(user_id):
         groups[i].modules_list = ', '.join(map(
             str, [x.code for x in group.get_modules_of_group()]))
     return render_template(
-        'admin/single_user.html', title=_(f'Admin Panel: User {user_id}'),
-        user=user, groups=groups
+        'admin/single_user.html', user=user, groups=groups,
+        title=_(f'Admin Panel: User ') + str(user_id)
     )
 
 
@@ -352,8 +355,8 @@ def import_modules():
         file = upload_file(form.file)
         module_data = read_json(file, field='modules')
         import_status = import_modules_to_db(module_data)
-        flash(_(f'{import_status} modules imported'))
-        current_app.logger.info(_(f'{import_status} modules imported'))
+        flash(import_status + _(' modules imported'))
+        current_app.logger.info(f'{import_status} modules imported')
         return redirect(url_for('admin.admin'))
     return render_template(
         'admin/import.html', title=_('Admin Panel: Import Modules'),
@@ -437,8 +440,8 @@ def import_results():
         file = upload_file(form.file)
         results_data = read_json(file, field='results')
         import_status = import_results_to_db(results_data)
-        flash(_(f'{import_status} results imported'))
-        current_app.logger.info(_(f'{import_status} results imported'))
+        flash(import_status + _(f' results imported'))
+        current_app.logger.info(f'{import_status} results imported')
         return redirect(url_for('admin.admin'))
     return render_template(
         'admin/import.html', title=_('Admin Panel: Import Results'), form=form,
@@ -468,8 +471,8 @@ def single_group(group_id):
         abort(403)
     group = Group.query.filter_by(id=group_id).first()
     return render_template(
-        'admin/single_group.html', title=_(f'Admin Panel: Group {group.id}'),
-        group=group,
+        'admin/single_group.html', group=group,
+        title=_(f'Admin Panel: Group ') + str(group.id)
     )
 
 
@@ -483,8 +486,8 @@ def import_group():
         file = upload_file(form.file)
         group_data = read_json(file, field='groups')
         import_status = import_groups_to_db(group_data)
-        flash(_(f'{import_status} groups imported'))
-        current_app.logger.info(_(f'{import_status} groups imported'))
+        flash(import_status + _(f' groups imported'))
+        current_app.logger.info(f'{import_status} groups imported')
         return redirect(url_for('admin.admin'))
     return render_template(
         'admin/import.html', title=_('Admin Panel: Import Groups'), form=form,
@@ -502,7 +505,8 @@ def add_group():
         group = Group(code=form.code.data, active=form.active.data)
         db.session.add(group)
         db.session.commit()
-        flash(_(f'Group {form.code.data} with id {group.id} added'))
+        # STRING NOT TRANSLATED YET (STR WITH VARIABLES)
+        flash(f'Group {form.code.data} with id {group.id} added')
         redirect(url_for('admin.group_overview'))
     return render_template(
         'admin/edit_group.html', title=_('Admin Panel: Add Group'), form=form
@@ -520,7 +524,8 @@ def edit_group(group_id):
         group.code = form.code.data
         group.active = form.active.data
         db.session.commit()
-        flash(_(f'Group {form.code.data} with id {group.id} updated'))
+        # STRING NOT TRANSLATED YET (STR WITH VARIABLES)
+        flash(f'Group {form.code.data} with id {group.id} updated')
         return redirect(url_for('admin.single_group', group_id=group_id))
     else:
         form.code.data = group.code
@@ -540,8 +545,8 @@ def import_schedule():
         file = upload_file(form.file)
         schedule_data = read_json(file, field='schedules')
         import_status = import_schedules_to_db(schedule_data)
-        flash(_(f'{import_status} schedules imported'))
-        current_app.logger.info(_(f'{import_status} schedules imported'))
+        flash(import_status + _(f' schedules imported'))
+        current_app.logger.info(import_status + _(f' schedules imported'))
         return redirect(url_for('admin.admin'))
     return render_template(
         'admin/import.html', title=_('Admin Panel: Import Schedules'),
@@ -571,7 +576,7 @@ def single_schedule(schedule_id):
     group = Group.query.filter_by(id=schedule.group).first()
     return render_template(
         'admin/single_schedule.html', schedule=schedule, group=group,
-        title=_(f'Admin Panel: Schedule {schedule_id}'), module=module
+        title=_(f'Admin Panel: ') + str(schedule_id), module=module
     )
 
 
@@ -818,11 +823,13 @@ def manage_module_membership():
                 module = Module.query.filter_by(id=module_id).first()
                 if form.action.data == 'add':
                     user.add_to_module(module, module_role=form.roles.data)
-                    flash(_(f'Added {form.roles.data} to modules'))
+                    # STRING NOT TRANSLATED YET (STR WITH VARIABLES)
+                    flash(f'Added {form.roles.data} to modules')
                 elif form.action.data == 'remove':
                     user.remove_from_module(
                         module, module_role=form.roles.data)
-                    flash(_(f'Removed {form.roles.data} from modules'))
+                    # STRING NOT TRANSLATED YET (STR WITH VARIABLES)
+                    flash(f'Removed {form.roles.data} from modules')
             db.session.commit()
         return redirect(url_for('admin.manage_module_membership'))
     return render_template(
