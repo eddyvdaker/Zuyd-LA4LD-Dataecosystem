@@ -6,7 +6,7 @@
     A learning analytics for learning design data ecosystem build using Flask.
 """
 
-from flask import Flask, request
+from flask import Flask, request, current_app
 from flask_babel import Babel, lazy_gettext as _l
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -103,11 +103,10 @@ def create_app(config_class=Config):
     return app
 
 
-# Uncomment when translations have been added
-# @babel.localeselector
-# def get_locale():
-#     return request.accept_languages.best_match(
-#         current_app.config['LANGUAGES'])
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(
+        current_app.config['LANGUAGES'])
 
 
 from app import models
