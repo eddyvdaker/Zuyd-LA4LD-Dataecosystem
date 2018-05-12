@@ -20,28 +20,28 @@
         <ul class="navbar-nav">
             {% if not current_user.is_anonymous %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('main.profile') }}">Profile</a>
+                    <a class="nav-link" href="{{ url_for('main.profile') }}">{{ _('Profile') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('results.results') }}">Results</a>
+                    <a class="nav-link" href="{{ url_for('results.results') }}">{{ _('Results') }}</a>
                 </li>
                 <li>
-                    <a class="nav-link" href="{{ url_for('schedule.schedule') }}">Schedule</a>
+                    <a class="nav-link" href="{{ url_for('schedule.schedule') }}">{{ _('Schedule') }}</a>
                 </li>
                 <li>
-                    <a class="nav-link" href="{{ url_for('attendance.attendance') }}">Attendance</a>
+                    <a class="nav-link" href="{{ url_for('attendance.attendance') }}">{{ _('Attendance') }}</a>
                 </li>
                 {% if current_user.role.role == 'admin' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.admin') }}">Admin</a>
+                        <a class="nav-link" href="{{ url_for('admin.admin') }}">{{ _('Admin') }}</a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
                 </li>
             {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
                 </li>
             {% endif %}
         </ul>

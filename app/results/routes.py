@@ -6,6 +6,7 @@
     Routes used for the results overview of the application.
 """
 from flask import render_template
+from flask_babel import _
 from flask_login import current_user, login_required
 
 from app.models import Result
@@ -26,7 +27,8 @@ def results():
                     user_results.append(grade)
     else:
         user_results = None
-    return render_template('results/results.html', title='Results',
-                           results=user_results)
+    return render_template(
+        'results/results.html', title=_('Results'), results=user_results
+    )
 
 

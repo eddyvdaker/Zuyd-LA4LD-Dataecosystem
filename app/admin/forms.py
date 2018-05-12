@@ -6,6 +6,8 @@
     Forms that are used within the admin panel blueprint of the
     application.
 """
+
+from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField, StringField, SelectField, DateField, \
@@ -16,67 +18,67 @@ from app.forms import MultiCheckboxField
 
 
 class ImportForm(FlaskForm):
-    file = FileField('File', validators=[
+    file = FileField(_l('File'), validators=[
         FileRequired(),
-        FileAllowed(['json'], 'Incorrect format, JSON required!')
+        FileAllowed(['json'], _l('Incorrect format, JSON required!'))
     ])
-    submit = SubmitField('Import')
+    submit = SubmitField(_l('Import'))
 
 
 class EditUserForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    role = SelectField('Role', validators=[DataRequired()])
-    card_number = StringField('Card Number', validators=[DataRequired()])
-    submit = SubmitField('Save Changes')
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    email = StringField(_l('Email'), validators=[DataRequired(), Email()])
+    role = SelectField(_l('Role'), validators=[DataRequired()])
+    card_number = StringField(_l('Card Number'), validators=[DataRequired()])
+    submit = SubmitField(_l('Save Changes'))
 
 
 class EditModuleForm(FlaskForm):
-    code = StringField('Code', validators=[DataRequired()])
-    name = StringField('Name', validators=[DataRequired()])
-    description = StringField('Description', validators=[DataRequired()])
-    start = DateField('Start', validators=[DataRequired()])
-    end = DateField('End', validators=[DataRequired()])
-    faculty = StringField('Faculty', validators=[DataRequired()])
-    submit = SubmitField('Save Changes')
+    code = StringField(_l('Code'), validators=[DataRequired()])
+    name = StringField(_l('Name'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    start = DateField(_l('Start'), validators=[DataRequired()])
+    end = DateField(_l('End'), validators=[DataRequired()])
+    faculty = StringField(_l('Faculty'), validators=[DataRequired()])
+    submit = SubmitField(_l('Save Changes'))
 
 
 class EditScheduleForm(FlaskForm):
-    description = StringField('Description', validators=[DataRequired()])
-    module = SelectField('Module', validators=[DataRequired()], coerce=int)
-    group = SelectField('Group', validators=[DataRequired()], coerce=int)
-    submit = SubmitField('Save Changes')
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    module = SelectField(_l('Module'), validators=[DataRequired()], coerce=int)
+    group = SelectField(_l('Group'), validators=[DataRequired()], coerce=int)
+    submit = SubmitField(_l('Save Changes'))
 
 
 class EditScheduleItemForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    description = StringField('Description', validators=[DataRequired()])
-    start = DateTimeField('Start', validators=[DataRequired()])
-    end = DateTimeField('End', validators=[DataRequired()])
-    room = StringField('Room')
-    submit = SubmitField('Save Changes')
+    title = StringField(_l('Title'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    start = DateTimeField(_l('Start'), validators=[DataRequired()])
+    end = DateTimeField(_l('End'), validators=[DataRequired()])
+    room = StringField(_l('Room'))
+    submit = SubmitField(_l('Save Changes'))
 
 
 class EditGroupForm(FlaskForm):
-    code = StringField('Group', validators=[DataRequired()])
-    active = BooleanField('Active')
-    submit = SubmitField('Save Changes')
+    code = StringField(_l('Group'), validators=[DataRequired()])
+    active = BooleanField(_l('Active'))
+    submit = SubmitField(_l('Save Changes'))
 
 
 class ManageGroupMembershipForm(FlaskForm):
     action = SelectField(
         'Action', validators=[DataRequired()],
-        choices=[('add', 'Add'), ('remove', 'Remove')])
-    users_list = MultiCheckboxField('Users', validators=[])
-    groups_list = MultiCheckboxField('Groups', validators=[])
-    submit = SubmitField('Save Changes')
+        choices=[('add', _l('Add')), ('remove', _l('Remove'))])
+    users_list = MultiCheckboxField(_l('Users'), validators=[])
+    groups_list = MultiCheckboxField(_l('Groups'), validators=[])
+    submit = SubmitField(_l('Save Changes'))
 
 
 class ManageModuleMembershipForm(FlaskForm):
     action = SelectField(
         'Action', validators=[DataRequired()],
-        choices=[('add', 'Add'), ('remove', 'Remove')])
-    users_list = MultiCheckboxField('Users', validators=[])
-    modules_list = MultiCheckboxField('Modules', validators=[])
-    roles = SelectField('Role', validators=[DataRequired()])
-    submit = SubmitField('Save Changes')
+        choices=[('add', _l('Add')), ('remove', _l('Remove'))])
+    users_list = MultiCheckboxField(_l('Users'), validators=[])
+    modules_list = MultiCheckboxField(_l('Modules'), validators=[])
+    roles = SelectField(_l('Role'), validators=[DataRequired()])
+    submit = SubmitField(_l('Save Changes'))

@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<p id="welcome-text">Hello, {{ current_user.username }}</p>
+<p id="welcome-text">{{ _('Hello') }}, {{ current_user.username }}</p>
 
-<h3>Settings</h3>
-<p><a href="{{ url_for('auth.change_password') }}">Change Password</a></p>
+<h3>{{ _('Settings') }}</h3>
+<p><a href="{{ url_for('auth.change_password') }}">{{ _('Change Password') }}</a></p>
 <hr>
 <h3>Info</h3>
 <p>
-    <strong>Your role is:</strong> {{ current_user.role.role }}<br>
-    <strong>Your card number:</strong> {{ current_user.card_number }}<br>
-    <strong>Your identifier is:</strong> {{ current_user.hash_identifier() }}<br><br>
-    <a href="{{ url_for('main.download_own_data') }}"><button type="button" class="btn btn-dark">Export Data</button></a>
+    <strong>{{ _('Your role is') }}:</strong> {{ current_user.role.role }}<br>
+    <strong>{{ _('Your card number') }}:</strong> {{ current_user.card_number }}<br>
+    <strong>{{ _('Your identifier is') }}:</strong> {{ current_user.hash_identifier() }}<br><br>
+    <a href="{{ url_for('main.download_own_data') }}"><button type="button" class="btn btn-dark">{{ _('Export Data') }}</button></a>
 </p>
 {% if modules_as_student %}
 <div id="modules-as-student">
     <br>
     <hr>
-    <h3>Modules as Student</h3>
+    <h3>{{ _('Modules as Student') }}</h3>
     <table class="table table-striped">
         <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Faculty</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Faculty') }}</th>
         </tr>
 
     {% for module in modules_as_student %}
@@ -45,15 +45,15 @@
 <div id="modules-as-teacher">
     <br>
     <hr>
-    <h3>Modules as Teacher</h3>
+    <h3>{{ _('Modules as Teacher') }}</h3>
     <table class="table table-striped">
         <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Faculty</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Faculty') }}</th>
         </tr>
 
     {% for module in modules_as_teacher %}
@@ -73,15 +73,15 @@
 <div id="modules-as-examiner">
     <br>
     <hr>
-    <h3>Modules as Examiner</h3>
+    <h3>{{ _('Modules as Examiner') }}</h3>
     <table class="table table-striped">
         <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Faculty</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Faculty') }}</th>
         </tr>
 
     {% for module in modules_as_examiner %}
@@ -97,5 +97,4 @@
     </table>
 </div>
 {% endif %}
-<p>{{ test_data }}</p>
 {% endblock %}

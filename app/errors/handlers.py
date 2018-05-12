@@ -7,6 +7,7 @@
 """
 
 from flask import render_template, request
+from flask_babel import _
 
 from app import db
 from app.api.errors import error_response as api_error_response
@@ -23,7 +24,7 @@ def forbidden_error(error):
     if wants_json_response():
         return api_error_response(403)
     return render_template(
-        'errors/403.html', title='403 - Forbidden'
+        'errors/403.html', title=_('403 - Forbidden')
     ), 403
 
 
@@ -32,7 +33,7 @@ def not_found_error(error):
     if wants_json_response():
         return api_error_response(404)
     return render_template(
-        'errors/404.html', title='404 - File Not Found'
+        'errors/404.html', title=_('404 - File Not Found')
     ), 404
 
 
@@ -42,5 +43,5 @@ def internal_error(error):
     if wants_json_response():
         return api_error_response(500)
     return render_template(
-        'errors/500.html', title='500 - Internal Server Error'
+        'errors/500.html', title=_('500 - Internal Server Error')
     ), 500

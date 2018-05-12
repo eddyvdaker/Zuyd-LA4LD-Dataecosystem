@@ -1,10 +1,10 @@
-<p>Dear {{ user.username }},</p>
-<p>A account has been created for you in the LA4LD system. Your login details are:</p>
-<p>username: {{ user.username }}</p>
-<p>password: {{ user.password }}</p>
+<p>{{ _('Dear') }} {{ user.username }},</p>
+<p>{{ _('A account has been created for you in the LA4LD system. Your login details are') }}:</p>
+<p>{{ _('username') }}: {{ user.username }}</p>
+<p>{{ _('password') }}: {{ user.password }}</p>
 <p></p>
-<p>Change your password as soon as possible.</p>
+<p>{{ _('Change your password as soon as possible.') }}</p>
 <p></p>
-<p>Sincerely,</p>
+<p>{{ _('Sincerely') }},</p>
 <p></p>
-<p>The LA4LD team</p>
+<p>{{ _('The LA4LD team') }}</p>

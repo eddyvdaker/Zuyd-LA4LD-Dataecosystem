@@ -10,6 +10,7 @@ import json
 import os
 from flask import abort, current_app, render_template, send_from_directory, \
     send_file
+from flask_babel import _
 from flask_login import current_user, login_required
 from secrets import token_urlsafe
 
@@ -125,7 +126,7 @@ def collect_schedule_data(user_identifier):
 
 @bp.route('/')
 def index():
-    return render_template('index.html', title='Home Page')
+    return render_template('index.html', title=_('Home Page'))
 
 
 @bp.route('/error/test_500')
@@ -140,10 +141,12 @@ def profile():
     modules_as_teacher = current_user.get_modules_of_teacher()
     modules_as_examiner = current_user.get_modules_of_examiner()
 
-    return render_template('profile.html', title='Profile',
-                           modules_as_student=modules_as_student,
-                           modules_as_teacher=modules_as_teacher,
-                           modules_as_examiner=modules_as_examiner)
+    return render_template(
+        'profile.html', title=_('Profile'),
+        modules_as_student=modules_as_student,
+        modules_as_teacher=modules_as_teacher,
+        modules_as_examiner=modules_as_examiner
+    )
 
 
 @bp.route('/uploads/<filename>')
@@ -174,4 +177,5 @@ def download_own_data():
         mimetype='application/json',
         attachment_filename='my-data.json',
         as_attachment=True,
-        cache_timeout=-1)
+        cache_timeout=-1
+    )

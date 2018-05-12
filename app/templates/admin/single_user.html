@@ -2,23 +2,23 @@
 
 {% block app_content %}
 <p>
-    <strong>Username:</strong> {{ user.username }}<br>
-    <strong>Email:</strong> {{ user.email }}<br>
-    <strong>User Role:</strong> {{ user.role.role }}<br>
-    <strong>User Card number:</strong> {{ user.card_number }}<br>
-    <a href="{{ url_for('admin.edit_user', user_id=user.id) }}">Edit User</a><br>
+    <strong>{{ _('Username') }}:</strong> {{ user.username }}<br>
+    <strong>{{ _('Email') }}:</strong> {{ user.email }}<br>
+    <strong>{{ _('User Role') }}:</strong> {{ user.role.role }}<br>
+    <strong>{{ _('User Card number') }}:</strong> {{ user.card_number }}<br>
+    <a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ _('Edit User') }}</a><br>
 </p>
 {% if user.groups_of_student() %}
 <div id="groups-of-student">
     <br>
     <hr>
-    <h3>Groups of student</h3>
+    <h3>{{ _('Groups of student') }}</h3>
     <table class="table table-striped">
         <tr>
             <th>id</th>
-            <th>code</th>
-            <th>active</th>
-            <th>Modules</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Active') }}</th>
+            <th>{{ _('Modules') }}</th>
             <th></th>
         </tr>
     {% for group in groups %}
@@ -27,7 +27,7 @@
             <td>{{ group.code }}</td>
             <td>{{ group.active }}</td>
             <td>{{ group.modules_list }}</td>
-            <td><a href="{{ url_for('admin.single_group', group_id=group.id) }}">Details</a></td>
+            <td><a href="{{ url_for('admin.single_group', group_id=group.id) }}">{{ _('Details') }}</a></td>
         </tr>
     {% endfor %}
     </table>
@@ -38,15 +38,15 @@
 <div id="modules-as-student">
     <br>
     <hr>
-    <h3>Modules as Student</h3>
+    <h3>{{ _('Modules as Student') }}</h3>
     <table class="table table-striped">
         <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Faculty</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Faculty') }}</th>
         </tr>
 
     {% for module in user.get_modules_of_student() %}
@@ -66,15 +66,15 @@
 <div id="modules-as-teacher">
     <br>
     <hr>
-    <h3>Modules as Teacher</h3>
+    <h3>{{ _('Modules as Teacher') }}</h3>
     <table class="table table-striped">
         <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Faculty</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Faculty') }}</th>
         </tr>
 
     {% for module in user.get_modules_of_teacher() %}
@@ -94,15 +94,15 @@
 <div id="modules-as-examiner">
     <br>
     <hr>
-    <h3>Modules as Examiner</h3>
+    <h3>{{ _('Modules as Examiner') }}</h3>
     <table class="table table-striped">
         <tr>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Faculty</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Faculty') }}</th>
         </tr>
 
     {% for module in user.get_modules_of_examiner() %}

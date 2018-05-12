@@ -1,0 +1,742 @@
+# Dutch translations for PROJECT.
+# Copyright (C) 2018 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2018-05-12 14:18+0200\n"
+"PO-Revision-Date: 2018-05-12 14:20+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: nl\n"
+"Language-Team: nl <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.3\n"
+
+#: app/__init__.py:26
+msgid "Please log in to access this page."
+msgstr "Log a.u.b. in om toegang te krijgen tot deze pagina."
+
+#: app/admin/forms.py:21
+msgid "File"
+msgstr "Bestand"
+
+#: app/admin/forms.py:23
+msgid "Incorrect format, JSON required!"
+msgstr "Incorrect formaat, verwacht JSON!"
+
+#: app/admin/forms.py:25
+msgid "Import"
+msgstr "Importeren"
+
+#: app/admin/forms.py:29 app/auth/forms.py:15
+#: app/templates/admin/single_group.html:39
+#: app/templates/admin/single_user.html:5
+#: app/templates/admin/users_overview.html:8
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+#: app/admin/forms.py:30 app/auth/forms.py:22
+#: app/templates/admin/single_group.html:40
+#: app/templates/admin/single_user.html:6
+#: app/templates/admin/users_overview.html:9
+msgid "Email"
+msgstr "Email"
+
+#: app/admin/forms.py:31 app/admin/forms.py:83
+#: app/templates/admin/single_group.html:41
+#: app/templates/admin/users_overview.html:10
+msgid "Role"
+msgstr "Rol"
+
+#: app/admin/forms.py:32 app/templates/admin/single_group.html:42
+#: app/templates/admin/users_overview.html:11
+msgid "Card Number"
+msgstr "Kaart nummer"
+
+#: app/admin/forms.py:33 app/admin/forms.py:43 app/admin/forms.py:50
+#: app/admin/forms.py:59 app/admin/forms.py:65 app/admin/forms.py:74
+#: app/admin/forms.py:84
+msgid "Save Changes"
+msgstr "Weizigingen Opslaan"
+
+#: app/admin/forms.py:37 app/templates/admin/group_overview.html:8
+#: app/templates/admin/single_group.html:5
+#: app/templates/admin/single_group.html:13
+#: app/templates/admin/single_user.html:19
+#: app/templates/admin/single_user.html:44
+#: app/templates/admin/single_user.html:72
+#: app/templates/admin/single_user.html:100 app/templates/profile.html:23
+#: app/templates/profile.html:51 app/templates/profile.html:79
+msgid "Code"
+msgstr "Code"
+
+#: app/admin/forms.py:38 app/templates/admin/modules_overview.html:9
+#: app/templates/admin/single_group.html:14
+#: app/templates/admin/single_user.html:45
+#: app/templates/admin/single_user.html:73
+#: app/templates/admin/single_user.html:101 app/templates/profile.html:24
+#: app/templates/profile.html:52 app/templates/profile.html:80
+#: app/templates/results/results.html:8
+msgid "Name"
+msgstr "Naam"
+
+#: app/admin/forms.py:39 app/admin/forms.py:47 app/admin/forms.py:55
+#: app/templates/admin/modules_overview.html:10
+#: app/templates/admin/single_group.html:15
+#: app/templates/admin/single_group.html:60
+#: app/templates/admin/single_schedule.html:5
+#: app/templates/admin/single_schedule.html:15
+#: app/templates/admin/single_user.html:46
+#: app/templates/admin/single_user.html:74
+#: app/templates/admin/single_user.html:102
+#: app/templates/attendance/attendance.html:8 app/templates/profile.html:25
+#: app/templates/profile.html:53 app/templates/profile.html:81
+msgid "Description"
+msgstr "Beschrijving"
+
+#: app/admin/forms.py:40 app/admin/forms.py:56
+#: app/templates/admin/modules_overview.html:11
+#: app/templates/admin/single_group.html:16
+#: app/templates/admin/single_schedule.html:16
+#: app/templates/admin/single_user.html:47
+#: app/templates/admin/single_user.html:75
+#: app/templates/admin/single_user.html:103
+#: app/templates/attendance/attendance.html:9 app/templates/profile.html:26
+#: app/templates/profile.html:54 app/templates/profile.html:82
+msgid "Start"
+msgstr "Start"
+
+#: app/admin/forms.py:41 app/admin/forms.py:57
+#: app/templates/admin/modules_overview.html:12
+#: app/templates/admin/single_group.html:17
+#: app/templates/admin/single_schedule.html:17
+#: app/templates/admin/single_user.html:48
+#: app/templates/admin/single_user.html:76
+#: app/templates/admin/single_user.html:104
+#: app/templates/attendance/attendance.html:10 app/templates/profile.html:27
+#: app/templates/profile.html:55 app/templates/profile.html:83
+msgid "End"
+msgstr "Einde"
+
+#: app/admin/forms.py:42 app/templates/admin/modules_overview.html:13
+#: app/templates/admin/single_group.html:18
+#: app/templates/admin/single_user.html:49
+#: app/templates/admin/single_user.html:77
+#: app/templates/admin/single_user.html:105 app/templates/profile.html:28
+#: app/templates/profile.html:56 app/templates/profile.html:84
+msgid "Faculty"
+msgstr "Faculteit"
+
+#: app/admin/forms.py:48 app/templates/admin/group_overview.html:10
+#: app/templates/admin/single_group.html:61
+#: app/templates/admin/single_schedule.html:6
+#: app/templates/results/results.html:7
+msgid "Module"
+msgstr "Module"
+
+#: app/admin/forms.py:49 app/admin/forms.py:63
+#: app/templates/admin/single_group.html:62
+#: app/templates/admin/single_schedule.html:7
+msgid "Group"
+msgstr "Groep"
+
+#: app/admin/forms.py:54
+msgid "Title"
+msgstr "Titel"
+
+#: app/admin/forms.py:58 app/templates/admin/single_schedule.html:18
+#: app/templates/attendance/attendance.html:11
+msgid "Room"
+msgstr "Ruimte"
+
+#: app/admin/forms.py:64 app/templates/admin/group_overview.html:9
+#: app/templates/admin/single_group.html:6
+#: app/templates/admin/single_user.html:20
+msgid "Active"
+msgstr "Actief"
+
+#: app/admin/forms.py:71 app/admin/forms.py:80
+msgid "Add"
+msgstr "Toevoegen"
+
+#: app/admin/forms.py:71 app/admin/forms.py:80
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: app/admin/forms.py:72 app/admin/forms.py:81
+msgid "Users"
+msgstr "Gebruikers"
+
+#: app/admin/forms.py:73
+msgid "Groups"
+msgstr "Groepen"
+
+#: app/admin/forms.py:82 app/templates/admin/single_group.html:9
+#: app/templates/admin/single_user.html:21
+msgid "Modules"
+msgstr "Modules"
+
+#: app/admin/routes.py:60
+msgid "Invalid file, missing key )"
+msgstr "Ongeldig bestand, mist sleutel )"
+
+#: app/admin/routes.py:233
+msgid "Admin Panel"
+msgstr "Administratie Paneel"
+
+#: app/admin/routes.py:251
+msgid "Imported Users (Copy to send to users):"
+msgstr "Geimporteerde gebruikers (Kopieer en stuur naar gebruikers):"
+
+#: app/admin/routes.py:259
+msgid "Skipped Users:"
+msgstr "Overgeslagen gebruikers"
+
+#: app/admin/routes.py:266
+msgid "Admin Panel: Import Users"
+msgstr "Administratie Paneel: Importeren Gebruikers"
+
+#: app/admin/routes.py:278
+msgid "Admin Panel: Users Overview"
+msgstr "Administratie Paneel: Gebruikers Overzicht"
+
+#: app/admin/routes.py:295
+msgid "Admin Panel: User "
+msgstr "Administratie Paneel: Gebruikers"
+
+#: app/admin/routes.py:314 app/admin/routes.py:394
+msgid "The changes have been saved."
+msgstr "De weizigingen zijn opgeslagen"
+
+#: app/admin/routes.py:322
+msgid "Admin Panel: Edit User"
+msgstr "Administratie Paneel: Gebruiker Weizigen"
+
+#: app/admin/routes.py:344
+msgid "Admin Panel: New User"
+msgstr "Administratie Paneel: Nieuwe Gebruiker"
+
+#: app/admin/routes.py:358
+msgid " modules imported"
+msgstr " Modules importeren"
+
+#: app/admin/routes.py:362
+msgid "Admin Panel: Import Modules"
+msgstr "Administratie Paneel: Modules Importeren"
+
+#: app/admin/routes.py:375
+msgid "Admin Panel: Modules Overview"
+msgstr "Administratie Paneel: Modules Overzicht"
+
+#: app/admin/routes.py:405
+msgid "Admin Panel: Edit Module"
+msgstr "Administratie Paneel: Module Weizigen"
+
+#: app/admin/routes.py:429
+msgid "Admin Panel: Add Module"
+msgstr "Administratie Paneel: Module Toevoegen"
+
+#: app/admin/routes.py:443
+msgid " results imported"
+msgstr " resultaten importeren"
+
+#: app/admin/routes.py:447
+msgid "Admin Panel: Import Results"
+msgstr "Administratie Paneel: Resultaten Importeren"
+
+#: app/admin/routes.py:463
+msgid "Admin Panel: Group Overview"
+msgstr "Administratie Paneel: Groepen Overzicht"
+
+#: app/admin/routes.py:475
+msgid "Admin Panel: Group "
+msgstr "Administratie Paneel: Groep"
+
+#: app/admin/routes.py:489
+msgid " groups imported"
+msgstr " groepen geimporteerd"
+
+#: app/admin/routes.py:493
+msgid "Admin Panel: Import Groups"
+msgstr "Administratie Paneel: Groepen Importeren"
+
+#: app/admin/routes.py:512
+msgid "Admin Panel: Add Group"
+msgstr "Administratie Paneel: Groep Toevoegen"
+
+#: app/admin/routes.py:534
+msgid "Admin Panel: Edit Group"
+msgstr "Administratie Paneel: Groep Weizigen"
+
+#: app/admin/routes.py:548 app/admin/routes.py:549
+msgid " schedules imported"
+msgstr " rooster importeren"
+
+#: app/admin/routes.py:552
+msgid "Admin Panel: Import Schedules"
+msgstr "Administratie Paneel: Roosters Importeren"
+
+#: app/admin/routes.py:565
+msgid "Admin Panel: Schedule Overview"
+msgstr "Administratie Paneel: Roosters Overzicht"
+
+#: app/admin/routes.py:579
+msgid "Admin Panel: "
+msgstr "Administratie Paneel: "
+
+#: app/admin/routes.py:611
+msgid "Admin Panel: Edit Schedule"
+msgstr "Administratie Paneel: Rooster Weizigen"
+
+#: app/admin/routes.py:639
+msgid "Admin Panel: Add Schedule"
+msgstr "Administratie Paneel: Rooster Toevoegen"
+
+#: app/admin/routes.py:670
+msgid "Admin Panel:Edit Schedule Item"
+msgstr "Administratie Paneel: Rooster Item Weizigen"
+
+#: app/admin/routes.py:697
+msgid "Admin Panel: New Schedule Item"
+msgstr "Administratie Paneel: Rooster Item Toevoegen"
+
+#: app/admin/routes.py:712
+msgid "Admin Panel: Logs"
+msgstr "Administratie Paneel: Logboek"
+
+#: app/admin/routes.py:744
+msgid "No Fact-Store Data"
+msgstr "Geen Fact-Store Data"
+
+#: app/admin/routes.py:747
+msgid "Admin Panel: Fact-Store"
+msgstr "Administratie Paneel: Fact-Store"
+
+#: app/admin/routes.py:770
+msgid "No Fact-Store data available"
+msgstr "Geen Fact-Store data beschikbaar"
+
+#: app/admin/routes.py:791
+msgid "Added users to groups."
+msgstr "Gebruikers toegevoegd aan groep"
+
+#: app/admin/routes.py:794
+msgid "Removed users from groups"
+msgstr "Gebruikers verwijderd van groep"
+
+#: app/admin/routes.py:798
+msgid "Admin Panel: Manage Groups"
+msgstr "Administratie Paneel: Groepen beheren"
+
+#: app/admin/routes.py:836
+msgid "Admin Panel: Manage Modules"
+msgstr "Administratie Paneel: Modules beheren"
+
+#: app/attendance/routes.py:40 app/templates/base.html:32
+msgid "Attendance"
+msgstr "Aanwezigheid"
+
+#: app/auth/forms.py:16 app/auth/forms.py:27
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: app/auth/forms.py:17
+msgid "Remember Me"
+msgstr "Mij Onthouden"
+
+#: app/auth/forms.py:18
+msgid "Sign In"
+msgstr "Inloggen"
+
+#: app/auth/forms.py:23 app/auth/forms.py:31
+msgid "Request Password Reset"
+msgstr "Wachtwoord herstel"
+
+#: app/auth/forms.py:29
+msgid "Repeat Password"
+msgstr "Herhaal Wachtwoord"
+
+#: app/auth/forms.py:36
+msgid "Current Password"
+msgstr "Huidig Wachtwoord"
+
+#: app/auth/forms.py:39
+msgid "New Password"
+msgstr "Nieuw Wachtwoord"
+
+#: app/auth/forms.py:42
+msgid "Retype New Password"
+msgstr "Herhaal Nieuwe Wachtwoord"
+
+#: app/auth/forms.py:45 app/auth/routes.py:95 app/templates/profile.html:7
+msgid "Change Password"
+msgstr "Weizig Wachtwoord"
+
+#: app/auth/routes.py:29
+msgid "Invalid username or password"
+msgstr "Verkeerde gebruikersnaam of wachtwoord"
+
+#: app/auth/routes.py:36
+msgid "Sign in"
+msgstr "Inloggen"
+
+#: app/auth/routes.py:55
+msgid "Check your email for the instructions to reset your password"
+msgstr "Check uw email voor instructies voor het herstellen van uw wachtwoord"
+
+#: app/auth/routes.py:59 app/auth/routes.py:78
+msgid "Reset Password"
+msgstr "Herstel Wachtwoord"
+
+#: app/auth/routes.py:75
+msgid "Your password has been reset."
+msgstr "Uw wachtwoord is hersteld"
+
+#: app/auth/routes.py:88
+msgid "Wrong password"
+msgstr "Verkeerd wachtwoord"
+
+#: app/auth/routes.py:91
+msgid "Password changed"
+msgstr "Wachtwoord gewijzigd"
+
+#: app/errors/handlers.py:27
+msgid "403 - Forbidden"
+msgstr "403 - Verboden"
+
+#: app/errors/handlers.py:36
+msgid "404 - File Not Found"
+msgstr "404 - Bestand niet gevonden"
+
+#: app/errors/handlers.py:46
+msgid "500 - Internal Server Error"
+msgstr "500 - Interne fout"
+
+#: app/main/routes.py:129
+msgid "Home Page"
+msgstr "Home Pagina"
+
+#: app/main/routes.py:145 app/templates/base.html:23
+msgid "Profile"
+msgstr "Profiel"
+
+#: app/results/routes.py:31 app/templates/base.html:26
+msgid "Results"
+msgstr "Resultaten"
+
+#: app/schedule/forms.py:15 app/schedule/routes.py:42
+#: app/templates/base.html:29
+msgid "Schedule"
+msgstr "Rooster"
+
+#: app/schedule/forms.py:16
+msgid "Check"
+msgstr "Check"
+
+#: app/schedule/routes.py:31
+msgid "Select Schedule"
+msgstr "Selecteer Rooster"
+
+#: app/templates/base.html:36
+msgid "Admin"
+msgstr "Administrator"
+
+#: app/templates/base.html:40
+msgid "Logout"
+msgstr "Uitloggen"
+
+#: app/templates/base.html:44
+msgid "Login"
+msgstr "Inloggen"
+
+#: app/templates/index.html:5
+msgid "Welcome to the LA4LD dataecosystem, please log in"
+msgstr "Welkom bij het LA4LD dataecosysteem, log a.u.b. in"
+
+#: app/templates/index.html:5
+msgid "here"
+msgstr "hier"
+
+#: app/templates/index.html:7 app/templates/profile.html:4
+msgid "Hello"
+msgstr "Hallo"
+
+#: app/templates/profile.html:6
+msgid "Settings"
+msgstr "Instellingen"
+
+#: app/templates/profile.html:11
+msgid "Your role is"
+msgstr "Uw rol is"
+
+#: app/templates/profile.html:12
+msgid "Your card number"
+msgstr "Uw kaartnummer"
+
+#: app/templates/profile.html:13
+msgid "Your identifier is"
+msgstr "Uw identificatienummer is"
+
+#: app/templates/profile.html:14
+msgid "Export Data"
+msgstr "Exporteer Data"
+
+#: app/templates/admin/single_user.html:41 app/templates/profile.html:20
+msgid "Modules as Student"
+msgstr "Modules als Student"
+
+#: app/templates/admin/single_user.html:69 app/templates/profile.html:48
+msgid "Modules as Teacher"
+msgstr "Modules als Docent"
+
+#: app/templates/admin/single_user.html:97 app/templates/profile.html:76
+msgid "Modules as Examiner"
+msgstr "Modules als Examinator"
+
+#: app/templates/admin/admin.html:4
+msgid "General Settigns"
+msgstr "Basis Instellingen"
+
+#: app/templates/admin/admin.html:8
+msgid "User Settings"
+msgstr "Gebruikers Instellingen"
+
+#: app/templates/admin/admin.html:10
+msgid "Import Users"
+msgstr "Importeren Gebruikers"
+
+#: app/templates/admin/admin.html:11
+msgid "Users Overview"
+msgstr "Gebruikers Overzicht"
+
+#: app/templates/admin/admin.html:13
+msgid "Module Settings"
+msgstr "Module Instellingen"
+
+#: app/templates/admin/admin.html:15
+msgid "Import Modules"
+msgstr "Importeren Modules"
+
+#: app/templates/admin/admin.html:16
+msgid "Module Overview"
+msgstr "Modules Overzicht"
+
+#: app/templates/admin/admin.html:17
+msgid "Module Membership"
+msgstr "Module Beheer"
+
+#: app/templates/admin/admin.html:19
+msgid "Group Settings"
+msgstr "Groep Instellingen"
+
+#: app/templates/admin/admin.html:21
+msgid "Group Overview"
+msgstr "Groepen Overzicht"
+
+#: app/templates/admin/admin.html:22
+msgid "Group Membership"
+msgstr "Groep Beheer"
+
+#: app/templates/admin/admin.html:24
+msgid "Results Settings"
+msgstr "Resultaten Instellingen"
+
+#: app/templates/admin/admin.html:26
+msgid "Import Results"
+msgstr "Importeren Resultaten"
+
+#: app/templates/admin/admin.html:28
+msgid "Schedule Settings"
+msgstr "Rooster Instellingen"
+
+#: app/templates/admin/admin.html:30
+msgid "Import Schedules"
+msgstr "Roosters Importeren"
+
+#: app/templates/admin/admin.html:31
+msgid "Schedule Overview"
+msgstr "Roosters Overzicht"
+
+#: app/templates/admin/admin.html:33
+msgid "Fact-Store"
+msgstr "Fact-Store"
+
+#: app/templates/admin/admin.html:35
+msgid "View Fact-Store"
+msgstr "Bekijk Fact-Store"
+
+#: app/templates/admin/fact-store.html:4
+msgid "Export Fact-Store"
+msgstr "Fact-Store Exporteren"
+
+#: app/templates/admin/group_overview.html:4
+msgid "Add Group"
+msgstr "Groep Toevoegen"
+
+#: app/templates/admin/group_overview.html:19
+#: app/templates/admin/schedule_overview.html:19
+#: app/templates/admin/single_group.html:71
+#: app/templates/admin/single_user.html:30
+#: app/templates/admin/users_overview.html:21
+msgid "Details"
+msgstr "Details"
+
+#: app/templates/admin/import.html:16
+msgid "Import expects JSON files in the following format:"
+msgstr "Importeerfunctie verwacht JSON bestanden in het volgende formaat:"
+
+#: app/templates/admin/logs.html:4
+msgid "Export Logs"
+msgstr "Exporteer Logboek"
+
+#: app/templates/admin/modules_overview.html:4
+msgid "Add Modules"
+msgstr "Modules Toevoegen"
+
+#: app/templates/admin/modules_overview.html:26
+#: app/templates/admin/single_group.html:7
+#: app/templates/admin/single_group.html:31
+#: app/templates/admin/single_group.html:52
+#: app/templates/admin/single_schedule.html:29
+msgid "Edit"
+msgstr "Weizigen"
+
+#: app/templates/admin/schedule_overview.html:4
+msgid "Add Schedule"
+msgstr "Rooster Toevoegen"
+
+#: app/templates/admin/single_group.html:35
+msgid "Students"
+msgstr "Studenten"
+
+#: app/templates/admin/single_group.html:56
+msgid "Schedules"
+msgstr "Roosters"
+
+#: app/templates/admin/single_schedule.html:8
+msgid "Edit schedule"
+msgstr "Rooster weizigen"
+
+#: app/templates/admin/single_schedule.html:10
+msgid "Schedule Items"
+msgstr "Rooster Items"
+
+#: app/templates/admin/single_schedule.html:11
+msgid "Add Schedule Item"
+msgstr "Rooster Item Toevoegen"
+
+#: app/templates/admin/single_schedule.html:14
+msgid "Item"
+msgstr "Item"
+
+#: app/templates/admin/single_user.html:7
+msgid "User Role"
+msgstr "Gebruikersrol"
+
+#: app/templates/admin/single_user.html:8
+msgid "User Card number"
+msgstr "Gebruiker Kaartnummer"
+
+#: app/templates/admin/single_user.html:9
+msgid "Edit User"
+msgstr "Gebruiker Weizigen"
+
+#: app/templates/admin/single_user.html:15
+msgid "Groups of student"
+msgstr "Groepen van student"
+
+#: app/templates/admin/users_overview.html:4
+msgid "Add User"
+msgstr "Gebruiker Toevoegen"
+
+#: app/templates/attendance/attendance.html:7
+msgid "Attended"
+msgstr "Aanwezig"
+
+#: app/templates/attendance/attendance.html:25
+#: app/templates/results/results.html:23
+msgid "No results"
+msgstr "Geen resultaten"
+
+#: app/templates/auth/login.html:23
+msgid "Forgot Your Password?"
+msgstr "Wachtwoord vergeten?"
+
+#: app/templates/auth/login.html:24
+msgid "Click to Reset It"
+msgstr "Klik hier om het te herstellen"
+
+#: app/templates/email/new_account.html:1
+#: app/templates/email/reset_password.html:1
+msgid "Dear"
+msgstr "Beste"
+
+#: app/templates/email/new_account.html:2
+msgid ""
+"A account has been created for you in the LA4LD system. Your login "
+"details are"
+msgstr "Uw account voor het LA4LD systeem is aangemaakt. Uw gegevens zijn"
+
+#: app/templates/email/new_account.html:3
+msgid "username"
+msgstr "Gebruikersnaam"
+
+#: app/templates/email/new_account.html:4
+msgid "password"
+msgstr "Wachtwoord"
+
+#: app/templates/email/new_account.html:6
+msgid "Change your password as soon as possible."
+msgstr "Weizig uw wachtwoord zo snel mogelijk."
+
+#: app/templates/email/new_account.html:8
+#: app/templates/email/reset_password.html:11
+msgid "Sincerely"
+msgstr "Met vriendelijke groet"
+
+#: app/templates/email/new_account.html:10
+#: app/templates/email/reset_password.html:12
+msgid "The LA4LD team"
+msgstr "Het LA4LD team"
+
+#: app/templates/email/reset_password.html:3
+msgid "To reset your password"
+msgstr "Om uw wachtwoord te herstellen"
+
+#: app/templates/email/reset_password.html:5
+msgid "click here"
+msgstr "klik hier"
+
+#: app/templates/email/reset_password.html:8
+msgid ""
+"Alternatively, you can paste the following link in your browser's address"
+" bar"
+msgstr "U kunt ook de volgende link in de adresbalk van uw browser plakken"
+
+#: app/templates/email/reset_password.html:10
+msgid "If you have not requested a password reset simply ignore this message."
+msgstr "Als u deze aanvraag niet heeft gedaan kunt u dit bericht negeren."
+
+#: app/templates/errors/403.html:4 app/templates/errors/404.html:4
+#: app/templates/errors/500.html:7
+msgid "Back"
+msgstr "Vorige"
+
+#: app/templates/errors/500.html:5
+msgid "An unexpected error has occurred, the administrator has been notified."
+msgstr "Er is een onverwachte fout opgetreden, de beheerder is op de hoogte gebracht."
+
+#: app/templates/results/results.html:9
+msgid "Score"
+msgstr "Score"
+
+#: app/templates/results/results.html:10
+msgid "Weight"
+msgstr "Gewicht"
+

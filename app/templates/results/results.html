@@ -4,10 +4,10 @@
 {% if results %}
     <table class="table table-striped">
         <tr>
-            <th>Module</th>
-            <th>Name</th>
-            <th>Score</th>
-            <th>Weight</th>
+            <th>{{ _('Module') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Score') }}</th>
+            <th>{{ _('Weight') }}</th>
         </tr>
 
     {% for result in results %}
@@ -20,6 +20,6 @@
     {% endfor %}
     </table>
 {% else %}
-    <p>No results</p>
+    <p>{{ _('No results') }}</p>
 {% endif %}
 {% endblock %}

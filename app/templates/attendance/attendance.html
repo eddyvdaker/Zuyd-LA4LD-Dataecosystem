@@ -4,11 +4,11 @@
 {% if attended %}
     <table class="table table-striped">
         <tr>
-            <th>Attended</th>
-            <th>Description</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Room</th>
+            <th>{{ _('Attended') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Room') }}</th>
         </tr>
 
     {% for row in attended %}
@@ -22,6 +22,6 @@
     {% endfor %}
     </table>
 {% else %}
-    <p>No results</p>
+    <p>{{ _('No results') }}</p>
 {% endif %}
 {% endblock %}

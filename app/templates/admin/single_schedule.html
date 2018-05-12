@@ -2,20 +2,20 @@
 
 {% block app_content %}
 <p>
-    <strong>Description:</strong> {{ schedule.description }}<br>
-    <strong>Module:</strong> {{ module.name }} ({{ module.code }})<br>
-    <strong>Group:</strong> {{ group.code }}<br>
-    <a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">Edit schedule</a><br>
+    <strong>{{ _('Description') }}:</strong> {{ schedule.description }}<br>
+    <strong>{{ _('Module') }}:</strong> {{ module.name }} ({{ module.code }})<br>
+    <strong>{{ _('Group') }}:</strong> {{ group.code }}<br>
+    <a href="{{ url_for('admin.edit_schedule', schedule_id=schedule.id) }}">{{ _('Edit schedule') }}</a><br>
 </p>
-<h3>Schedule Items</h3>
-<a href="{{ url_for('admin.add_schedule_item', schedule_id=schedule.id) }}"><button type="button" class="btn btn-dark">Add Schedule Item</button></a><br><br>
+<h3>{{ _('Schedule Items') }}</h3>
+<a href="{{ url_for('admin.add_schedule_item', schedule_id=schedule.id) }}"><button type="button" class="btn btn-dark">{{ _('Add Schedule Item') }}</button></a><br><br>
 <table class="table table-striped">
     <tr>
-        <th>Item</th>
-        <th>Description</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Room</th>
+        <th>{{ _('Item') }}</th>
+        <th>{{ _('Description') }}</th>
+        <th>{{ _('Start') }}</th>
+        <th>{{ _('End') }}</th>
+        <th>{{ _('Room') }}</th>
         <th></th>
     </tr>
     {% if schedule.items.all() %}
@@ -26,7 +26,7 @@
                 <td>{{ item.start }}</td>
                 <td>{{ item.end }}</td>
                 <td>{{ item.room }}</td>
-                <td><a href="{{ url_for('admin.edit_schedule_item', schedule_id=schedule.id, item_id=item.id) }}">Edit</a></td>
+                <td><a href="{{ url_for('admin.edit_schedule_item', schedule_id=schedule.id, item_id=item.id) }}">{{ _('Edit') }}</a></td>
             </tr>
         {% endfor %}
     {% endif %}

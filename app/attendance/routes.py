@@ -6,6 +6,7 @@
     Routes and API endpoints used for showing attendance.
 """
 from flask import jsonify, request, render_template
+from flask_babel import _
 from flask_login import current_user, login_required
 
 from app import db
@@ -35,4 +36,6 @@ def attendance():
     attended = Attendance.query.filter_by(
         identifier=current_user.hash_identifier()).all()
 
-    return render_template('attendance/attendance.html', attended=attended)
+    return render_template(
+        'attendance/attendance.html', attended=attended, title=_('Attendance')
+    )
