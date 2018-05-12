@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<a href="{{ url_for('admin.add_group') }}"><button type="button" class="btn btn-dark">Add Group</button></a><br><br>
+<a href="{{ url_for('admin.add_group') }}"><button type="button" class="btn btn-dark">{{ _('Add Group') }}</button></a><br><br>
 <table class="table table-striped">
     <tr>
         <th>ID</th>
-        <th>Code</th>
-        <th>Active</th>
-        <th>Module</th>
+        <th>{{ _('Code') }}</th>
+        <th>{{ _('Active') }}</th>
+        <th>{{ _('Module') }}</th>
         <th></th>
     </tr>
 {% for group in groups %}
@@ -16,7 +16,7 @@
         <td>{{ group.code }}</td>
         <td>{{ group.active }}</td>
         <td>{{ group.modules_list }}</td>
-        <td><a href="{{ url_for('admin.single_group', group_id=group.id) }}">Details</a></td>
+        <td><a href="{{ url_for('admin.single_group', group_id=group.id) }}">{{ _('Details') }}</a></td>
     </tr>
 {% endfor %}
 </table>

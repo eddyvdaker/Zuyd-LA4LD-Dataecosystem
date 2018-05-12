@@ -1,11 +1,11 @@
-Dear {{ user.username }},
+{{ _('Dear') }} {{ user.username }},
 
-A account has been created for you in the LA4LD system. Your login details are:
-username: {{ user.username }}
-password: {{ user.password }}
+{{ _('A account has been created for you in the LA4LD system. Your login details are') }}:
+{{ _(username'') }}: {{ user.username }}
+{{ _('password') }}: {{ user.password }}
 
-Change your password as soon as possible.
+{{ _('Change your password as soon as possible.') }}
 
-Sincerely,
+{{ _('Sincerely') }},
 
-The LA4LD team
+{{ _('The LA4LD team') }}

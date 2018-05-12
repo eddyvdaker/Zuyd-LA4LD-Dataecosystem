@@ -7,6 +7,7 @@
 """
 from datetime import datetime, timedelta
 from flask import jsonify, redirect, render_template, url_for
+from flask_babel import _
 
 from app.api.auth import token_auth
 from app.models import Module, Schedule, ScheduleItem, Group
@@ -24,9 +25,11 @@ def schedule():
         schedule_id = Schedule.query.filter_by(
             description=form.schedule.data).first().id
         return redirect(url_for(
-            'schedule.single_schedule', schedule_id=schedule_id))
+            'schedule.single_schedule', schedule_id=schedule_id)
+        )
     return render_template(
-        'schedule/select_schedule.html', form=form, title='Select Schedule')
+        'schedule/select_schedule.html', form=form, title=_('Select Schedule')
+    )
 
 
 @bp.route('/schedule/<schedule_id>')
@@ -36,7 +39,8 @@ def single_schedule(schedule_id):
     group = Group.query.filter_by(id=selected_schedule.group).first()
     return render_template(
         'schedule/single_schedule.html', schedule=selected_schedule,
-        module=module, group=group)
+        module=module, group=group, title=_('Schedule')
+    )
 
 
 @bp.route('/api/schedules', methods=['GET'])

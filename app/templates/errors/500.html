@@ -2,8 +2,7 @@
 
 {% block app_content %}
 <p>
-    An unexpected error has occurred.
-    The administrator has been notified.
+    {{ _('An unexpected error has occurred, the administrator has been notified.') }}
 </p>
-<p><a href="{{ url_for('main.index') }}">Back</a></p>
+<p><a href="{{ url_for('main.index') }}">{{ _('Back') }}</a></p>
 {% endblock %}

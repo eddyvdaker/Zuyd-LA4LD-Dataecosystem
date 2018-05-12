@@ -10,6 +10,7 @@ import os
 from datetime import datetime
 from flask import abort, current_app, flash, redirect, render_template, \
     request, url_for, send_file
+from flask_babel import _
 from flask_login import current_user, login_required
 from sqlalchemy.exc import IntegrityError
 from secrets import token_urlsafe
@@ -56,7 +57,7 @@ def read_json(json_file, field=None):
             try:
                 data = json.load(f)[field]
             except KeyError:
-                flash(f'Invalid file, missing key "{field}"')
+                flash(_(f'Invalid file, missing key "{field}"'))
                 return redirect(url_for('admin'))
         else:
             data = json.load(f)
@@ -229,7 +230,7 @@ def import_groups_to_db(data):
 def admin():
     if current_user.role.role != 'admin':
         abort(403)
-    return render_template('admin/admin.html', title='Admin Panel')
+    return render_template('admin/admin.html', title=_('Admin Panel'))
 
 
 @bp.route('/admin/users_import', methods=['GET', 'POST'])
@@ -242,23 +243,26 @@ def import_users():
         file = upload_file(form.file)
         user_data = read_json(file, field='users')
         imported_users, skipped_users = import_users_to_db(user_data)
-        flash(f'Imported {len(imported_users)} of {len(user_data)} Users.')
+        flash(_(f'Imported {len(imported_users)} of {len(user_data)} Users.'))
         current_app.logger.info(f'User Import: imported {len(imported_users)}'
                                 f' of {len(user_data)} users')
         if imported_users:
-            flash('Imported Users (Copy to send to users):')
+            flash(_('Imported Users (Copy to send to users):'))
             for row in imported_users:
-                flash(f'User: {row["username"]} (email: {row["email"]}, card:'
-                      f' {row["cardnr"]}) - Password: {row["password"]}')
+                flash(_(
+                    f'User: {row["username"]} (email: {row["email"]}, card:'
+                    f' {row["cardnr"]}) - Password: {row["password"]}'
+                ))
         if skipped_users:
-            flash('Skipped Users:')
+            flash(_('Skipped Users:'))
             for row in skipped_users:
-                flash(f'{row} skipped')
+                flash(_(f'{row} skipped'))
 
         return redirect(url_for('admin.admin'))
     return render_template(
-        'admin/import.html', title='Admin Panel: Import Users', form=form,
-        example_gist_code='f73e48eea2c3672dec92adc2dd2627ef')
+        'admin/import.html', title=_('Admin Panel: Import Users'), form=form,
+        example_gist_code='f73e48eea2c3672dec92adc2dd2627ef'
+    )
 
 
 @bp.route('/admin/users_overview', methods=['GET'])
@@ -268,8 +272,9 @@ def users_overview():
         abort(403)
     users = User.query.all()
     return render_template(
-        'admin/users_overview.html', title='Admin Panel: Users Overview',
-        users=users)
+        'admin/users_overview.html', title=_('Admin Panel: Users Overview'),
+        users=users
+    )
 
 
 @bp.route('/admin/user/<user_id>', methods=['GET'])
@@ -283,8 +288,9 @@ def single_user(user_id):
         groups[i].modules_list = ', '.join(map(
             str, [x.code for x in group.get_modules_of_group()]))
     return render_template(
-        'admin/single_user.html', title=f'Admin Panel: User {user_id}',
-        user=user, groups=groups)
+        'admin/single_user.html', title=_(f'Admin Panel: User {user_id}'),
+        user=user, groups=groups
+    )
 
 
 @bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
@@ -302,7 +308,7 @@ def edit_user(user_id):
         user.role = Role.query.filter_by(role=form.role.data).first()
         user.card_number = form.card_number.data
         db.session.commit()
-        flash('The changes have been saved.')
+        flash(_('The changes have been saved.'))
         return redirect(url_for('admin.single_user', user_id=user.id))
     elif request.method == 'GET':
         form.username.data = user.username
@@ -310,7 +316,8 @@ def edit_user(user_id):
         form.role.data = user.role.role
         form.card_number.data = user.card_number
     return render_template(
-        'admin/edit_user.html', form=form, title='Admin Panel: Edit User')
+        'admin/edit_user.html', form=form, title=_('Admin Panel: Edit User')
+    )
 
 
 @bp.route('/admin/add_user', methods=['GET', 'POST'])
@@ -331,7 +338,8 @@ def add_user():
         db.session.commit()
         return redirect(url_for('admin.users_overview'))
     return render_template(
-        'admin/edit_user.html', form=form, title='Admin Panel: New User')
+        'admin/edit_user.html', form=form, title=_('Admin Panel: New User')
+    )
 
 
 @bp.route('/admin/modules_import', methods=['GET', 'POST'])
@@ -344,12 +352,13 @@ def import_modules():
         file = upload_file(form.file)
         module_data = read_json(file, field='modules')
         import_status = import_modules_to_db(module_data)
-        flash(f'{import_status} modules imported')
-        current_app.logger.info(f'{import_status} modules imported')
+        flash(_(f'{import_status} modules imported'))
+        current_app.logger.info(_(f'{import_status} modules imported'))
         return redirect(url_for('admin.admin'))
     return render_template(
-        'admin/import.html', title='Admin Panel: Import Modules',
-        form=form, example_gist_code='3c1848ce491d9061fec9ae18ae5069e0')
+        'admin/import.html', title=_('Admin Panel: Import Modules'),
+        form=form, example_gist_code='3c1848ce491d9061fec9ae18ae5069e0'
+    )
 
 
 @bp.route('/admin/modules_overview', methods=['GET'])
@@ -359,8 +368,9 @@ def modules_overview():
         abort(403)
     modules = Module.query.all()
     return render_template(
-        'admin/modules_overview.html', title='Admin Panel: Modules Overview',
-        modules=modules)
+        'admin/modules_overview.html', modules=modules,
+        title=_('Admin Panel: Modules Overview')
+    )
 
 
 @bp.route('/admin/edit_module/<module_id>', methods=['GET', 'POST'])
@@ -378,7 +388,7 @@ def edit_module(module_id):
         module.end = form.end.data
         module.faculty = form.faculty.data
         db.session.commit()
-        flash('The changes have been saved.')
+        flash(_('The changes have been saved.'))
         return redirect(url_for('admin.modules_overview'))
     elif request.method == 'GET':
         form.code.data = module.code
@@ -387,7 +397,10 @@ def edit_module(module_id):
         form.start.data = module.start
         form.end.data = module.end
         form.faculty.data = module.faculty
-    return render_template('admin/edit_module.html', form=form)
+    return render_template(
+        'admin/edit_module.html', form=form,
+        title=_('Admin Panel: Edit Module')
+    )
 
 
 @bp.route('/admin/add_module', methods=['GET', 'POST'])
@@ -403,12 +416,15 @@ def add_module():
             description=form.description.data,
             start=form.start.data,
             end=form.end.data,
-            faculty=form.faculty.data)
+            faculty=form.faculty.data
+        )
         db.session.add(m)
         db.session.commit()
         return redirect(url_for('admin.modules_overview'))
     return render_template(
-        'admin/edit_module.html', form=form, title='Admin Panel: Add Module')
+        'admin/edit_module.html', form=form,
+        title=_('Admin Panel: Add Module')
+    )
 
 
 @bp.route('/admin/results_import', methods=['GET', 'POST'])
@@ -421,12 +437,13 @@ def import_results():
         file = upload_file(form.file)
         results_data = read_json(file, field='results')
         import_status = import_results_to_db(results_data)
-        flash(f'{import_status} results imported')
-        current_app.logger.info(f'{import_status} results imported')
+        flash(_(f'{import_status} results imported'))
+        current_app.logger.info(_(f'{import_status} results imported'))
         return redirect(url_for('admin.admin'))
     return render_template(
-        'admin/import.html', title='Admin Panel: Import Results', form=form,
-        example_gist_code='d504fb80b48c28e2e1495e76ea33814e')
+        'admin/import.html', title=_('Admin Panel: Import Results'), form=form,
+        example_gist_code='d504fb80b48c28e2e1495e76ea33814e'
+    )
 
 
 @bp.route('/admin/group_overview', methods=['GET'])
@@ -437,9 +454,10 @@ def group_overview():
     groups = Group.query.all()
     for i, group in enumerate(groups):
         groups[i].modules_list = ', '.join(map(
-            str, [x.code for x in group.get_modules_of_group()]))
+            str, [x.code for x in group.get_modules_of_group()])
+        )
     return render_template(
-        'admin/group_overview.html', title='Admin Panel: Group Overview',
+        'admin/group_overview.html', title=_('Admin Panel: Group Overview'),
         groups=groups)
 
 
@@ -450,7 +468,7 @@ def single_group(group_id):
         abort(403)
     group = Group.query.filter_by(id=group_id).first()
     return render_template(
-        'admin/single_group.html', title=f'Admin Panel: Group {group.id}',
+        'admin/single_group.html', title=_(f'Admin Panel: Group {group.id}'),
         group=group,
     )
 
@@ -465,12 +483,13 @@ def import_group():
         file = upload_file(form.file)
         group_data = read_json(file, field='groups')
         import_status = import_groups_to_db(group_data)
-        flash(f'{import_status} groups imported')
-        current_app.logger.info(f'{import_status} groups imported')
+        flash(_(f'{import_status} groups imported'))
+        current_app.logger.info(_(f'{import_status} groups imported'))
         return redirect(url_for('admin.admin'))
     return render_template(
-        'admin/import.html', title='Admin Panel: Import Groups', form=form,
-        example_gist_code='b410ae801de3fae1d8ab6ec4347a6800')
+        'admin/import.html', title=_('Admin Panel: Import Groups'), form=form,
+        example_gist_code='b410ae801de3fae1d8ab6ec4347a6800'
+    )
 
 
 @bp.route('/admin/add_group', methods=['GET', 'POST'])
@@ -483,10 +502,11 @@ def add_group():
         group = Group(code=form.code.data, active=form.active.data)
         db.session.add(group)
         db.session.commit()
-        flash(f'Group {form.code.data} with id {group.id} added')
+        flash(_(f'Group {form.code.data} with id {group.id} added'))
         redirect(url_for('admin.group_overview'))
     return render_template(
-        'admin/edit_group.html', title='Admin Panel: Add Group', form=form)
+        'admin/edit_group.html', title=_('Admin Panel: Add Group'), form=form
+    )
 
 
 @bp.route('/admin/edit_group/<group_id>', methods=['GET', 'POST'])
@@ -500,13 +520,14 @@ def edit_group(group_id):
         group.code = form.code.data
         group.active = form.active.data
         db.session.commit()
-        flash(f'Group {form.code.data} with id {group.id} updated')
+        flash(_(f'Group {form.code.data} with id {group.id} updated'))
         return redirect(url_for('admin.single_group', group_id=group_id))
     else:
         form.code.data = group.code
         form.active.data = group.active
     return render_template(
-        'admin/edit_group.html', title='Admin Panel: Edit Group', form=form)
+        'admin/edit_group.html', title=_('Admin Panel: Edit Group'), form=form
+    )
 
 
 @bp.route('/admin/schedule_import', methods=['GET', 'POST'])
@@ -519,12 +540,13 @@ def import_schedule():
         file = upload_file(form.file)
         schedule_data = read_json(file, field='schedules')
         import_status = import_schedules_to_db(schedule_data)
-        flash(f'{import_status} schedules imported')
-        current_app.logger.info(f'{import_status} schedules imported')
+        flash(_(f'{import_status} schedules imported'))
+        current_app.logger.info(_(f'{import_status} schedules imported'))
         return redirect(url_for('admin.admin'))
     return render_template(
-        'admin/import.html', title='Admin Panel: Import Schedules', form=form,
-        example_gist_code='b410ae801de3fae1d8ab6ec4347a6800')
+        'admin/import.html', title=_('Admin Panel: Import Schedules'),
+        form=form, example_gist_code='b410ae801de3fae1d8ab6ec4347a6800'
+    )
 
 
 @bp.route('/admin/schedule_overview', methods=['GET'])
@@ -534,8 +556,9 @@ def schedule_overview():
         abort(403)
     schedules = Schedule.query.all()
     return render_template(
-        'admin/schedule_overview.html', title='Admin Panel: Schedule Overview',
-        schedules=schedules)
+        'admin/schedule_overview.html',
+        title=_('Admin Panel: Schedule Overview'), schedules=schedules
+    )
 
 
 @bp.route('/admin/schedule/<schedule_id>', methods=['GET'])
@@ -548,7 +571,8 @@ def single_schedule(schedule_id):
     group = Group.query.filter_by(id=schedule.group).first()
     return render_template(
         'admin/single_schedule.html', schedule=schedule, group=group,
-        title=f'Admin Panel: Schedule {schedule_id}', module=module)
+        title=_(f'Admin Panel: Schedule {schedule_id}'), module=module
+    )
 
 
 @bp.route('/admin/edit_schedule/<schedule_id>', methods=['GET', 'POST'])
@@ -560,24 +584,28 @@ def edit_schedule(schedule_id):
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     modules = Module.query.all()
     form.module.choices = [
-        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in modules]
+        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in modules
+    ]
     groups = Group.query.all()
     form.group.choices = [
-        (int(x.id), f'{x.id}: {x.code} ({x.active})') for x in groups]
+        (int(x.id), f'{x.id}: {x.code} ({x.active})') for x in groups
+    ]
     if form.validate_on_submit():
         schedule.description = form.description.data
         schedule.module = form.module.data
         schedule.group = form.group.data
         db.session.commit()
         return redirect(url_for(
-            'admin.single_schedule', schedule_id=schedule_id))
+            'admin.single_schedule', schedule_id=schedule_id)
+        )
     elif request.method == 'GET':
         form.description.data = schedule.description
         form.module.data = schedule.module
         form.group.data = schedule.group
     return render_template(
-        'admin/edit_schedule.html', title='Admin Panel: Edit Schedule',
-        form=form)
+        'admin/edit_schedule.html', title=_('Admin Panel: Edit Schedule'),
+        form=form
+    )
 
 
 @bp.route('/admin/add_schedule', methods=['GET', 'POST'])
@@ -588,10 +616,12 @@ def add_schedule():
     form = EditScheduleForm()
     modules = Module.query.all()
     form.module.choices = [
-        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in modules]
+        (int(x.id), f'{x.id}: {x.code} ({x.start}-{x.end}') for x in modules
+    ]
     groups = Group.query.all()
     form.group.choices = [
-        (int(x.id), f'{x.id}: {x.code} ({x.active})') for x in groups]
+        (int(x.id), f'{x.id}: {x.code} ({x.active})') for x in groups
+    ]
     if form.validate_on_submit():
         s = Schedule(
             description=form.description.data,
@@ -601,8 +631,9 @@ def add_schedule():
         db.session.commit()
         return redirect(url_for('admin.schedule_overview'))
     return render_template(
-        'admin/edit_schedule.html', title='Admin Panel: Add Schedule',
-        form=form)
+        'admin/edit_schedule.html', title=_('Admin Panel: Add Schedule'),
+        form=form
+    )
 
 
 @bp.route(
@@ -621,7 +652,8 @@ def edit_schedule_item(schedule_id, item_id):
         item.room = form.room.data
         db.session.commit()
         return redirect(url_for(
-            'admin.single_schedule', schedule_id=schedule_id))
+            'admin.single_schedule', schedule_id=schedule_id)
+        )
     elif request.method == 'GET':
         form.title.data = item.title
         form.description.data = item.description
@@ -630,7 +662,8 @@ def edit_schedule_item(schedule_id, item_id):
         form.room.data = item.room
     return render_template(
         'admin/edit_schedule_item.html', form=form,
-        title='Admin Panel:Edit Schedule Item')
+        title=_('Admin Panel:Edit Schedule Item')
+    )
 
 
 @bp.route(
@@ -652,10 +685,12 @@ def add_schedule_item(schedule_id):
         db.session.add(si)
         db.session.commit()
         return redirect(url_for(
-            'admin.single_schedule', schedule_id=schedule_id))
+            'admin.single_schedule', schedule_id=schedule_id)
+        )
     return render_template(
         'admin/edit_schedule_item.html', form=form,
-        title='Admin Panel: New Schedule Item')
+        title=_('Admin Panel: New Schedule Item')
+    )
 
 
 @bp.route('/admin/logs', methods=['GET'])
@@ -669,7 +704,8 @@ def show_logs():
         log_data = f.read().splitlines()
 
     return render_template(
-        'admin/logs.html', title='Admin Panel: Logs', logs=log_data)
+        'admin/logs.html', title=_('Admin Panel: Logs'), logs=log_data
+    )
 
 
 @bp.route('/downloads/logs', methods=['GET'])
@@ -685,7 +721,8 @@ def download_logs():
             mimetype='text/plain',
             attachment_filename='la4ld.log',
             as_attachment=True,
-            cache_timeout=-1)
+            cache_timeout=-1
+        )
 
 
 @bp.route('/admin/fact-store', methods=['GET'])
@@ -699,11 +736,12 @@ def show_fact_store():
         with open(fact_store_file, 'r') as f:
             fact_store_data = f.read().splitlines()
     except FileNotFoundError:
-        fact_store_data = ['No Fact-Store Data']
+        fact_store_data = [_('No Fact-Store Data')]
 
     return render_template(
-        'admin/fact-store.html', title='Admin Panel: Fact-Store',
-        fact_store=fact_store_data)
+        'admin/fact-store.html', title=_('Admin Panel: Fact-Store'),
+        fact_store=fact_store_data
+    )
 
 
 @bp.route('/downloads/fact-store', methods=['GET'])
@@ -721,9 +759,10 @@ def download_fact_store():
                 mimetype='text/plain',
                 attachment_filename='fact-store.txt',
                 as_attachment=True,
-                cache_timeout=-1)
+                cache_timeout=-1
+            )
         else:
-            flash('No Fact-Store data available')
+            flash(_('No Fact-Store data available'))
             return redirect(url_for('admin.show_fact_store'))
 
 
@@ -744,15 +783,16 @@ def manage_group_membership():
                 group = Group.query.filter_by(id=group_id).first()
                 if form.action.data == 'add':
                     user.add_to_group(group)
-                    flash('Added users to groups.')
+                    flash(_('Added users to groups.'))
                 elif form.action.data == 'remove':
                     user.remove_from_group(group)
-                    flash('Removed users from groups')
+                    flash(_('Removed users from groups'))
             db.session.commit()
         return redirect(url_for('admin.manage_group_membership'))
     return render_template(
-        'admin/manage_groups.html', title='Admin Panel: Manage Groups',
-        form=form)
+        'admin/manage_groups.html', title=_('Admin Panel: Manage Groups'),
+        form=form
+    )
 
 
 @bp.route('/admin/manage-modules', methods=['GET', 'POST'])
@@ -769,7 +809,8 @@ def manage_module_membership():
     form.roles.choices = [
         ('student', 'student'),
         ('teacher', 'teacher'),
-        ('examiner', 'examiner')]
+        ('examiner', 'examiner')
+    ]
     if request.method == 'POST':
         for user_id in form.users_list.data:
             user = User.query.filter_by(id=user_id).first()
@@ -777,13 +818,14 @@ def manage_module_membership():
                 module = Module.query.filter_by(id=module_id).first()
                 if form.action.data == 'add':
                     user.add_to_module(module, module_role=form.roles.data)
-                    flash(f'Added {form.roles.data} to modules')
+                    flash(_(f'Added {form.roles.data} to modules'))
                 elif form.action.data == 'remove':
                     user.remove_from_module(
                         module, module_role=form.roles.data)
-                    flash(f'Removed {form.roles.data} from modules')
+                    flash(_(f'Removed {form.roles.data} from modules'))
             db.session.commit()
         return redirect(url_for('admin.manage_module_membership'))
     return render_template(
-        'admin/manage_modules.html', title='Admin Panel: Manage Modules',
-        form=form)
+        'admin/manage_modules.html', title=_('Admin Panel: Manage Modules'),
+        form=form
+    )

@@ -6,7 +6,8 @@
     A learning analytics for learning design data ecosystem build using Flask.
 """
 
-from flask import Flask
+from flask import Flask, request
+from flask_babel import Babel, lazy_gettext as _l
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -22,8 +23,9 @@ db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 login.login_view = 'auth.login'
-login.login_message = 'Please log in to access this page.'
+login.login_message = _l('Please log in to access this page.')
 mail = Mail()
+babel = Babel()
 
 
 def create_app(config_class=Config):
@@ -34,6 +36,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)
+    babel.init_app(app)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
@@ -98,6 +101,13 @@ def create_app(config_class=Config):
         app.logger.info('LA4LD - Startup')
 
     return app
+
+
+# Uncomment when translations have been added
+# @babel.localeselector
+# def get_locale():
+#     return request.accept_languages.best_match(
+#         current_app.config['LANGUAGES'])
 
 
 from app import models
