@@ -56,7 +56,7 @@ def reset_password_request():
         )
         return redirect(url_for('auth.login'))
     return render_template(
-        'auth/reset_password_request.html', title=_('Reset Password'),
+        'default-form.html', title=_('Reset Password'),
         form=form
     )
 
@@ -75,7 +75,7 @@ def reset_password(token):
         flash(_('Your password has been reset.'))
         return redirect(url_for('auth.login'))
     return render_template(
-        'auth/reset_password.html', form=form, title=_('Reset Password')
+        'default-form.html', form=form, title=_('Reset Password')
     )
 
 
@@ -92,5 +92,5 @@ def change_password():
         db.session.commit()
         return redirect(url_for('auth.change_password'))
     return render_template(
-        'auth/change_password.html', title=_('Change Password'), form=form
+        'default-form.html', title=_('Change Password'), form=form
     )

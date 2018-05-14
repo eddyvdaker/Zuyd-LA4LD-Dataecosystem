@@ -1,100 +1,102 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<p id="welcome-text">{{ _('Hello') }}, {{ current_user.username }}</p>
+<div id="profile">
+    <div id="general-info">
+        <p id="welcome-text">{{ _('Hello') }}, {{ current_user.username }}</p>
 
-<h3>{{ _('Settings') }}</h3>
-<p><a href="{{ url_for('auth.change_password') }}">{{ _('Change Password') }}</a></p>
-<hr>
-<h3>Info</h3>
-<p>
-    <strong>{{ _('Your role is') }}:</strong> {{ current_user.role.role }}<br>
-    <strong>{{ _('Your card number') }}:</strong> {{ current_user.card_number }}<br>
-    <strong>{{ _('Your identifier is') }}:</strong> {{ current_user.hash_identifier() }}<br><br>
-    <a href="{{ url_for('main.download_own_data') }}"><button type="button" class="btn btn-dark">{{ _('Export Data') }}</button></a>
-</p>
-{% if modules_as_student %}
-<div id="modules-as-student">
-    <br>
-    <hr>
-    <h3>{{ _('Modules as Student') }}</h3>
-    <table class="table table-striped">
-        <tr>
-            <th>{{ _('Code') }}</th>
-            <th>{{ _('Name') }}</th>
-            <th>{{ _('Description') }}</th>
-            <th>{{ _('Start') }}</th>
-            <th>{{ _('End') }}</th>
-            <th>{{ _('Faculty') }}</th>
-        </tr>
+        <h3>{{ _('Settings') }}</h3>
+        <a id="change-password" href="{{ url_for('auth.change_password') }}">{{ _('Change Password') }}</a>
+        <hr>
+        <h3>Info</h3>
+        <ul class="list-unstyled">
+            <li id="role"><strong>{{ _('Your role is') }}:</strong> {{ current_user.role.role }}<br></li>
+            <li id="card-number"><strong>{{ _('Your card number') }}:</strong> {{ current_user.card_number }}<br></li>
+            <li id="identifier"><strong>{{ _('Your identifier is') }}:</strong> {{ current_user.hash_identifier() }}<br><br></li>
+        </ul>
+        <a id="export-link" href="{{ url_for('main.download_own_data') }}"><button type="button" class="btn btn-dark">{{ _('Export Data') }}</button></a>
+    </div>
+    {% if modules_as_student %}
+    <div id="modules-as-student">
+        <br>
+        <hr>
+        <h3>{{ _('Modules as Student') }}</h3>
+        <table id="modules" class="table table-striped">
+            <tr id="header-row">
+                <th>{{ _('Code') }}</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Start') }}</th>
+                <th>{{ _('End') }}</th>
+                <th>{{ _('Faculty') }}</th>
+            </tr>
+            {% for module in modules_as_student %}
+                <tr id="row">
+                    <td>{{ module.code }}</td>
+                    <td>{{ module.name }}</td>
+                    <td>{{ module.description }}</td>
+                    <td>{{ module.start }}</td>
+                    <td>{{ module.end }}</td>
+                    <td>{{ module.faculty }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    {% if modules_as_teacher %}
+    <div id="modules-as-teacher">
+        <br>
+        <hr>
+        <h3>{{ _('Modules as Teacher') }}</h3>
+        <table id="modules" class="table table-striped">
+            <tr id="header-row">
+                <th>{{ _('Code') }}</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Start') }}</th>
+                <th>{{ _('End') }}</th>
+                <th>{{ _('Faculty') }}</th>
+            </tr>
 
-    {% for module in modules_as_student %}
-        <tr>
-            <td>{{ module.code }}</td>
-            <td>{{ module.name }}</td>
-            <td>{{ module.description }}</td>
-            <td>{{ module.start }}</td>
-            <td>{{ module.end }}</td>
-            <td>{{ module.faculty }}</td>
-        </tr>
-    {% endfor %}
-    </table>
-</div>
-{% endif %}
-{% if modules_as_teacher %}
-<div id="modules-as-teacher">
-    <br>
-    <hr>
-    <h3>{{ _('Modules as Teacher') }}</h3>
-    <table class="table table-striped">
-        <tr>
-            <th>{{ _('Code') }}</th>
-            <th>{{ _('Name') }}</th>
-            <th>{{ _('Description') }}</th>
-            <th>{{ _('Start') }}</th>
-            <th>{{ _('End') }}</th>
-            <th>{{ _('Faculty') }}</th>
-        </tr>
-
-    {% for module in modules_as_teacher %}
-        <tr>
-            <td>{{ module.code }}</td>
-            <td>{{ module.name }}</td>
-            <td>{{ module.description }}</td>
-            <td>{{ module.start }}</td>
-            <td>{{ module.end }}</td>
-            <td>{{ module.faculty }}</td>
-        </tr>
-    {% endfor %}
-    </table>
-</div>
-{% endif %}
-{% if modules_as_examiner %}
-<div id="modules-as-examiner">
-    <br>
-    <hr>
-    <h3>{{ _('Modules as Examiner') }}</h3>
-    <table class="table table-striped">
-        <tr>
-            <th>{{ _('Code') }}</th>
-            <th>{{ _('Name') }}</th>
-            <th>{{ _('Description') }}</th>
-            <th>{{ _('Start') }}</th>
-            <th>{{ _('End') }}</th>
-            <th>{{ _('Faculty') }}</th>
-        </tr>
-
-    {% for module in modules_as_examiner %}
-        <tr>
-            <td>{{ module.code }}</td>
-            <td>{{ module.name }}</td>
-            <td>{{ module.description }}</td>
-            <td>{{ module.start }}</td>
-            <td>{{ module.end }}</td>
-            <td>{{ module.faculty }}</td>
-        </tr>
-    {% endfor %}
-    </table>
+            {% for module in modules_as_teacher %}
+                <tr id="row">
+                    <td>{{ module.code }}</td>
+                    <td>{{ module.name }}</td>
+                    <td>{{ module.description }}</td>
+                    <td>{{ module.start }}</td>
+                    <td>{{ module.end }}</td>
+                    <td>{{ module.faculty }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    {% if modules_as_examiner %}
+    <div id="modules-as-examiner">
+        <br>
+        <hr>
+        <h3>{{ _('Modules as Examiner') }}</h3>
+        <table id="modules" class="table table-striped">
+            <tr id="header-row">
+                <th>{{ _('Code') }}</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Start') }}</th>
+                <th>{{ _('End') }}</th>
+                <th>{{ _('Faculty') }}</th>
+            </tr>
+            {% for module in modules_as_examiner %}
+                <tr id="row">
+                    <td>{{ module.code }}</td>
+                    <td>{{ module.name }}</td>
+                    <td>{{ module.description }}</td>
+                    <td>{{ module.start }}</td>
+                    <td>{{ module.end }}</td>
+                    <td>{{ module.faculty }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endif %}
 {% endblock %}

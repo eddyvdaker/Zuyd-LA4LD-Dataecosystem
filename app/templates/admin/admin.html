@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h3>{{ _('General Settigns') }}</h3>
-<ul>
-    <li><a href="{{ url_for('admin.show_logs') }}">View Logs</a></li>
-</ul>
-<h3>{{ _('User Settings') }}</h3>
-<ul>
-    <li><a href="{{ url_for('admin.import_users') }}">{{ _('Import Users') }}</a></li>
-    <li><a href="{{ url_for('admin.users_overview') }}">{{ _('Users Overview') }}</a></li>
-</ul>
-<h3>{{ _('Module Settings') }}</h3>
-<ul>
-    <li><a href="{{ url_for('admin.import_modules') }}">{{ _('Import Modules') }}</a></li>
-    <li><a href="{{ url_for('admin.modules_overview') }}">{{ _('Module Overview') }}</a></li>
-    <li><a href="{{ url_for('admin.manage_module_membership') }}">{{ _('Module Membership') }}</a></li>
-</ul>
-<h3>{{ _('Group Settings') }}</h3>
-<ul>
-    <li><a href="{{ url_for('admin.group_overview') }}">{{ _('Group Overview') }}</a></li>
-    <li><a href="{{ url_for('admin.manage_group_membership') }}">{{ _('Group Membership') }}</a></li>
-</ul>
-<h3>{{ _('Results Settings') }}</h3>
-<ul>
-    <li><a href="{{ url_for('admin.import_results') }}">{{ _('Import Results') }}</a></li>
-</ul>
-<h3>{{ _('Schedule Settings') }}</h3>
-<ul>
-    <li><a href="{{ url_for('admin.import_schedule') }}">{{ _('Import Schedules') }}</a></li>
-    <li><a href="{{ url_for('admin.schedule_overview') }}">{{ _('Schedule Overview') }}</a></li>
-</ul>
-<h3>{{ _('Fact-Store') }}</h3>
-<ul>
-    <li><a href="{{ url_for('admin.show_fact_store') }}">{{ _('View Fact-Store') }}</a></li>
-</ul>
+<div id="admin-panel">
+    <h3>{{ _('General Settigns') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.show_logs') }}">View Logs</a></li>
+        </ul>
+    <h3>{{ _('User Settings') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.import_users') }}">{{ _('Import Users') }}</a></li>
+            <li><a href="{{ url_for('admin.users_overview') }}">{{ _('Users Overview') }}</a></li>
+        </ul>
+    <h3>{{ _('Module Settings') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.import_modules') }}">{{ _('Import Modules') }}</a></li>
+            <li><a href="{{ url_for('admin.modules_overview') }}">{{ _('Module Overview') }}</a></li>
+            <li><a href="{{ url_for('admin.manage_module_membership') }}">{{ _('Module Membership') }}</a></li>
+        </ul>
+    <h3>{{ _('Group Settings') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.group_overview') }}">{{ _('Group Overview') }}</a></li>
+            <li><a href="{{ url_for('admin.manage_group_membership') }}">{{ _('Group Membership') }}</a></li>
+        </ul>
+    <h3>{{ _('Results Settings') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.import_results') }}">{{ _('Import Results') }}</a></li>
+        </ul>
+    <h3>{{ _('Schedule Settings') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.import_schedule') }}">{{ _('Import Schedules') }}</a></li>
+            <li><a href="{{ url_for('admin.schedule_overview') }}">{{ _('Schedule Overview') }}</a></li>
+        </ul>
+    <h3>{{ _('Fact-Store') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.show_fact_store') }}">{{ _('View Fact-Store') }}</a></li>
+        </ul>
+</div>
 {% endblock %}

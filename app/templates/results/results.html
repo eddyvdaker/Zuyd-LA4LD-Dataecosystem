@@ -1,25 +1,26 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-{% if results %}
-    <table class="table table-striped">
-        <tr>
-            <th>{{ _('Module') }}</th>
-            <th>{{ _('Name') }}</th>
-            <th>{{ _('Score') }}</th>
-            <th>{{ _('Weight') }}</th>
-        </tr>
-
-    {% for result in results %}
-        <tr>
-            <td>{{ result.grade_result.result_module.code }}</td>
-            <td>{{ result.name }}</td>
-            <td>{{ result.score }}</td>
-            <td>{{ result.weight }}</td>
-        </tr>
-    {% endfor %}
-    </table>
-{% else %}
-    <p>{{ _('No results') }}</p>
-{% endif %}
+<div id="student-results">
+    {% if results %}
+        <table id="results" class="table table-striped">
+            <tr id="header-row">
+                <th>{{ _('Module') }}</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Score') }}</th>
+                <th>{{ _('Weight') }}</th>
+            </tr>
+            {% for result in results %}
+                <tr id="row">
+                    <td>{{ result.grade_result.result_module.code }}</td>
+                    <td>{{ result.name }}</td>
+                    <td>{{ result.score }}</td>
+                    <td>{{ result.weight }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p id="no-results">{{ _('No results') }}</p>
+    {% endif %}
+</div>
 {% endblock %}

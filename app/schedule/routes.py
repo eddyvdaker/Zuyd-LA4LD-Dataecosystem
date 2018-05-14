@@ -28,7 +28,7 @@ def schedule():
             'schedule.single_schedule', schedule_id=schedule_id)
         )
     return render_template(
-        'schedule/select_schedule.html', form=form, title=_('Select Schedule')
+        'default-form.html', form=form, title=_('Select Schedule')
     )
 
 

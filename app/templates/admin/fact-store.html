@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<a href="{{ url_for('admin.download_fact_store') }}"><button type="button" class="btn btn-dark">{{ _('Export Fact-Store') }}</button></a><br><br>
-{% for line in fact_store %}
-    {{ line }}<br>
-{% endfor %}
+<div id="fact-store-view">
+    <a id="download-button" href="{{ url_for('admin.download_fact_store') }}"><button type="button" class="btn btn-dark">{{ _('Export Fact-Store') }}</button></a><br><br>
+    <div id="fact-store">
+        {% for line in fact_store %}
+            {{ line }}<br>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

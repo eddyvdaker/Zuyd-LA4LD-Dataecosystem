@@ -1,75 +1,84 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<p>
-    <strong>{{ _('Code') }}:</strong> {{ group.code }}<br>
-    <strong>{{ _('Active') }}:</strong> {{ group.active }}<br>
-    <a href="{{ url_for('admin.edit_group', group_id=group.id) }}">{{ _('Edit') }}</a>
-</p>
-<h3>{{ _('Modules') }}</h3>
-<table class="table table-striped">
-    <tr>
-        <th>ID</th>
-        <th>{{ _('Code') }}</th>
-        <th>{{ _('Name') }}</th>
-        <th>{{ _('Description') }}</th>
-        <th>{{ _('Start') }}</th>
-        <th>{{ _('End') }}</th>
-        <th>{{ _('Faculty') }}</th>
-        <th></th>
-    </tr>
-
-{% for module in group.get_modules_of_group() %}
-    <tr>
-        <td>{{ module.id }}</td>
-        <td>{{ module.code }}</td>
-        <td>{{ module.name }}</td>
-        <td>{{ module.description }}</td>
-        <td>{{ module.start }}</td>
-        <td>{{ module.end }}</td>
-        <td>{{ module.faculty }}</td>
-        <td><a href="{{ url_for('admin.edit_module', module_id=module.id) }}">{{ _('Edit') }}</a></td>
-    </tr>
-{% endfor %}
-</table>
-<h3>{{ _('Students') }}</h3>
-<table class="table table-striped">
-    <tr>
-        <th>ID</th>
-        <th>{{ _('Username') }}</th>
-        <th>{{ _('Email') }}</th>
-        <th>{{ _('Role') }}</th>
-        <th>{{ _('Card Number') }}</th>
-        <th></th>
-    </tr>
-{% for user in group.get_students_of_group() %}
-    <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role.role }}</td>
-        <td>{{ user.card_number }}</td>
-        <td><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ _('Edit') }}</a></td>
-    </tr>
-{% endfor %}
-</table>
-<h3>{{ _('Schedules') }}</h3>
-<table class="table table-striped">
-    <tr>
-        <th>ID</th>
-        <th>{{ _('Description') }}</th>
-        <th>{{ _('Module') }}</th>
-        <th>{{ _('Group') }}</th>
-        <th></th>
-    </tr>
-{% for schedule in group.schedules.all() %}
-    <tr>
-        <td>{{ schedule.id }}</td>
-        <td>{{ schedule.description }}</td>
-        <td>{{ schedule.module }}</td>
-        <td>{{ schedule.group }}</td>
-        <td><a href="{{ url_for('admin.single_schedule', schedule_id=schedule.id) }}">{{ _('Details') }}</a></td>
-    </tr>
-{% endfor %}
-</table>
+<div id="details">
+    <div id="general-info">
+        <ul class="list-unstyled">
+            <li><strong>{{ _('Code') }}:</strong> {{ group.code }}</li>
+            <li><strong>{{ _('Active') }}:</strong> {{ group.active }}</li>
+            <li><a href="{{ url_for('admin.edit_group', group_id=group.id) }}">{{ _('Edit') }}</a></li>
+        </ul>
+    </div>
+    <div id="group-modules">
+        <h3>{{ _('Modules') }}</h3>
+        <table id="modules" class="table table-striped">
+            <tr id="header-row">
+                <th>ID</th>
+                <th>{{ _('Code') }}</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Start') }}</th>
+                <th>{{ _('End') }}</th>
+                <th>{{ _('Faculty') }}</th>
+                <th></th>
+            </tr>
+            {% for module in group.get_modules_of_group() %}
+                <tr id="row">
+                    <td>{{ module.id }}</td>
+                    <td>{{ module.code }}</td>
+                    <td>{{ module.name }}</td>
+                    <td>{{ module.description }}</td>
+                    <td>{{ module.start }}</td>
+                    <td>{{ module.end }}</td>
+                    <td>{{ module.faculty }}</td>
+                    <td><a href="{{ url_for('admin.edit_module', module_id=module.id) }}">{{ _('Edit') }}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="group-students">
+        <h3>{{ _('Students') }}</h3>
+        <table id="students" class="table table-striped">
+            <tr id="header-row">
+                <th>ID</th>
+                <th>{{ _('Username') }}</th>
+                <th>{{ _('Email') }}</th>
+                <th>{{ _('Role') }}</th>
+                <th>{{ _('Card Number') }}</th>
+                <th></th>
+            </tr>
+            {% for user in group.get_students_of_group() %}
+                <tr id="row">
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role.role }}</td>
+                    <td>{{ user.card_number }}</td>
+                    <td><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ _('Edit') }}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="group=schedules">
+        <h3>{{ _('Schedules') }}</h3>
+        <table id="schedules" class="table table-striped">
+            <tr id="header-row">
+                <th>ID</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Module') }}</th>
+                <th>{{ _('Group') }}</th>
+                <th></th>
+            </tr>
+            {% for schedule in group.schedules.all() %}
+                <tr id="row">
+                    <td>{{ schedule.id }}</td>
+                    <td>{{ schedule.description }}</td>
+                    <td>{{ schedule.module }}</td>
+                    <td>{{ schedule.group }}</td>
+                    <td><a href="{{ url_for('admin.single_schedule', schedule_id=schedule.id) }}">{{ _('Details') }}</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}

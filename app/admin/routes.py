@@ -319,7 +319,7 @@ def edit_user(user_id):
         form.role.data = user.role.role
         form.card_number.data = user.card_number
     return render_template(
-        'admin/edit_user.html', form=form, title=_('Admin Panel: Edit User')
+        'default-form.html', form=form, title=_('Admin Panel: Edit User')
     )
 
 
@@ -341,7 +341,7 @@ def add_user():
         db.session.commit()
         return redirect(url_for('admin.users_overview'))
     return render_template(
-        'admin/edit_user.html', form=form, title=_('Admin Panel: New User')
+        'default-form.html', form=form, title=_('Admin Panel: New User')
     )
 
 
@@ -401,7 +401,7 @@ def edit_module(module_id):
         form.end.data = module.end
         form.faculty.data = module.faculty
     return render_template(
-        'admin/edit_module.html', form=form,
+        'default-form.html', form=form,
         title=_('Admin Panel: Edit Module')
     )
 
@@ -425,7 +425,7 @@ def add_module():
         db.session.commit()
         return redirect(url_for('admin.modules_overview'))
     return render_template(
-        'admin/edit_module.html', form=form,
+        'default-form.html', form=form,
         title=_('Admin Panel: Add Module')
     )
 
@@ -509,7 +509,7 @@ def add_group():
         flash(f'Group {form.code.data} with id {group.id} added')
         redirect(url_for('admin.group_overview'))
     return render_template(
-        'admin/edit_group.html', title=_('Admin Panel: Add Group'), form=form
+        'default-form.html', title=_('Admin Panel: Add Group'), form=form
     )
 
 
@@ -531,7 +531,7 @@ def edit_group(group_id):
         form.code.data = group.code
         form.active.data = group.active
     return render_template(
-        'admin/edit_group.html', title=_('Admin Panel: Edit Group'), form=form
+        'default-form.html', title=_('Admin Panel: Edit Group'), form=form
     )
 
 
@@ -608,7 +608,7 @@ def edit_schedule(schedule_id):
         form.module.data = schedule.module
         form.group.data = schedule.group
     return render_template(
-        'admin/edit_schedule.html', title=_('Admin Panel: Edit Schedule'),
+        'default-form.html', title=_('Admin Panel: Edit Schedule'),
         form=form
     )
 
@@ -636,7 +636,7 @@ def add_schedule():
         db.session.commit()
         return redirect(url_for('admin.schedule_overview'))
     return render_template(
-        'admin/edit_schedule.html', title=_('Admin Panel: Add Schedule'),
+        'default-form.html', title=_('Admin Panel: Add Schedule'),
         form=form
     )
 
@@ -666,7 +666,7 @@ def edit_schedule_item(schedule_id, item_id):
         form.end.data = item.end
         form.room.data = item.room
     return render_template(
-        'admin/edit_schedule_item.html', form=form,
+        'default-form.html', form=form,
         title=_('Admin Panel:Edit Schedule Item')
     )
 
@@ -693,7 +693,7 @@ def add_schedule_item(schedule_id):
             'admin.single_schedule', schedule_id=schedule_id)
         )
     return render_template(
-        'admin/edit_schedule_item.html', form=form,
+        'default-form.html', form=form,
         title=_('Admin Panel: New Schedule Item')
     )
 

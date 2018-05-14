@@ -1,27 +1,19 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.username.label }}<br>
-        {{ form.username(size=32) }}<br>
-        {% for error in form.username.errors %}
-            <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password.label }}<br>
-        {{ form.password(size=32) }}<br>
-        {% for error in form.password.errors %}
-            <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.remember_me() }}{{ form.remember_me.label }}</p>
-    <p>{{ form.submit() }}</p>
-    <p>
+<div id="login">
+    <form action="" method="post">
+        <div class="row">
+            <div class="col-md-4">
+                {{ wtf.quick_form(form) }}
+            </div>
+        </div>
+    </form>
+    <br>
+    <p id="forgot-password">
         {{ _('Forgot Your Password?') }}
         <a href="{{ url_for('auth.reset_password_request') }}">{{ _('Click to Reset It') }}</a>
     </p>
-</form>
+</div>
 {% endblock %}

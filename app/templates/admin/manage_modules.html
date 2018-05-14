@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.action.label }} {{ form.action() }} {{ form.roles.label }} {{ form.roles() }} {{ form.submit() }}
-    </p>
-    <div class="row">
-        <div class="col-sm-2">
-            <strong>{{ form.users_list.label }}</strong><br>
-            {{ form.users_list() }}
+<div id="manage-modules">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.action.label }} {{ form.action() }} {{ form.roles.label }} {{ form.roles() }} {{ form.submit() }}
+        </p>
+        <div class="row">
+            <div class="col-sm-2">
+                <strong>{{ form.users_list.label }}</strong><br>
+                {{ form.users_list() }}
+            </div>
+            <div class="col-sm-6">
+                <strong>{{ form.modules_list.label }}</strong><br>
+                {{ form.modules_list() }}
+            </div>
         </div>
-        <div class="col-sm-6">
-            <strong>{{ form.modules_list.label }}</strong><br>
-            {{ form.modules_list() }}
-        </div>
-    </div>
-</form>
+    </form>
+</div>
 {% endblock %}

@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-{% if current_user.is_anonymous %}
-    <p>{{ _('Welcome to the LA4LD dataecosystem, please log in') }} <a href="{{ url_for('auth.login') }}">{{ _('here') }}</a>!</p>
-{% else %}
-    <p>{{ _('Hello') }}, {{ current_user.username }}</p>
-{% endif %}
+<div id="landing-page">
+    {% if current_user.is_anonymous %}
+        <p>{{ _('Welcome to the LA4LD dataecosystem, please log in') }} <a href="{{ url_for('auth.login') }}">{{ _('here') }}</a>!</p>
+    {% else %}
+        <p>{{ _('Hello') }}, {{ current_user.username }}</p>
+    {% endif %}
+</div>
 {% endblock %}

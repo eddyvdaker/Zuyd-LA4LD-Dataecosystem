@@ -1,30 +1,31 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<a href="{{ url_for('admin.add_module') }}"><button type="button" class="btn btn-dark">{{ _('Add Modules') }}</button></a><br><br>
-<table class="table table-striped">
-    <tr>
-        <th>ID</th>
-        <th>{{ _('') }}Code</th>
-        <th>{{ _('Name') }}</th>
-        <th>{{ _('Description') }}</th>
-        <th>{{ _('Start') }}</th>
-        <th>{{ _('End') }}</th>
-        <th>{{ _('Faculty') }}</th>
-        <th></th>
-    </tr>
-
-{% for module in modules %}
-    <tr>
-        <td>{{ module.id }}</td>
-        <td>{{ module.code }}</td>
-        <td>{{ module.name }}</td>
-        <td>{{ module.description }}</td>
-        <td>{{ module.start }}</td>
-        <td>{{ module.end }}</td>
-        <td>{{ module.faculty }}</td>
-        <td><a href="{{ url_for('admin.edit_module', module_id=module.id) }}">{{ _('Edit') }}</a></td>
-    </tr>
-{% endfor %}
-</table>
+<div id="overview">
+    <a id="add-button" href="{{ url_for('admin.add_module') }}"><button type="button" class="btn btn-dark">{{ _('Add Modules') }}</button></a><br><br>
+    <table id="modules" class="table table-striped">
+        <tr id="header-row">
+            <th>ID</th>
+            <th>{{ _('Code') }}</th>
+            <th>{{ _('Name') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th>{{ _('Start') }}</th>
+            <th>{{ _('End') }}</th>
+            <th>{{ _('Faculty') }}</th>
+            <th></th>
+        </tr>
+        {% for module in modules %}
+            <tr id="row">
+                <td>{{ module.id }}</td>
+                <td>{{ module.code }}</td>
+                <td>{{ module.name }}</td>
+                <td>{{ module.description }}</td>
+                <td>{{ module.start }}</td>
+                <td>{{ module.end }}</td>
+                <td>{{ module.faculty }}</td>
+                <td><a href="{{ url_for('admin.edit_module', module_id=module.id) }}">{{ _('Edit') }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

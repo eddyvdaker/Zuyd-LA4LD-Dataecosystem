@@ -1,25 +1,27 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<a href="{{ url_for('admin.add_user') }}"><button type="button" class="btn btn-dark">{{ _('Add User') }}</button></a><br><br>
-<table class="table table-striped">
-    <tr>
-        <th>ID</th>
-        <th>{{ _('Username') }}</th>
-        <th>{{ _('Email') }}</th>
-        <th>{{ _('Role') }}</th>
-        <th>{{ _('Card Number') }}</th>
-        <th></th>
-    </tr>
-{% for user in users %}
-    <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role.role }}</td>
-        <td>{{ user.card_number }}</td>
-        <td><a href="{{ url_for('admin.single_user', user_id=user.id) }}">{{ _('Details') }}</a></td>
-    </tr>
-{% endfor %}
-</table>
+<div id="overview">
+    <a id="add-button" href="{{ url_for('admin.add_user') }}"><button type="button" class="btn btn-dark">{{ _('Add User') }}</button></a><br><br>
+    <table id="users" class="table table-striped">
+        <tr id="header-row">
+            <th>ID</th>
+            <th>{{ _('Username') }}</th>
+            <th>{{ _('Email') }}</th>
+            <th>{{ _('Role') }}</th>
+            <th>{{ _('Card Number') }}</th>
+            <th></th>
+        </tr>
+        {% for user in users %}
+            <tr id="row">
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role.role }}</td>
+                <td>{{ user.card_number }}</td>
+                <td><a href="{{ url_for('admin.single_user', user_id=user.id) }}">{{ _('Details') }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}
