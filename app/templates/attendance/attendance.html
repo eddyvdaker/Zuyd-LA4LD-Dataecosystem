@@ -1,27 +1,28 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-{% if attended %}
-    <table class="table table-striped">
-        <tr>
-            <th>{{ _('Attended') }}</th>
-            <th>{{ _('Description') }}</th>
-            <th>{{ _('Start') }}</th>
-            <th>{{ _('End') }}</th>
-            <th>{{ _('Room') }}</th>
-        </tr>
-
-    {% for row in attended %}
-        <tr>
-            <td>{{ row.get_schedule_item().title }}</td>
-            <td>{{ row.get_schedule_item().description }}</td>
-            <td>{{ row.get_schedule_item().start }}</td>
-            <td>{{ row.get_schedule_item().end }}</td>
-            <td>{{ row.get_schedule_item().room }}</td>
-        </tr>
-    {% endfor %}
-    </table>
-{% else %}
-    <p>{{ _('No results') }}</p>
-{% endif %}
+<div id="attendance">
+    {% if attended %}
+        <table id="attended" class="table table-striped">
+            <tr id="header-row">
+                <th>{{ _('Attended') }}</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Start') }}</th>
+                <th>{{ _('End') }}</th>
+                <th>{{ _('Room') }}</th>
+            </tr>
+            {% for row in attended %}
+                <tr id="row">
+                    <td>{{ row.get_schedule_item().title }}</td>
+                    <td>{{ row.get_schedule_item().description }}</td>
+                    <td>{{ row.get_schedule_item().start }}</td>
+                    <td>{{ row.get_schedule_item().end }}</td>
+                    <td>{{ row.get_schedule_item().room }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p id="no-results">{{ _('No results') }}</p>
+    {% endif %}
+</div>
 {% endblock %}

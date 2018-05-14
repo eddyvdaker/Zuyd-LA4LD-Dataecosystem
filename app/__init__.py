@@ -7,6 +7,7 @@
 """
 
 from flask import Flask, request, current_app
+from flask_bootstrap import Bootstrap
 from flask_babel import Babel, lazy_gettext as _l
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -26,6 +27,7 @@ login.login_view = 'auth.login'
 login.login_message = _l('Please log in to access this page.')
 mail = Mail()
 babel = Babel()
+bootstrap = Bootstrap()
 
 
 def create_app(config_class=Config):
@@ -37,6 +39,7 @@ def create_app(config_class=Config):
     login.init_app(app)
     mail.init_app(app)
     babel.init_app(app)
+    bootstrap.init_app(app)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
@@ -107,6 +110,5 @@ def create_app(config_class=Config):
 def get_locale():
     return request.accept_languages.best_match(
         current_app.config['LANGUAGES'])
-
 
 from app import models
