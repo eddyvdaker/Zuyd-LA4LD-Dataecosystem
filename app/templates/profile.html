@@ -10,10 +10,15 @@
         <hr>
         <h3>Info</h3>
         <ul class="list-unstyled">
-            <li id="role"><strong>{{ _('Your role is') }}:</strong> {{ current_user.role.role }}<br></li>
-            <li id="card-number"><strong>{{ _('Your card number') }}:</strong> {{ current_user.card_number }}<br></li>
-            <li id="identifier"><strong>{{ _('Your identifier is') }}:</strong> {{ current_user.hash_identifier() }}<br><br></li>
-        </ul>
+            <li id="role"><strong>{{ _('Your role is') }}:</strong> {{ current_user.role.role }}</li>
+            <li id="card-number"><strong>{{ _('Your card number') }}:</strong> {{ current_user.card_number }}</li>
+            <li id="identifier"><strong>{{ _('Your identifier is') }}:</strong> {{ current_user.hash_identifier() }}</li>
+            {% if current_user.groups_of_student() %}
+                <li id="groups"><strong>{{ _('Groups') }}:</strong>
+                    {% for group in current_user.groups_of_student() %} {{ group.code }};{% endfor %}
+                </li>
+            {% endif %}
+        </ul><br>
         <a id="export-link" href="{{ url_for('main.download_own_data') }}"><button type="button" class="btn btn-dark">{{ _('Export Data') }}</button></a>
     </div>
     {% if modules_as_student %}

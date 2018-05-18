@@ -7,6 +7,7 @@
 """
 from datetime import datetime, timedelta
 from flask import jsonify, redirect, render_template, url_for
+from flask_login import current_user
 from flask_babel import _
 
 from app.api.auth import token_auth
@@ -19,8 +20,17 @@ from app.schedule.forms import SelectSchedule
 def schedule():
     form = SelectSchedule()
     schedules = Schedule.query.all()
-    form.schedule.choices = [
-        (x.description, x.description) for x in schedules]
+    choices = []
+    for schedule in schedules:
+        if schedule.group in [x.id for x in current_user.groups_of_student()]:
+            choices.append((
+                schedule.description,
+                f'{schedule.description} (Your schedule)'
+            ))
+        else:
+            choices.append((schedule.description, schedule.description))
+
+    form.schedule.choices = choices
     if form.validate_on_submit():
         schedule_id = Schedule.query.filter_by(
             description=form.schedule.data).first().id
