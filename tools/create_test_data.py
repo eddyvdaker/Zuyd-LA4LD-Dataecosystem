@@ -81,11 +81,13 @@ def create_schedules(schedules):
 
 def create_users(users):
     for user in users:
+        print(user)
         # noinspection PyArgumentList
         u = User(
             username=user['username'],
             email=user['email'],
-            role=Role.query.filter_by(role=user['role']).first()
+            role=Role.query.filter_by(role=user['role']).first(),
+            card_number=user['cardnr']
         )
         db.session.add(u)
         db.session.commit()
@@ -105,7 +107,7 @@ def create_users(users):
 
         for module in user['examiner_of']:
             u.add_to_module(
-                Module.query.filter_by(code=module).first(), 'student'
+                Module.query.filter_by(code=module).first(), 'examiner'
             )
 
         u.set_password('la4ld')
