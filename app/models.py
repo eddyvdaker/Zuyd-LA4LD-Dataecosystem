@@ -369,7 +369,8 @@ class ScheduleItem(db.Model):
     room = db.Column(db.String(128))
     schedule = db.Column(db.Integer, db.ForeignKey('schedule.id'))
     student_attendance = db.relationship(
-        'Attendance', backref='item_attendance', lazy='dynamic')
+        'Attendance', backref='item_attendance', lazy='dynamic'
+    )
 
     def __repr__(self):
         return f'<ScheduleItem {self.id}>'
@@ -396,6 +397,15 @@ class Attendance(db.Model):
 
     def get_schedule_item(self):
         return ScheduleItem.query.filter_by(id=self.schedule_item_id).first()
+
+
+class ApiKey(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(1024), unique=True)
+    description = db.Column(db.String(256))
+
+    def __repr__(self):
+        return f'<ApiKey {self.id}>'
 
 
 @login.user_loader
