@@ -3,249 +3,215 @@
     tools.create_test_data
     ~~~~~~~~~~~~~~~~~~~~~~
 
-    Create test data for use during development
+    Create test data for use during development, testing or demonstrations.
+    The data comes from the ./tools/test-data/test-data.json file, which is
+    also a valid import file.
 """
+import json
+import os
 from datetime import datetime
+from random import randint
 
-from app import create_app, db
-from app.models import User, Grade, Module, Result, Role, Schedule, \
-    ScheduleItem, Group
+from app import db, create_app
+from app.models import Role, Module, Group, Schedule, ScheduleItem, Result, \
+    Attendance, User, Grade
 
-roles = ['admin', 'student', 'teacher', 'system']
-
-users = [
-    {
-        'username': 'student',
-        'email': 'student@la4ld-test.com',
-        'role': 'student',
-        'password': 'la4ld',
-        'cardnr': '964972',
-        'groups': ['ict1']
-    },
-    {
-        'username': 'admin',
-        'email': 'admin@la4ld-test.com',
-        'role': 'admin',
-        'password': 'la4ld',
-        'cardnr': '2521110'
-    },
-    {
-        'username': 'teacher',
-        'email': 'teacher@la4ld-test.com',
-        'role': 'teacher',
-        'password': 'la4ld',
-        'cardnr': '895328'
-    }
-]
-
-modules = [
-    {
-        'code': 'tm01',
-        'name': 'Test Module 1',
-        'description': 'The first testing module',
-        'start': datetime(2010, 10, 1),
-        'end': datetime(2010, 11, 1),
-        'faculty': 'ICT'
-    },
-    {
-        'code': 'tm02',
-        'name': 'Test Module 2',
-        'description': 'The second testing module',
-        'start': datetime(2010, 10, 15),
-        'end': datetime(2011, 3, 1),
-        'faculty': 'Zorg'
-    }
-]
-
-groups = [
-    {
-        'code': 'ict1',
-        'active': True,
-        'modules': ['tm01', 'tm02']
-    },
-    {
-        'code': 'bm01-1',
-        'active': True,
-        'modules': ['tm01']
-    },
-    {
-        'code': 'ict1',
-        'active': False,
-        'modules': ['tm02']
-    }
-]
-
-schedules = [
-    {
-        'description': 'ict1 - tm01 schedule',
-        'group': 'ict1',
-        'module': 'tm01',
-        'items': [
-            {
-                'title': 'tm01 - WK1 LESSON 1',
-                'description': 'First lesson of tm01',
-                'start': datetime(2010, 10, 1, 9, 30),
-                'end': datetime(2010, 10, 1, 10, 30),
-                'room': 'B3.205'
-            },
-            {
-                'title': 'tm01 - WK1 LESSON 2',
-                'description': 'Second lesson of tm01',
-                'start': datetime(2017, 10, 3, 15, 0),
-                'end': datetime(2019, 10, 3, 16, 0),
-                'room': 'B2.221'
-            }
-        ]
-    },
-    {
-        'description': 'ict1 - tm02 schedule',
-        'group': 'ict1',
-        'module': 'tm02',
-        'items': [
-            {
-                'title': 'tm02 - HC 1',
-                'description': 'First lecture of tm02',
-                'start': datetime(2010, 12, 6, 13, 0),
-                'end': datetime(2010, 12, 6, 13, 30),
-                'room': 'A1.120'
-            }
-        ]
-    },
-    {
-        'description': 'bm01-1 - tm01 schedule',
-        'group': 'bm01-1',
-        'module': 'tm01',
-        'items': [
-            {
-                'title': 'tm01 - lesson 1',
-                'description': 'First lesson of tm01',
-                'start': datetime(2017, 5, 5, 12, 0),
-                'end': datetime(2019, 1, 1, 1, 1),
-                'room': 'C1.005'
-            }
-        ]
-    }
-]
+basedir = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(basedir, 'tools/test-data/test-data.json')) as f:
+    test_data = json.load(f)
 
 
 def create_roles():
-    for role in roles:
+    for role in ['admin', 'student', 'teacher']:
         r = Role(role=role)
         db.session.add(r)
     db.session.commit()
 
 
-def create_users():
-    for user in users:
-        u = User(
-            username=user['username'],
-            email=user['email'],
-            card_number=user['cardnr']
-        )
-        db.session.add(u)
-        db.session.commit()
-
-        r = Role.query.filter_by(role=user['role']).first()
-        u.role_id = r.id
-        db.session.commit()
-
-        u = User.query.filter_by(username=user['username']).first()
-        u.set_password(user['password'])
-        db.session.commit()
-    db.session.commit()
-
-
-def create_modules():
+def create_modules(modules):
     for module in modules:
         m = Module(
             code=module['code'],
             name=module['name'],
             description=module['description'],
-            start=module['start'],
-            end=module['end'],
+            start=datetime.strptime(module['start'], '%Y-%m-%d'),
+            end=datetime.strptime(module['end'], '%Y-%m-%d'),
             faculty=module['faculty']
         )
         db.session.add(m)
-    db.session.commit()
-
-
-def add_users_to_modules():
-    tm01 = Module.query.filter_by(code='tm01').first()
-    tm02 = Module.query.filter_by(code='tm02').first()
-    student = User.query.filter_by(username='student').first()
-    teacher = User.query.filter_by(username='teacher').first()
-
-    student.add_to_module(tm01)
-    teacher.add_to_module(tm01, module_role='examiner')
-    teacher.add_to_module(tm02, module_role='teacher')
-    db.session.commit()
-
-
-def add_results():
-    student = User.query.filter_by(username='student').first()
-    tm01 = Module.query.filter_by(code='tm01').first()
-
-    r = Result(identifier=student.hash_identifier(), module=tm01.id)
-    db.session.add(r)
-    db.session.commit()
-
-    g1 = Grade(name='pi1', score=6, weight=1, result=r.id)
-    g2 = Grade(name='pi10', score=8, weight=4, result=r.id)
-    db.session.add_all([g1, g2])
-    db.session.commit()
-
-
-def add_groups():
-    for group in groups:
-        grp = Group(code=group['code'], active=group['active'])
-        db.session.add(grp)
         db.session.commit()
 
+
+def create_groups(groups):
+    for group in groups:
+        grp = Group(
+            code=group['code'],
+            active=bool(group['active']),
+        )
+        db.session.add(grp)
+        db.session.commit()
         for module in group['modules']:
             m = Module.query.filter_by(code=module).first()
             grp.add_module_to_group(m)
         db.session.commit()
 
 
-def add_schedule():
+def create_schedules(schedules):
     for schedule in schedules:
-        grp = Group.query.filter_by(code=schedule['group']).first()
-        m = Module.query.filter_by(
-            code=schedule['module']).first()
         s = Schedule(
-            description=schedule['description'], group=grp.id, module=m.id)
+            description=schedule['description'],
+            group=Group.query.filter_by(code=schedule['group']).first().id,
+            module=Module.query.filter_by(code=schedule['module']).first().id
+        )
         db.session.add(s)
         db.session.commit()
 
         for item in schedule['items']:
-            i = ScheduleItem(
+            si = ScheduleItem(
                 title=item['title'],
                 description=item['description'],
-                start=item['start'],
-                end=item['end'],
+                start=datetime.strptime(item['start'], '%Y-%m-%d %H:%M'),
+                end=datetime.strptime(item['end'], '%Y-%m-%d %H:%M'),
                 room=item['room'],
                 schedule=s.id
             )
-            db.session.add(i)
-            db.session.commit()
-
-
-def add_student_to_group():
-    s = User.query.filter_by(username='student').first()
-    for group in users[0]['groups']:
-        grp = Group.query.filter_by(code=group, active=True).first()
-        s.add_to_group(grp)
+            db.session.add(si)
         db.session.commit()
 
 
+def create_users(users):
+    for user in users:
+        # noinspection PyArgumentList
+        u = User(
+            username=user['username'],
+            email=user['email'],
+            role=Role.query.filter_by(role=user['role']).first()
+        )
+        db.session.add(u)
+        db.session.commit()
+
+        for group in user['groups']:
+            u.add_to_group(Group.query.filter_by(code=group).first())
+
+        for module in user['student_of']:
+            u.add_to_module(
+                Module.query.filter_by(code=module).first(), 'student'
+            )
+
+        for module in user['teacher_of']:
+            u.add_to_module(
+                Module.query.filter_by(code=module).first(), 'teacher'
+            )
+
+        for module in user['examiner_of']:
+            u.add_to_module(
+                Module.query.filter_by(code=module).first(), 'student'
+            )
+
+        u.set_password('la4ld')
+        db.session.commit()
+
+
+def create_admin():
+    # noinspection PyArgumentList
+    u = User(
+        username='admin',
+        email='admin@la4ld.com',
+        role=Role.query.filter_by(role='admin').first()
+    )
+    u.set_password('la4ld')
+    db.session.add(u)
+    db.session.commit()
+
+
+def generate_results(past_modules, pi_dicts):
+    r = Role.query.filter_by(role='student').first()
+    students = User.query.filter_by(role_id=r.id).all()
+
+    for student in students:
+        modules = [
+            x for x in student.get_modules_of_student()
+            if x.code in past_modules
+        ]
+        for module in modules:
+            r = Result(
+                identifier=student.hash_identifier(),
+                module=module.id
+            )
+            db.session.add(r)
+            db.session.commit()
+
+            for pi in pi_dicts:
+                grd = Grade(
+                    name=pi['name'],
+                    score=randint(0, 5) * 2,
+                    weight=int(pi['weight']),
+                    result=r.id
+                )
+                db.session.add(grd)
+            db.session.commit()
+
+
+def generate_attendance(rate=80):
+    r = Role.query.filter_by(role='student').first()
+    students = User.query.filter_by(role_id=r.id).all()
+
+    for student in students:
+        past_schedule_items = []
+        for group in student.groups_of_student():
+            for schedule in group.schedules.all():
+                for x in schedule.items.all():
+                    if x.end < datetime.now():
+                        past_schedule_items.append(x)
+        for item in past_schedule_items:
+            if randint(1, 100) <= rate:
+                a = Attendance(
+                    identifier=student.hash_identifier(),
+                    schedule_item_id=item.id
+                )
+                db.session.add(a)
+                db.session.commit()
+
+
 if __name__ == '__main__':
-    app = create_app()
-    app.config['TESTING'] = True
-    with app.app_context():
-        create_roles()
-        create_users()
-        create_modules()
-        add_users_to_modules()
-        add_results()
-        add_groups()
-        add_schedule()
+    user_input = input(
+        'This script adds data to the application database, are you sure '
+        'you want to continue? [y/N]: '
+    )
+    if user_input == 'y' or user_input == 'Y':
+        app = create_app()
+        app.config['TESTING'] = True
+        with app.app_context():
+            print('Creating modules...')
+            create_modules(test_data['modules'])
+
+            print('Creating groups...')
+            create_groups(test_data['groups'])
+
+            print('Creating roles...')
+            create_roles()
+
+            print('Creating users...')
+            create_users(test_data['users'])
+
+            print('Creating admin account...')
+            create_admin()
+
+            print('Creating schedules...')
+            create_schedules(test_data['schedules'])
+
+            print('Generating student results...')
+            generate_results(
+                ['B2S1', 'B2A1'],
+                [
+                    {'name': 'pi3', 'weight': 1},
+                    {'name': 'pi4', 'weight': 2},
+                    {'name': 'pi6', 'weight': 3},
+                    {'name': 'pi9', 'weight': 5}
+                ]
+            )
+
+            print('Generating student attendance...')
+            generate_attendance()
+
+            print('Done...')

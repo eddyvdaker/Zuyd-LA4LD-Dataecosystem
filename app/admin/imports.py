@@ -74,8 +74,11 @@ def import_users_to_db(data, mail_details=False):
     users_skipped_data = []
     for row in data:
         try:
-            user = User(username=row['username'], email=row['email'],
-                        card_number=row['cardnr'])
+            # noinspection PyArgumentList
+            user = User(
+                username=row['username'], email=row['email'],
+                card_number=row['cardnr']
+            )
             db.session.add(user)
             db.session.commit()
 
@@ -87,10 +90,12 @@ def import_users_to_db(data, mail_details=False):
             password = token_urlsafe()
             user.set_password(password)
             db.session.commit()
-            new_user = {'username': user.username,
-                        'password': password,
-                        'email': user.email,
-                        'cardnr': user.card_number}
+            new_user = {
+                'username': user.username,
+                'password': password,
+                'email': user.email,
+                'cardnr': user.card_number
+            }
 
             for group in row['groups']:
                 user.add_to_group(Group.query.filter_by(
