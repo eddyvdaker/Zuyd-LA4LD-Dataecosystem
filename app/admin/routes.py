@@ -6,6 +6,7 @@
     Routes used for the admin panel of the application.
 """
 import os
+from secrets import token_urlsafe
 from flask import abort, current_app, flash, redirect, render_template, \
     request, url_for, send_file
 from flask_babel import _
@@ -15,11 +16,13 @@ from app import db
 from app.admin import bp
 from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
     EditScheduleForm, EditScheduleItemForm, EditGroupForm, \
-    ManageGroupMembershipForm, ManageModuleMembershipForm
+    ManageGroupMembershipForm, ManageModuleMembershipForm, AddApiKeyForm, \
+    ApiKeyDeleteConfirmationForm
 from app.admin.imports import upload_file, import_groups_to_db, \
     import_modules_to_db, import_results_to_db, import_schedules_to_db, \
     import_users_to_db, read_json
-from app.models import User, Module, Role, Schedule, ScheduleItem, Group
+from app.models import User, Module, Role, Schedule, ScheduleItem, Group, \
+    ApiKey
 
 
 @bp.route('/admin', methods=['GET'])
@@ -632,4 +635,53 @@ def manage_module_membership():
     return render_template(
         'admin/manage_modules.html', title=_('Admin Panel: Manage Modules'),
         form=form
+    )
+
+
+@bp.route('/admin/apikey-overview', methods=['GET'])
+@login_required
+def apikey_overview():
+    if current_user.role.role != 'admin':
+        abort(403)
+    return render_template(
+        'admin/overview_api_keys.html', keys=ApiKey.query.all(),
+        title=_('Admin Panel: API Key Overview')
+    )
+
+
+@bp.route('/admin/add-apikey', methods=['GET', 'POST'])
+@login_required
+def add_apikey():
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = AddApiKeyForm()
+    if form.validate_on_submit():
+        a = ApiKey(key=form.key.data, description=form.description.data)
+        db.session.add(a)
+        db.session.commit()
+        return redirect(url_for('admin.apikey_overview'))
+    else:
+        while form.key.data in [x.key for x in ApiKey.query.all()] or \
+                not form.key.data:
+            form.key.data = token_urlsafe(24)
+    return render_template(
+        'default-form.html', form=form, title=_('Admin Panel: Add API Key')
+    )
+
+
+@bp.route('/admin/delete-apikey/<key_id>', methods=['GET', 'POST'])
+@login_required
+def delete_apikey(key_id):
+    if current_user.role.role != 'admin':
+        abort(403)
+    form = ApiKeyDeleteConfirmationForm()
+    key = ApiKey.query.filter_by(id=key_id).first()
+    if form.validate_on_submit():
+        ApiKey.query.filter_by(id=key.id).delete()
+        db.session.commit()
+        flash(_('API key deleted'))
+        return redirect(url_for('admin.apikey_overview'))
+    return render_template(
+        'admin/delete_api_key.html', form=form, key=key,
+        title=_('Admin Panel: Delete API Key')
     )

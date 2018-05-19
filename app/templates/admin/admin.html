@@ -35,5 +35,9 @@
         <ul>
             <li><a href="{{ url_for('admin.show_fact_store') }}">{{ _('View Fact-Store') }}</a></li>
         </ul>
+    <h3>{{ _('API Keys') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.apikey_overview') }}">{{ _('API Key Overview') }}</a></li>
+        </ul>
 </div>
 {% endblock %}

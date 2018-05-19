@@ -11,8 +11,8 @@ from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField, StringField, SelectField, DateField, \
-    DateTimeField, BooleanField
-from wtforms.validators import DataRequired, Email
+    DateTimeField, BooleanField, TextAreaField
+from wtforms.validators import DataRequired, Email, Length
 
 from app.forms import MultiCheckboxField
 
@@ -82,3 +82,19 @@ class ManageModuleMembershipForm(FlaskForm):
     modules_list = MultiCheckboxField(_l('Modules'), validators=[])
     roles = SelectField(_l('Role'), validators=[DataRequired()])
     submit = SubmitField(_l('Save Changes'))
+
+
+class AddApiKeyForm(FlaskForm):
+    key = StringField(
+        _l('Key'), validators=[DataRequired(), Length(min=12, max=512)]
+    )
+    description = TextAreaField(_l('Description'))
+    submit = SubmitField(_l('Create Key'))
+
+
+class ApiKeyDeleteConfirmationForm(FlaskForm):
+    confirm = BooleanField(
+        _l('Confirm deletion (this action cannot be reverted)'),
+        validators=[DataRequired()]
+    )
+    submit = SubmitField(_l('Confirm'))
