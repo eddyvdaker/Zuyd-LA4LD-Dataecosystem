@@ -82,6 +82,50 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
+    def to_dict(self, include_student_of=False, include_student_of_short=True,
+                include_teacher_of=False, include_teacher_of_short=True,
+                include_examiner_of=False, include_examiner_of_short=True,
+                include_groups=False, include_groups_short=True):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'card_number': self.card_number,
+            'role': self.role.role
+        }
+
+        if include_student_of:
+            data['student_of'] = [
+                x.to_dict for x in self.get_modules_of_student()
+            ]
+        elif include_student_of_short:
+            data['student_of'] = [
+                x.code for x in self.get_modules_of_student()
+            ]
+
+        if include_teacher_of:
+            data['teacher_of'] = [
+                x.to_dict() for x in self.get_modules_of_teacher()
+            ]
+        elif include_teacher_of_short:
+            data['teacher_of'] = [
+                x.code for x in self.get_modules_of_teacher()
+            ]
+
+        if include_examiner_of:
+            data['examiner_of'] = [
+                x.to_dict() for x in self.get_modules_of_examiner()
+            ]
+        elif include_examiner_of_short:
+            data['examiner_of'] = [
+                x.code for x in self.get_modules_of_examiner()
+            ]
+
+        if include_groups:
+            data['groups'] = [x.to_dict() for x in self.groups_of_student()]
+        elif include_groups_short:
+            data['groups'] = [x.code for x in self.groups_of_student()]
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -248,6 +292,45 @@ class Module(db.Model):
     def __repr__(self):
         return f'<Module {self.code}>'
 
+    def to_dict(self, include_students=False, include_students_short=True,
+                include_teachers=False, include_teachers_short=True,
+                include_examiners=False, include_examiners_short=True,
+                include_groups=False, include_groups_short=True,
+                include_results=False):
+        data = {
+            'id': self.id,
+            'code': self.code,
+            'name': self.name,
+            'description': self.description,
+            'start': self.start.strftime('%Y-%m-%d'),
+            'end': self.end.strftime('%Y-%m-%d'),
+            'faculty': self.faculty
+        }
+        if include_students:
+            data['students'] = [x.to_dict() for x in self.students.all()]
+        elif include_students_short:
+            data['students'] = [x.username for x in self.students.all()]
+
+        if include_teachers:
+            data['teachers'] = [x.to_dict() for x in self.teachers.all()]
+        elif include_teachers_short:
+            data['teachers'] = [x.username for x in self.teachers.all()]
+
+        if include_examiners:
+            data['examiners'] = [x.to_dict() for x in self.examiners.all()]
+        elif include_examiners_short:
+            data['examiners'] = [x.username for x in self.examiners.all()]
+
+        if include_groups:
+            data['groups'] = [x.to_dict() for x in self.groups.all()]
+        elif include_groups_short:
+            data['groups'] = [x.code for x in self.groups.all()]
+
+        if include_results:
+            data['results'] = [x.to_dict() for x in self.results.all()]
+
+        return data
+
     def get_students(self):
         return User.query.join(
             student_module, (student_module.c.student_id == User.id)).filter(
@@ -277,6 +360,16 @@ class Result(db.Model):
     def __repr__(self):
         return f'<Result {self.id}>'
 
+    def to_dict(self, include_grades=True):
+        data = {
+            'id': self.id,
+            'identifier': self.identifier,
+            'module': self.result_module.code
+        }
+        if include_grades:
+            data['grades'] = [x.to_dict() for x in self.grades.all()]
+        return data
+
 
 class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -287,6 +380,15 @@ class Grade(db.Model):
 
     def __repr__(self):
         return f'<Grade {self.id}>'
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'name': self.name,
+            'score': self.score,
+            'weight': self.weight,
+        }
+        return data
 
 
 class Group(db.Model):
@@ -310,6 +412,31 @@ class Group(db.Model):
 
     def __repr__(self):
         return f'<Group {self.id}>'
+
+    def to_dict(self, include_modules=False, include_modules_short=True,
+                include_students=False, include_students_short=True,
+                include_schedules=False, include_schedules_short=True):
+        data = {
+            'id': self.id,
+            'code': self.code,
+            'active': self.active,
+        }
+        if include_modules:
+            data['modules'] = [x.to_dict() for x in self.modules.all()]
+        elif include_modules_short:
+            data['modules'] = [x.code for x in self.modules.all()]
+
+        if include_students:
+            data['students'] = [x.to_dict() for x in self.students.all()]
+        elif include_students_short:
+            data['students'] = [x.username for x in self.students.all()]
+
+        if include_schedules:
+            data['schedules'] = [x.to_dict() for x in self.schedules.all()]
+        elif include_schedules_short:
+            data['schedules'] = [x.description for x in self.schedules.all()]
+
+        return data
 
     def module_in_group(self, module):
         return self.modules.filter(
@@ -347,16 +474,18 @@ class Schedule(db.Model):
     def __repr__(self):
         return f'<Schedule {self.id}>'
 
-    def to_dict(self):
+    def to_dict(self, include_items=True):
         data = {
             'id': self.id,
             'description': self.description,
             'group_id': self.group,
-            '_links': {
-                'self': url_for(
-                    'schedule.api_single_schedule', schedule_id=self.id)
-            }
         }
+        if include_items:
+            data['items'] = [
+                x.to_dict() for x in ScheduleItem.query.filter_by(
+                    schedule=self.id
+                )
+            ]
         return data
 
 
@@ -380,11 +509,18 @@ class ScheduleItem(db.Model):
             'id': self.id,
             'title': self.title,
             'description': self.description,
-            'start': self.start,
-            'end': self.end,
+            'start': self.start.strftime('%Y-%m-%d %H:%M'),
+            'end': self.end.strftime('%Y-%m-%d %H:%M'),
             'room': self.room
         }
         return data
+
+    def attended(self, user):
+        attended = Attendance.query.filter_by(
+            identifier=user.hash_identifier(),
+            schedule_item_id=self.id
+        ).first()
+        return attended is not None
 
 
 class Attendance(db.Model):
@@ -394,6 +530,14 @@ class Attendance(db.Model):
 
     def __repr__(self):
         return f'<Attendance {self.id}>'
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'identifier': self.identifier,
+            'schedule_item': self.schedule_item_id
+        }
+        return data
 
     def get_schedule_item(self):
         return ScheduleItem.query.filter_by(id=self.schedule_item_id).first()
