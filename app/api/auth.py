@@ -5,11 +5,11 @@
 
     Handles API authentication
 """
-from flask import g
+from flask import g, current_app
 from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
 from app.api.errors import error_response
-from app.models import User
+from app.models import User, ApiKey
 
 basic_auth = HTTPBasicAuth()
 token_auth = HTTPTokenAuth()
@@ -31,7 +31,13 @@ def basic_auth_error():
 
 @token_auth.verify_token
 def verify_token(token):
-    g.current_user = User.check_token(token) if token else None
+    print(token)
+    if ApiKey.query.filter_by(key=token).all():
+        g.current_user = User.query.filter_by(
+            username=current_app.config['SYSTEM_ACCOUNT']
+        ).first()
+    else:
+        g.current_user = User.check_token(token) if token else None
     return g.current_user is not None
 
 
