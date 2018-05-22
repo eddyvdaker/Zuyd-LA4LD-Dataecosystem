@@ -125,6 +125,7 @@ class User(UserMixin, db.Model):
             data['groups'] = [x.to_dict() for x in self.groups_of_student()]
         elif include_groups_short:
             data['groups'] = [x.code for x in self.groups_of_student()]
+        return data
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
