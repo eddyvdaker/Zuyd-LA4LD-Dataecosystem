@@ -34,3 +34,4 @@ class Config(object):
     FACT_STORE = os.environ.get('FACT_STORE') or \
                  os.path.join(basedir, 'fact-store.txt')
     LANGUAGES = ['en', 'nl']
+    SYSTEM_ACCOUNT = os.environ.get('SYSTEM_ACCOUNT') or 'admin'

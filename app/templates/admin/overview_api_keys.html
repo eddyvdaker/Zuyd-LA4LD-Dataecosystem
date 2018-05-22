@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div id="overview">
+    <a id="add-button" href="{{ url_for('admin.add_apikey') }}"><button type="button" class="btn btn-dark">{{ _('Add Key') }}</button></a><br><br>
+    <table id="keys" class="table table-striped">
+        <tr id="header-row">
+            <th>ID</th>
+            <th>{{ _('Key') }}</th>
+            <th>{{ _('Description') }}</th>
+            <th></th>
+        </tr>
+        {% for key in keys %}
+            <tr id="row">
+                <td>{{ key.id }}</td>
+                <td>{{ key.key }}</td>
+                <td>{{ key.description }}</td>
+                <td><a href="{{ url_for('admin.delete_apikey', key_id=key.id) }}">{{ _('Delete') }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
