@@ -7,10 +7,10 @@
 """
 import os
 from secrets import token_urlsafe
-from flask import abort, current_app, flash, redirect, render_template, \
+from flask import current_app, flash, redirect, render_template, \
     request, url_for, send_file
 from flask_babel import _
-from flask_login import current_user, login_required
+from flask_login import login_required
 
 from app import db
 from app.admin import bp
@@ -21,23 +21,22 @@ from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
 from app.admin.imports import upload_file, import_groups_to_db, \
     import_modules_to_db, import_results_to_db, import_schedules_to_db, \
     import_users_to_db, read_json
+from app.auth.decorator import admin_required
 from app.models import User, Module, Role, Schedule, ScheduleItem, Group, \
     ApiKey
 
 
 @bp.route('/admin', methods=['GET'])
 @login_required
+@admin_required
 def admin():
-    if current_user.role.role != 'admin':
-        abort(403)
     return render_template('admin/admin.html', title=_('Admin Panel'))
 
 
 @bp.route('/admin/users_import', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def import_users():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -70,9 +69,8 @@ def import_users():
 
 @bp.route('/admin/users_overview', methods=['GET'])
 @login_required
+@admin_required
 def users_overview():
-    if current_user.role.role != 'admin':
-        abort(403)
     users = User.query.all()
     return render_template(
         'admin/users_overview.html', title=_('Admin Panel: Users Overview'),
@@ -82,9 +80,8 @@ def users_overview():
 
 @bp.route('/admin/user/<user_id>', methods=['GET'])
 @login_required
+@admin_required
 def single_user(user_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     user = User.query.filter_by(id=user_id).first()
     groups = user.groups_of_student()
     for i, group in enumerate(groups):
@@ -98,9 +95,8 @@ def single_user(user_id):
 
 @bp.route('/admin/edit_user/<user_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_user(user_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditUserForm()
     roles = Role.query.all()
     form.role.choices = [(x.role, x.role) for x in roles]
@@ -125,13 +121,13 @@ def edit_user(user_id):
 
 @bp.route('/admin/add_user', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_user():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditUserForm()
     roles = Role.query.all()
     form.role.choices = [(x.role, x.role) for x in roles]
     if form.validate_on_submit():
+        # noinspection PyArgumentList
         u = User(
             username=form.username.data,
             email=form.email.data,
@@ -147,9 +143,8 @@ def add_user():
 
 @bp.route('/admin/modules_import', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def import_modules():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -166,9 +161,8 @@ def import_modules():
 
 @bp.route('/admin/modules_overview', methods=['GET'])
 @login_required
+@admin_required
 def modules_overview():
-    if current_user.role.role != 'admin':
-        abort(403)
     modules = Module.query.all()
     return render_template(
         'admin/modules_overview.html', modules=modules,
@@ -178,9 +172,8 @@ def modules_overview():
 
 @bp.route('/admin/edit_module/<module_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_module(module_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditModuleForm()
     module = Module.query.filter_by(id=module_id).first()
     if form.validate_on_submit():
@@ -208,9 +201,8 @@ def edit_module(module_id):
 
 @bp.route('/admin/add_module', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_module():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditModuleForm()
     if form.validate_on_submit():
         m = Module(
@@ -232,9 +224,8 @@ def add_module():
 
 @bp.route('/admin/results_import', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def import_results():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -251,9 +242,8 @@ def import_results():
 
 @bp.route('/admin/group_overview', methods=['GET'])
 @login_required
+@admin_required
 def group_overview():
-    if current_user.role.role != 'admin':
-        abort(403)
     groups = Group.query.all()
     for i, group in enumerate(groups):
         groups[i].modules_list = ', '.join(map(
@@ -266,9 +256,8 @@ def group_overview():
 
 @bp.route('/admin/group/<group_id>', methods=['GET'])
 @login_required
+@admin_required
 def single_group(group_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     group = Group.query.filter_by(id=group_id).first()
     return render_template(
         'admin/single_group.html', group=group,
@@ -278,9 +267,8 @@ def single_group(group_id):
 
 @bp.route('/admin/group_import', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def import_group():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -297,9 +285,8 @@ def import_group():
 
 @bp.route('/admin/add_group', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_group():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditGroupForm()
     if form.validate_on_submit():
         group = Group(code=form.code.data, active=form.active.data)
@@ -315,9 +302,8 @@ def add_group():
 
 @bp.route('/admin/edit_group/<group_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_group(group_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditGroupForm()
     group = Group.query.filter_by(id=group_id).first()
     if form.validate_on_submit():
@@ -337,9 +323,8 @@ def edit_group(group_id):
 
 @bp.route('/admin/schedule_import', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def import_schedule():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -356,9 +341,8 @@ def import_schedule():
 
 @bp.route('/admin/schedule_overview', methods=['GET'])
 @login_required
+@admin_required
 def schedule_overview():
-    if current_user.role.role != 'admin':
-        abort(403)
     schedules = Schedule.query.all()
     return render_template(
         'admin/schedule_overview.html',
@@ -368,9 +352,8 @@ def schedule_overview():
 
 @bp.route('/admin/schedule/<schedule_id>', methods=['GET'])
 @login_required
+@admin_required
 def single_schedule(schedule_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     module = Module.query.filter_by(id=schedule.module).first()
     group = Group.query.filter_by(id=schedule.group).first()
@@ -382,9 +365,8 @@ def single_schedule(schedule_id):
 
 @bp.route('/admin/edit_schedule/<schedule_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_schedule(schedule_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditScheduleForm()
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     modules = Module.query.all()
@@ -415,9 +397,8 @@ def edit_schedule(schedule_id):
 
 @bp.route('/admin/add_schedule', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_schedule():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditScheduleForm()
     modules = Module.query.all()
     form.module.choices = [
@@ -444,9 +425,8 @@ def add_schedule():
 @bp.route(
     '/admin/edit_schedule/<schedule_id>/<item_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_schedule_item(schedule_id, item_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditScheduleItemForm()
     item = ScheduleItem.query.filter_by(id=item_id).first()
     if form.validate_on_submit():
@@ -474,9 +454,8 @@ def edit_schedule_item(schedule_id, item_id):
 @bp.route(
     '/admin/add_schedule_item/<schedule_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_schedule_item(schedule_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     form = EditScheduleItemForm()
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     if form.validate_on_submit():
@@ -500,9 +479,8 @@ def add_schedule_item(schedule_id):
 
 @bp.route('/admin/logs', methods=['GET'])
 @login_required
+@admin_required
 def show_logs():
-    if current_user.role.role != 'admin':
-        abort(403)
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     log_file = os.path.join(base_dir, 'logs/la4ld.log')
     with open(log_file, 'r') as f:
@@ -515,26 +493,23 @@ def show_logs():
 
 @bp.route('/downloads/logs', methods=['GET'])
 @login_required
+@admin_required
 def download_logs():
-    if current_user.role.role != 'admin':
-        abort(403)
-    else:
-        base_dir = os.path.abspath(os.path.dirname('__main__'))
-        log_file = os.path.join(base_dir, 'logs/la4ld.log')
-        return send_file(
-            log_file,
-            mimetype='text/plain',
-            attachment_filename='la4ld.log',
-            as_attachment=True,
-            cache_timeout=-1
-        )
+    base_dir = os.path.abspath(os.path.dirname('__main__'))
+    log_file = os.path.join(base_dir, 'logs/la4ld.log')
+    return send_file(
+        log_file,
+        mimetype='text/plain',
+        attachment_filename='la4ld.log',
+        as_attachment=True,
+        cache_timeout=-1
+    )
 
 
 @bp.route('/admin/fact-store', methods=['GET'])
 @login_required
+@admin_required
 def show_fact_store():
-    if current_user.role.role != 'admin':
-        abort(403)
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     fact_store_file = os.path.join(base_dir, current_app.config['FACT_STORE'])
     try:
@@ -551,31 +526,28 @@ def show_fact_store():
 
 @bp.route('/downloads/fact-store', methods=['GET'])
 @login_required
+@admin_required
 def download_fact_store():
-    if current_user.role.role != 'admin':
-        abort(403)
+    base_dir = os.path.abspath(os.path.dirname('__main__'))
+    fact_store_file = os.path.join(
+        base_dir, current_app.config['FACT_STORE'])
+    if os.path.exists(fact_store_file):
+        return send_file(
+            fact_store_file,
+            mimetype='text/plain',
+            attachment_filename='fact-store.txt',
+            as_attachment=True,
+            cache_timeout=-1
+        )
     else:
-        base_dir = os.path.abspath(os.path.dirname('__main__'))
-        fact_store_file = os.path.join(
-            base_dir, current_app.config['FACT_STORE'])
-        if os.path.exists(fact_store_file):
-            return send_file(
-                fact_store_file,
-                mimetype='text/plain',
-                attachment_filename='fact-store.txt',
-                as_attachment=True,
-                cache_timeout=-1
-            )
-        else:
-            flash(_('No Fact-Store data available'))
-            return redirect(url_for('admin.show_fact_store'))
+        flash(_('No Fact-Store data available'))
+        return redirect(url_for('admin.show_fact_store'))
 
 
 @bp.route('/admin/manage-groups', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def manage_group_membership():
-    if current_user.role.role != 'admin':
-        abort(403)
     groups = Group.query.all()
     users = User.query.all()
     form = ManageGroupMembershipForm()
@@ -602,9 +574,8 @@ def manage_group_membership():
 
 @bp.route('/admin/manage-modules', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def manage_module_membership():
-    if current_user.role.role != 'admin':
-        abort(403)
     modules = Module.query.all()
     users = User.query.all()
     form = ManageModuleMembershipForm()
@@ -640,9 +611,8 @@ def manage_module_membership():
 
 @bp.route('/admin/apikey-overview', methods=['GET'])
 @login_required
+@admin_required
 def apikey_overview():
-    if current_user.role.role != 'admin':
-        abort(403)
     return render_template(
         'admin/overview_api_keys.html', keys=ApiKey.query.all(),
         title=_('Admin Panel: API Key Overview')
@@ -651,9 +621,8 @@ def apikey_overview():
 
 @bp.route('/admin/add-apikey', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_apikey():
-    if current_user.role.role != 'admin':
-        abort(403)
     form = AddApiKeyForm()
     if form.validate_on_submit():
         a = ApiKey(key=form.key.data, description=form.description.data)
@@ -671,9 +640,8 @@ def add_apikey():
 
 @bp.route('/admin/delete-apikey/<key_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def delete_apikey(key_id):
-    if current_user.role.role != 'admin':
-        abort(403)
     form = ApiKeyDeleteConfirmationForm()
     key = ApiKey.query.filter_by(id=key_id).first()
     if form.validate_on_submit():
