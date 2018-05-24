@@ -288,7 +288,8 @@ class Module(db.Model):
         lazy='dynamic'
     )
     results = db.relationship(
-        'Result', backref='result_module', lazy='dynamic')
+        'Result', backref='result_module', lazy='dynamic'
+    )
 
     def __repr__(self):
         return f'<Module {self.code}>'
@@ -551,6 +552,82 @@ class ApiKey(db.Model):
 
     def __repr__(self):
         return f'<ApiKey {self.id}>'
+
+
+class Questionnaire(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    questionnaire_id = db.Column(db.Integer)
+    identifier = db.Column(db.String(128))
+    questionnaire_scale = db.relationship(
+        'QuestionnaireScale', backref='scale_questionnaire', lazy='dynamic'
+    )
+
+    def __repr__(self):
+        return f'<Questionnaire {self.id}>'
+
+    def to_dict(self, include_scales=True):
+        data = {
+            'id': self.id,
+            'questionnaire_id': self.questionnaire_id,
+            'identifier': self.identifier
+        }
+
+        if include_scales:
+            data['scales'] = [
+                x.to_dict() for x in self.questionnaire_scale.all()
+            ]
+        return data
+
+
+class QuestionnaireScale(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    result = db.Column(db.Float)
+    date = db.Column(db.DateTime)
+    scale_id = db.Column(db.Integer)
+    questionnaire_id = db.Column(db.Integer, db.ForeignKey('questionnaire.id'))
+    question_results = db.relationship(
+        'QuestionResult', backref='question_result', lazy='dynamic'
+    )
+
+    def __repr__(self):
+        return f'<QuestionnaireScale {self.id}>'
+
+    def to_dict(self, include_question_results=True):
+        data = {
+            'id': self.id,
+            'result': self.result,
+            'date': self.date.strftime('%Y-%m-%d %H:%M'),
+            'questionnaire_id': self.questionnaire_id
+        }
+
+        if include_question_results:
+            data['question_results']: [
+                x.to_dict() for x in self.question_results.all()
+            ]
+        return data
+
+
+class QuestionResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    result = db.Column(db.Float)
+    reversed = db.Column(db.Boolean)
+    question_number = db.Column(db.Integer)
+    question_id = db.Column(db.Integer)
+    result_scale_id = db.Column(
+        db.Integer, db.ForeignKey('questionnaire_scale.id')
+    )
+
+    def __repr__(self):
+        return f'<QuestionResult {self.id}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'result': self.result,
+            'reversed': self.reversed,
+            'question_number': self.question_number,
+            'question_id': self.question_id
+        }
 
 
 @login.user_loader
