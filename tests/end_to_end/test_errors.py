@@ -12,7 +12,7 @@ class TestErrors(EndToEndTest):
 
     def test_403(self):
         # User logs in as student user
-        self.loginUser('student', 'la4ld')
+        self.loginUser(self.users['student'], 'la4ld')
 
         # User tries to reach admin page
         self.browser.get(self.live_server_url + '/admin')

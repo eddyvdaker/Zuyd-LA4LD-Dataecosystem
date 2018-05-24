@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    tests.unit.base
-    ~~~~~~~~~~~~~~~
-
-    Base functionality for running unit tests
-"""
 from unittest import TestCase, main
 
 import app as flask_app

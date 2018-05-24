@@ -22,7 +22,7 @@ class TestAuthentication(EndToEndTest):
         self.assertIn('Sign in', text)
 
         # User logs in
-        self.loginUser('student', 'la4ld')
+        self.loginUser(self.users['student'], 'la4ld')
 
         # User sees welcome message
         text = self.waitFor(
@@ -33,7 +33,7 @@ class TestAuthentication(EndToEndTest):
         text = self.waitFor(
             lambda: self.browser.find_element_by_tag_name('p').text
         )
-        self.assertIn('Hello, student', text)
+        self.assertIn(f'Hello, {self.users["student"]}', text)
 
     def test_wrong_username(self):
         # User goes to login page
@@ -64,7 +64,7 @@ class TestAuthentication(EndToEndTest):
         self.assertIn('Sign in', text)
 
         # User logs in
-        self.loginUser('student', 'j209fj0923g3290g')
+        self.loginUser(self.users['student'], 'j209fj0923g3290g')
         text_list = self.waitFor(
             lambda: self.browser.find_element_by_id('messages')
         )
@@ -83,7 +83,7 @@ class TestAuthentication(EndToEndTest):
         self.assertIn('Sign in', text)
 
         # User logs in
-        self.loginUser('student', 'la4ld')
+        self.loginUser(self.users['student'], 'la4ld')
 
         # User sees welcome message
         text = self.waitFor(
@@ -94,7 +94,7 @@ class TestAuthentication(EndToEndTest):
         text = self.waitFor(
             lambda: self.browser.find_element_by_tag_name('p').text
         )
-        self.assertIn('Hello, student', text)
+        self.assertIn(f'Hello, {self.users["student"]}', text)
 
         # User logs out
         self.browser.get(self.live_server_url + '/logout')

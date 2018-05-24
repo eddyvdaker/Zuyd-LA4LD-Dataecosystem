@@ -10,7 +10,7 @@ import hashlib
 import jwt
 import os
 from datetime import datetime, timedelta
-from flask import current_app, url_for
+from flask import current_app
 from flask_login import UserMixin
 from time import time
 from werkzeug.security import generate_password_hash, check_password_hash

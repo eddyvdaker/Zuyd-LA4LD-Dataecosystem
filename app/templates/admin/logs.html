@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <a id="download-button" href="{{ url_for('admin.download_logs') }}"><button type="button" class="btn btn-dark">{{ _('Export Logs') }}</button></a><br><br>
-    <div id="fact-store">
+    <div id="logs">
         {% for line in logs %}
             {{ line }}<br>
         {% endfor %}
