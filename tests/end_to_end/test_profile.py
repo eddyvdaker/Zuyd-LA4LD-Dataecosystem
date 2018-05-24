@@ -1,11 +1,3 @@
-
-# -*- coding: utf-8 -*-
-"""
-    tests.end-to-end.test_authentication
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    End-to-end tests for authentication
-"""
 from tests.end_to_end.base import EndToEndTest
 from time import sleep
 
@@ -22,7 +14,7 @@ class TestProfile(EndToEndTest):
         self.assertIn('Sign in', text)
 
         # User logs in
-        self.loginUser('student', 'la4ld')
+        self.loginUser(self.users['student'], 'la4ld')
 
         # User sees welcome message
         text = self.waitFor(
@@ -33,7 +25,7 @@ class TestProfile(EndToEndTest):
         text = self.waitFor(
             lambda: self.browser.find_element_by_tag_name('p').text
         )
-        self.assertIn('Hello, student', text)
+        self.assertIn(f'Hello, {self.users["student"]}', text)
 
         # User goes to profile page
         self.browser.get(self.live_server_url + '/profile')

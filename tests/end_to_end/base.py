@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    tests.end-to-end.base
-    ~~~~~~~~~~~~~~~~~~~~~
-
-    Basic functionality for running end-to-end tests
-"""
-
 import os
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
@@ -20,12 +12,23 @@ MAX_WAIT = 5
 class EndToEndTest(TestCase):
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        profile = webdriver.FirefoxProfile()
+        profile.set_preference('browser.download.folderList', 2)
+        profile.set_preference(
+            'browser.download.manager.showWhenStarting', False
+        )
+        profile.set_preference('browser.download.dir', '/tmp')
+        profile.set_preference(
+            'browser.helperApps.neverAsk.saveToDisk', 'text/plain'
+        )
+
+        self.browser = webdriver.Firefox(profile)
         staging_server = os.environ.get('STAGING_SERVER')
         if staging_server:
             self.live_server_url = 'http://' + staging_server
         else:
             self.live_server_url = 'http://127.0.0.1:5000'
+        self.users = {'admin': 'admin', 'student': '33187943boer'}
 
     def tearDown(self):
         self.browser.quit()
