@@ -7,7 +7,8 @@
 """
 from flask import jsonify
 
-from app.models import User, Module, Result, Group, Schedule, Attendance
+from app.models import User, Module, Result, Group, Schedule, Attendance, \
+    Questionnaire
 from app.api import bp
 from app.api.auth import token_auth
 from app.auth.decorator import admin_required
@@ -83,4 +84,13 @@ def get_schedule(id):
 def get_attendance():
     return jsonify({
         'attendance': [x.to_dict() for x in Attendance.query.all()]
+    })
+
+
+@bp.route('/api/data/questionnaires', methods=['GET'])
+@token_auth.login_required
+@admin_required
+def get_questionnaires():
+    return jsonify({
+        'questionnaires': [x.to_dict() for x in Questionnaire.query.all()]
     })

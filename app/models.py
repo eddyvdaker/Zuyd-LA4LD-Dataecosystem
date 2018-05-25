@@ -594,14 +594,14 @@ class QuestionnaireScale(db.Model):
 
     def to_dict(self, include_question_results=True):
         data = {
-            'id': self.id,
+            'id': self.scale_id,
             'result': self.result,
             'date': self.date.strftime('%Y-%m-%d %H:%M'),
             'questionnaire_id': self.questionnaire_id
         }
 
         if include_question_results:
-            data['question_results']: [
+            data['question_results'] = [
                 x.to_dict() for x in self.question_results.all()
             ]
         return data
