@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div id="questionnaires">
+    {% if user_questionnaires %}
+        <table id="questionnaires" class="table table-striped">
+            <tr id="header-row">
+                <th>ID</th>
+                <th>{{ _('Questionnaire ID') }}</th>
+                <th></th>
+            </tr>
+            {% for row in user_questionnaires %}
+                <tr id="row">
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.questionnaire_id }}</td>
+                    <td>
+                        <a href="{{ url_for('questionnaires.questionnaire', questionnaire_id=row.id) }}">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

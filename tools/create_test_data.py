@@ -10,11 +10,11 @@
 import json
 import os
 from datetime import datetime
-from random import randint
+from random import randint, uniform
 
 from app import db, create_app
 from app.models import Role, Module, Group, Schedule, ScheduleItem, Result, \
-    Attendance, User, Grade
+    Attendance, User, Grade, Questionnaire, QuestionResult, QuestionnaireScale
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(basedir, 'tools/test-data/test-data.json')) as f:
@@ -175,6 +175,43 @@ def generate_attendance(rate=80):
                 db.session.commit()
 
 
+def generate_mslq(mslq):
+    r = Role.query.filter_by(role='student').first()
+    students = User.query.filter_by(role_id=r.id).all()
+
+    for student in students:
+        q = Questionnaire(
+            questionnaire_id=mslq['questionnaire_id'],
+            identifier=student.hash_identifier()
+        )
+        db.session.add(q)
+        db.session.commit()
+
+        for scale in mslq['scales']:
+            qs = QuestionnaireScale(
+                result=round(uniform(1, 7), 2),
+                scale_id=scale['id'],
+                date=datetime.utcnow()
+            )
+            db.session.add(qs)
+            db.session.commit()
+
+            for question in range(scale['questions']):
+                qr = QuestionResult(
+                    result=randint(0, 7),
+                    reversed=question in scale['reversed'],
+                    question_id=question
+                )
+                db.session.add(qr)
+                db.session.commit()
+
+                qs.question_results.append(qr)
+                db.session.commit()
+
+            q.questionnaire_scale.append(qs)
+            db.session.commit()
+
+
 if __name__ == '__main__':
     user_input = input(
         'This script adds data to the application database, are you sure '
@@ -215,5 +252,8 @@ if __name__ == '__main__':
 
             print('Generating student attendance...')
             generate_attendance()
+
+            print('Generating MSLQ results...')
+            generate_mslq(test_data['mslq'])
 
             print('Done...')

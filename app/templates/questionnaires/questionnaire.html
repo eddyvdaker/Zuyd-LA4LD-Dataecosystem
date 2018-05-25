@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div id="questionnaire">
+    <div ic="general-info">
+        <ul class="list-unstyled">
+            <li id="questionnaire-id">
+                <strong>{{ _('Questionnaire ID') }}:</strong> {{ questionnaire.questionnaire_id }}
+            </li>
+            <li id="scales">
+                <strong>{{ _('Scales') }}:</strong> {{ questionnaire.questionnaire_scale.count() }}
+            </li>
+        </ul>
+    </div>
+    <div id="scales">
+        {% for scale in questionnaire.questionnaire_scale.all() %}
+            <h3>{{ _('Scale') }}: {{ scale.scale_id }}</h3>
+            <ul class="list-unstyled">
+                <li><strong>{{ _('Scale result') }}:</strong> {{ scale.result }}</li>
+                <li><strong>{{ _('Date') }}:</strong> {{ scale.date }}</li>
+            </ul>
+            {% if scale.question_results.all() %}
+                <table id="scale" class="table table-striped">
+                    <tr>
+                        <th>#</th>
+                        <th>{{ _('Result') }}</th>
+                        <th>{{ _('Reversed') }}</th>
+                    </tr>
+                    {% for question in scale.question_results.all() %}
+                        <tr>
+                            <td>{{ question.question_id }}</td>
+                            <td>{{ question.result }}</td>
+                            <td>{{ question.reversed }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
