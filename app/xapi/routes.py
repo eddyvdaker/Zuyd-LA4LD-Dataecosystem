@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    xapi.routes
-    ~~~~~~~~~~~
-
-    Routes used for handeling xAPI data.
-"""
-
 from flask import jsonify, request, current_app, g, abort
 
 from app.api.auth import token_auth

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    attendance.routes
-    ~~~~~~~~~~~~~~~~~
-
-    Routes and API endpoints used for showing attendance.
-"""
 from flask import jsonify, request, render_template, g, abort
 from flask_babel import _
 from flask_login import current_user, login_required

@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    admin.forms
-    ~~~~~~~~~~~
-
-    Forms that are used within the admin panel blueprint of the
-    application.
-"""
-
 from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired

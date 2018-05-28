@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    admin.imports
-    ~~~~~~~~~~~~~
-
-    Helper functions for the imports on the admin page.
-"""
 import json
 import os
 from datetime import datetime
@@ -17,7 +10,7 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.email import send_new_user_email
 from app.models import User, Grade, Module, Result, Role, Schedule, \
-    ScheduleItem, Group
+    ScheduleItem, Group, Questionnaire, QuestionResult, QuestionnaireScale
 
 
 def upload_file(file):
@@ -221,4 +214,44 @@ def import_groups_to_db(data):
             grp.add_module_to_group(
                 Module.query.filter_by(code=module).first())
         db.session.commit()
+    return str(len(data))
+
+
+def import_questionnaires_to_db(data):
+    """
+    Writes the MSLQ data from the json file to the db
+
+    :param data:
+    :return:
+    """
+    for row in data:
+        q = Questionnaire(
+            questionnaire_id=row['questionnaire_id'],
+            identifier=row['student_identifier']
+        )
+
+        for scale in row['scales']:
+            qs = QuestionnaireScale(
+                result=scale['result'],
+                scale_id=scale['scale_id'],
+                date=datetime.strptime(scale['date'], '%Y-%m-%d %H:%M')
+            )
+            db.session.add(qs)
+            db.session.commit()
+
+            for question in range(scale['questions']):
+                qr = QuestionResult(
+                    result=question['result'],
+                    reversed=question['reversed'],
+                    question_id=question['question_id'],
+                    question_number=question['question_number']
+                )
+                db.session.add(qr)
+                db.session.commit()
+
+                qs.question_results.append(qr)
+                db.session.commit()
+
+            q.questionnaire_scale.append(qs)
+            db.session.commit()
     return str(len(data))

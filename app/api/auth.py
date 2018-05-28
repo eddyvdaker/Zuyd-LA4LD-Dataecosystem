@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    api.auth
-    ~~~~~~~~
-
-    Handles API authentication
-"""
 from flask import g, current_app
 from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    api.errors
-    ~~~~~~~~~~
-
-    Generic error handlers for the API.
-"""
 from flask import jsonify
 from werkzeug.http import HTTP_STATUS_CODES
 

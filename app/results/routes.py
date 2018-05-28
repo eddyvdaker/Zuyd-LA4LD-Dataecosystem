@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    results.routes
-    ~~~~~~~~~~~~~~
-
-    Routes used for the results overview of the application.
-"""
 from flask import render_template
 from flask_babel import _
 from flask_login import current_user, login_required

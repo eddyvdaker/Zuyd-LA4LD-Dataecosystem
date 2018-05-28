@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    auth.routes
-    ~~~~~~~~~~~
-
-    Routes used for authentication.
-"""
 from flask import flash, redirect, render_template, request, url_for
 from flask_babel import _
 from flask_login import login_user, logout_user, current_user, login_required

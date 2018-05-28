@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    auth.decorator
-    ~~~~~~~~~~~~~~
-
-    A decorator for checking if user is admin.
-"""
 from functools import wraps
 from flask import abort, g
 from flask_login import current_user

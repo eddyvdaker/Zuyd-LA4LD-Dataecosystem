@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    errors
-    ~~~~~~
-
-    Error handling for the application.
-"""
-
 from flask import render_template, request
 from flask_babel import _
 

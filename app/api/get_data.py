@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    api.get_data
-    ~~~~~~~~~~~~
-
-    API endpoints for requesting data.
-"""
 from flask import jsonify
 
 from app.models import User, Module, Result, Group, Schedule, Attendance, \

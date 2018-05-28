@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    api.tokens
-    ~~~~~~~~~~
-
-    Handles the token authentication for the API.
-"""
 from flask import jsonify, g
 from app import db
 

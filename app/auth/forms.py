@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    auth.forms
-    ~~~~~~~~~~
-
-    Forms for the authentication blueprint of the application.
-"""
 from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField

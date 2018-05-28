@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    admin.routes
-    ~~~~~~~~~~~~
-
-    Routes used for the admin panel of the application.
-"""
 import os
 from secrets import token_urlsafe
 from flask import current_app, flash, redirect, render_template, \
@@ -20,7 +13,7 @@ from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
     ApiKeyDeleteConfirmationForm
 from app.admin.imports import upload_file, import_groups_to_db, \
     import_modules_to_db, import_results_to_db, import_schedules_to_db, \
-    import_users_to_db, read_json
+    import_users_to_db, read_json, import_questionnaires_to_db
 from app.auth.decorator import admin_required
 from app.models import User, Module, Role, Schedule, ScheduleItem, Group, \
     ApiKey
@@ -652,4 +645,22 @@ def delete_apikey(key_id):
     return render_template(
         'admin/delete_api_key.html', form=form, key=key,
         title=_('Admin Panel: Delete API Key')
+    )
+
+
+@bp.route('/admin/questionnaires_import', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def import_questionnaires():
+    form = ImportForm()
+    if form.validate_on_submit():
+        file = upload_file(form.file)
+        results_data = read_json(file, field='questionnaire')
+        import_status = import_questionnaires_to_db(results_data)
+        flash(import_status + _(f' questionnaire results imported'))
+        current_app.logger.info(f'{import_status} results imported')
+        return redirect(url_for('admin.admin'))
+    return render_template(
+        'admin/import.html', title=_('Admin Panel: Import Questionnaire'),
+        form=form, example_gist_code='d504fb80b48c28e2e1495e76ea33814e'
     )
