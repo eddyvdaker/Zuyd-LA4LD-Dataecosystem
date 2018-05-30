@@ -14,7 +14,8 @@ from random import randint, uniform
 
 from app import db, create_app
 from app.models import Role, Module, Group, Schedule, ScheduleItem, Result, \
-    Attendance, User, Grade, Questionnaire, QuestionResult, QuestionnaireScale
+    Attendance, User, Grade, Questionnaire, QuestionnaireScale, Question, \
+    QuestionResult
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(basedir, 'tools/test-data/test-data.json')) as f:
@@ -175,41 +176,55 @@ def generate_attendance(rate=80):
                 db.session.commit()
 
 
-def generate_mslq(mslq):
+def create_questionnaire(mslq):
+    q = Questionnaire(
+        questionnaire_id=mslq['questionnaire_id'],
+        name=mslq['name'],
+        description=mslq['description'],
+        questionnaire_type=mslq['questionnaire_type']
+    )
+    db.session.add(q)
+    db.session.commit()
+
+    for scale in mslq['scales']:
+        qs = QuestionnaireScale(
+            scale=scale['scale'],
+            name=scale['name'],
+            description=scale['description'],
+        )
+        db.session.add(qs)
+        db.session.commit()
+
+        for question in scale['questions']:
+            sq = Question(
+                question_number=question['number'],
+                question=question['question'],
+                reversed=question['reversed']
+            )
+            db.session.add(sq)
+            db.session.commit()
+            qs.scale_questions.append(sq)
+            db.session.commit()
+        q.questionnaire_scale.append(qs)
+        db.session.commit()
+
+
+def generate_mslq_results(mslq):
     r = Role.query.filter_by(role='student').first()
     students = User.query.filter_by(role_id=r.id).all()
 
     for student in students:
-        q = Questionnaire(
-            questionnaire_id=mslq['questionnaire_id'],
-            identifier=student.hash_identifier()
-        )
-        db.session.add(q)
-        db.session.commit()
-
         for scale in mslq['scales']:
-            qs = QuestionnaireScale(
-                result=round(uniform(1, 7), 2),
-                scale_id=scale['id'],
-                date=datetime.utcnow()
-            )
-            db.session.add(qs)
-            db.session.commit()
-
-            for question in range(scale['questions']):
+            for question in scale['questions']:
                 qr = QuestionResult(
-                    result=randint(0, 7),
-                    reversed=question in scale['reversed'],
-                    question_id=question
+                    identifier=student.hash_identifier(),
+                    question=Question.query.filter_by(
+                        question_number=question['number']
+                    ).first().id,
+                    result=randint(1, 7)
                 )
                 db.session.add(qr)
                 db.session.commit()
-
-                qs.question_results.append(qr)
-                db.session.commit()
-
-            q.questionnaire_scale.append(qs)
-            db.session.commit()
 
 
 if __name__ == '__main__':
@@ -253,7 +268,10 @@ if __name__ == '__main__':
             print('Generating student attendance...')
             generate_attendance()
 
-            print('Generating MSLQ results...')
-            generate_mslq(test_data['mslq'])
+            print('Creating MSLQ questionnaire...')
+            create_questionnaire(test_data['mslq'])
+
+            print('Generate MSLQ results...')
+            generate_mslq_results(test_data['mslq'])
 
             print('Done...')
