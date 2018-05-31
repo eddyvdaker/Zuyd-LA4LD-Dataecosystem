@@ -2,16 +2,21 @@ from flask import render_template, abort
 from flask_babel import _
 from flask_login import login_required, current_user
 
-from app.models import Questionnaire
+from app.models import QuestionResult
 from app.questionnaires import bp
 
 
 @bp.route('/questionnaires', methods=['GET'])
 @login_required
 def questionnaires():
-    user_questionnaires = Questionnaire.query.filter_by(
+    user_questions = QuestionResult.query.filter_by(
         identifier=current_user.hash_identifier()
     ).all()
+    user_questionnaires = []
+    for question in user_questions:
+        q = question.result_question.question_scale.scale_questionnaire
+        if q not in user_questionnaires:
+            user_questionnaires.append(q)
     return render_template(
         'questionnaires/questionnaires.html', title=_('Questionnaires'),
         user_questionnaires=user_questionnaires

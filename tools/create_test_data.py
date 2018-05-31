@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
     tools.create_test_data
     ~~~~~~~~~~~~~~~~~~~~~~

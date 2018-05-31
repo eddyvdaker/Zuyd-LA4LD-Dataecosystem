@@ -6,13 +6,17 @@
         <table id="questionnaires" class="table table-striped">
             <tr id="header-row">
                 <th>ID</th>
-                <th>{{ _('Questionnaire ID') }}</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Type') }}</th>
                 <th></th>
             </tr>
             {% for row in user_questionnaires %}
                 <tr id="row">
-                    <td>{{ row.id }}</td>
                     <td>{{ row.questionnaire_id }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.description }}</td>
+                    <td>{{ row.questionnaire_type }}</td>
                     <td>
                         <a href="{{ url_for('questionnaires.questionnaire', questionnaire_id=row.id) }}">
                             Details
