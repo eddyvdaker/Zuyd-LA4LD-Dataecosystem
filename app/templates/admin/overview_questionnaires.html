@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div id="questionnaires">
+    <a id="add-button" href="{{ url_for('admin.add_questionnaire') }}"><button type="button" class="btn btn-dark">{{ _('Add Questionnaire') }}</button></a><br><br>
+    {% if questionnaires %}
+        <table id="questionnaires" class="table table-striped">
+            <tr id="header-row">
+                <th>ID</th>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Description') }}</th>
+                <th>{{ _('Type') }}</th>
+                <th></th>
+            </tr>
+            {% for row in questionnaires %}
+                <tr id="row">
+                    <td>{{ row.questionnaire_id }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.description }}</td>
+                    <td>{{ row.questionnaire_type }}</td>
+                    <td>
+                        <a href="{{ url_for('questionnaires.questionnaire', questionnaire_id=row.id) }}">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

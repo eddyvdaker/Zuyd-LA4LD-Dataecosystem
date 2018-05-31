@@ -10,13 +10,13 @@ from app.admin import bp
 from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
     EditScheduleForm, EditScheduleItemForm, EditGroupForm, \
     ManageGroupMembershipForm, ManageModuleMembershipForm, AddApiKeyForm, \
-    ApiKeyDeleteConfirmationForm
+    ApiKeyDeleteConfirmationForm, AddQuestionnaireForm
 from app.admin.imports import upload_file, import_groups_to_db, \
     import_modules_to_db, import_results_to_db, import_schedules_to_db, \
-    import_users_to_db, read_json, import_questionnaires_to_db
+    import_users_to_db, read_json
 from app.auth.decorator import admin_required
 from app.models import User, Module, Role, Schedule, ScheduleItem, Group, \
-    ApiKey
+    ApiKey, Questionnaire
 
 
 @bp.route('/admin', methods=['GET'])
@@ -648,19 +648,58 @@ def delete_apikey(key_id):
     )
 
 
-@bp.route('/admin/questionnaires_import', methods=['GET', 'POST'])
+@bp.route('/admin/questionnaires_overview', methods=['GET'])
 @login_required
 @admin_required
-def import_questionnaires():
-    form = ImportForm()
-    if form.validate_on_submit():
-        file = upload_file(form.file)
-        results_data = read_json(file, field='questionnaire')
-        import_status = import_questionnaires_to_db(results_data)
-        flash(import_status + _(f' questionnaire results imported'))
-        current_app.logger.info(f'{import_status} results imported')
-        return redirect(url_for('admin.admin'))
+def questionnaires():
+    q = Questionnaire.query.all()
     return render_template(
-        'admin/import.html', title=_('Admin Panel: Import Questionnaire'),
-        form=form, example_gist_code='d504fb80b48c28e2e1495e76ea33814e'
+        'admin/overview_questionnaires.html', questionnaires=q,
+        title=_('Admin Panel: Questionnaires')
+    )
+
+
+@bp.route('/admin/add_questionnaire', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def add_questionnaire():
+    form = AddQuestionnaireForm()
+    if form.validate_on_submit():
+        q = Questionnaire(
+            questionnaire_id=form.id.data,
+            name=form.name.data,
+            description=form.description.data,
+            questionnaire_type=form.questionnaire_type.data
+        )
+        db.session.add(q)
+        db.session.commit()
+        return redirect(url_for('admin.questionnaires'))
+    return render_template(
+        'default-form.html', form=form,
+        title=_('Admin Panel: Add Questionnaire')
+    )
+
+
+@bp.route('/admin/edit_questionnaire/<questionnaire_id>',
+          methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_questionnaire(questionnaire_id):
+    form = AddQuestionnaireForm()
+    q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
+    if form.validate_on_submit():
+        q.questionnaire_id = form.id.data
+        q.name = form.name.data
+        q.description = form.description.data
+        q.questionnaire_type = form.questionnaire_type.data
+        db.session.commit()
+        return redirect(url_for('admin.questionnaires'))
+    else:
+        form.id.data = q.questionnaire_id
+        form.name.data = q.name
+        form.description.data = q.description
+        form.questionnaire_type.data = q.questionnaire_type
+    return render_template(
+        'default-form.html', form=form,
+        title=_('Admin Panel: Add Questionnaire')
     )

@@ -2,7 +2,7 @@ from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField, StringField, SelectField, DateField, \
-    DateTimeField, BooleanField, TextAreaField
+    DateTimeField, BooleanField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, Email, Length
 
 from app.forms import MultiCheckboxField
@@ -89,3 +89,14 @@ class ApiKeyDeleteConfirmationForm(FlaskForm):
         validators=[DataRequired()]
     )
     submit = SubmitField(_l('Confirm'))
+
+
+class AddQuestionnaireForm(FlaskForm):
+    id = IntegerField(
+        _l('Questionnaire number'),
+        validators=[DataRequired()]
+    )
+    name = StringField(_l('Name'), validators=[DataRequired()])
+    description = TextAreaField(_l('Description'), validators=[DataRequired()])
+    questionnaire_type = StringField(_l('Type'), validators=[DataRequired()])
+    submit = SubmitField(_l('Submit'))
