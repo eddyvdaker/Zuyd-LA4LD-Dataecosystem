@@ -1,8 +1,9 @@
-from flask import render_template, abort
+from flask import render_template
 from flask_babel import _
 from flask_login import login_required, current_user
 
-from app.models import QuestionResult
+from app.models import QuestionResult, Questionnaire, QuestionnaireScale, \
+    Question
 from app.questionnaires import bp
 
 
@@ -26,10 +27,11 @@ def questionnaires():
 @bp.route('/questionnaire/<questionnaire_id>', methods=['GET'])
 @login_required
 def questionnaire(questionnaire_id):
-    q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
-    if q.identifier != current_user.hash_identifier():
-        abort(403)
+    data = user_questionnaire = Questionnaire.query.filter_by(
+        id=questionnaire_id
+    ).first().get_questionnaire_for_user(current_user)
+
     return render_template(
-        'questionnaires/questionnaire.html', questionnaire=q,
-        title=_('Questionnaire') + f' {q.id}'
+        'questionnaires/questionnaire.html', data=data,
+        title=_('Questionnaire') + f' {data["questionnaire"].id}'
     )

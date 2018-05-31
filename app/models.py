@@ -580,6 +580,24 @@ class Questionnaire(db.Model):
             ]
         return data
 
+    def get_questionnaire_for_user(self, user):
+        data = {'questionnaire': self, 'scales': []}
+        for scale in self.questionnaire_scale.all():
+            scale_data = {'scale': scale, 'questions': [], 'score': 0.0}
+            for question in scale.scale_questions.all():
+                result = QuestionResult.query.filter_by(
+                    question=question.id
+                ).filter_by(
+                    identifier=user.hash_identifier()
+                ).first()
+                scale_data['score'] += result.result
+                scale_data['questions'].append({
+                    'question': question, 'result': result.result
+                })
+            scale_data['score'] /= len(scale_data['questions'])
+            data['scales'].append(scale_data)
+        return data
+
 
 class QuestionnaireScale(db.Model):
     id = db.Column(db.Integer, primary_key=True)

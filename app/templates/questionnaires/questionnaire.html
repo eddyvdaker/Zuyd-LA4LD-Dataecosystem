@@ -2,39 +2,52 @@
 
 {% block app_content %}
 <div id="questionnaire">
-    <div ic="general-info">
+    <div id="general-info">
         <ul class="list-unstyled">
-            <li id="questionnaire-id">
-                <strong>{{ _('Questionnaire ID') }}:</strong> {{ questionnaire.questionnaire_id }}
+            <li id="name">
+                <strong>{{ _('Name') }}:</strong> {{ data['questionnaire'].name }}
+            </li>
+            <li id="type">
+                <strong>{{ _('Type') }}:</strong> {{ data['questionnaire'].questionnaire_type }}
+            </li>
+            <li id="description">
+                <strong>{{ _('Description') }}:</strong> {{ data['questionnaire'].description }}
             </li>
             <li id="scales">
-                <strong>{{ _('Scales') }}:</strong> {{ questionnaire.questionnaire_scale.count() }}
+                <strong>{{ _('Scales') }}:</strong> {{ data['questionnaire'].questionnaire_scale.count() }}
             </li>
         </ul>
     </div>
-    <div id="scales">
-        {% for scale in questionnaire.questionnaire_scale.all() %}
-            <h3>{{ _('Scale') }}: {{ scale.scale_id }}</h3>
+    <div id="scales" class="container">
+        {% for scale in data['scales'] %}
+        <div class="row">
+            <hr>
+            <h3>{{ _('Scale') }} {{ scale['scale'].scale }}: {{ scale['scale'].name }}</h3>
             <ul class="list-unstyled">
-                <li><strong>{{ _('Scale result') }}:</strong> {{ scale.result }}</li>
-                <li><strong>{{ _('Date') }}:</strong> {{ scale.date }}</li>
+                <li id="scale-score">
+                    <strong>{{ _('Scale score') }}:</strong> {{ scale['score'] }}
+                </li>
+                <li id="scale-description">
+                    <strong>{{ _('Description') }}:</strong> {{ scale['scale'].description }}
+                </li>
             </ul>
-            {% if scale.question_results.all() %}
-                <table id="scale" class="table table-striped">
-                    <tr>
-                        <th>#</th>
-                        <th>{{ _('Result') }}</th>
-                        <th>{{ _('Reversed') }}</th>
-                    </tr>
-                    {% for question in scale.question_results.all() %}
-                        <tr>
-                            <td>{{ question.question_id }}</td>
-                            <td>{{ question.result }}</td>
-                            <td>{{ question.reversed }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            {% endif %}
+            <table id=questions-table" class="table table-striped">
+                <tr id="header-row">
+                    <th>ID</th>
+                    <th>{{ _('Question') }}</th>
+                    <th>{{ _('Result') }}</th>
+                    <th>{{ _('Reversed') }}</th>
+                </tr>
+                {% for question in scale['questions'] %}
+                <tr id="data-row">
+                    <td>{{ question['question'].question_number }}</td>
+                    <td>{{ question['question'].question }}</td>
+                    <td>{{ question['result'] }}</td>
+                    <td>{{ question['question'].reversed }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
         {% endfor %}
     </div>
 </div>
