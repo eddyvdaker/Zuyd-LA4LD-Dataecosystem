@@ -15,7 +15,7 @@ from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
     ScaleDeleteConfirmationField, QuestionDeleteConfirmationField
 from app.admin.imports import upload_file, import_groups_to_db, \
     import_modules_to_db, import_results_to_db, import_schedules_to_db, \
-    import_users_to_db, read_json
+    import_users_to_db, read_json, import_questionnaires_to_db
 from app.auth.decorator import admin_required
 from app.models import User, Module, Role, Schedule, ScheduleItem, Group, \
     ApiKey, Questionnaire, QuestionnaireScale, Question, QuestionResult
@@ -882,4 +882,22 @@ def delete_question(question_id):
         'admin/delete_question.html', form=form, question=q,
         questionnaire_id=questionnaire_id,
         title=_('Admin Panel: Delete Question')
+    )
+
+
+@bp.route('/admin/import_questionnaire_results', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def import_questionnaire_results():
+    form = ImportForm()
+    if form.validate_on_submit():
+        file = upload_file(form.file)
+        questionnaire_data = read_json(file, field='questionnaires')
+        import_status = import_questionnaires_to_db(questionnaire_data)
+        flash(import_status + _(f' questionnaires imported'))
+        current_app.logger.info(f'{import_status} questionnaires imported')
+        return redirect(url_for('admin.admin'))
+    return render_template(
+        'admin/import.html', title=_('Admin Panel: Import Questionnaires'),
+        form=form, example_gist_code='b410ae801de3fae1d8ab6ec4347a6800'
     )

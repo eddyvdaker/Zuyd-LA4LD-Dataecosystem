@@ -10,7 +10,8 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.email import send_new_user_email
 from app.models import User, Grade, Module, Result, Role, Schedule, \
-    ScheduleItem, Group, Questionnaire, QuestionResult, QuestionnaireScale
+    ScheduleItem, Group, Questionnaire, QuestionResult, QuestionnaireScale, \
+    Question
 
 
 def upload_file(file):
@@ -225,33 +226,49 @@ def import_questionnaires_to_db(data):
     :return:
     """
     for row in data:
-        q = Questionnaire(
-            questionnaire_id=row['questionnaire_id'],
-            identifier=row['student_identifier']
-        )
-
-        for scale in row['scales']:
-            qs = QuestionnaireScale(
-                result=scale['result'],
-                scale_id=scale['scale_id'],
-                date=datetime.strptime(scale['date'], '%Y-%m-%d %H:%M')
+        q = Questionnaire.query.filter_by(
+            questionnaire_id=row['questionnaire_id']
+        ).first()
+        if not q:
+            q = Questionnaire(
+                questionnaire_id=row['questionnaire_id'],
+                name=f'imported-questionnaire-{row["questionnaire_id"]}',
+                questionnaire_type=row['type']
             )
-            db.session.add(qs)
+            db.session.add(q)
             db.session.commit()
+        for scale in row['scales']:
+            qs = QuestionnaireScale.query.filter_by(
+                scale=scale['scale_id']
+            ).first()
+            if not qs:
+                qs = QuestionnaireScale(
+                    scale=scale['scale_id'],
+                    name=scale['scale_name'],
 
-            for question in range(scale['questions']):
+                )
+                db.session.add(qs)
+                db.session.commit()
+                q.questionnaire_scale.append(qs)
+                db.session.commit()
+            for question in scale['questions']:
+                sq = Question.query.filter_by(
+                    question_number=question['question_id']
+                ).first()
+                if not sq:
+                    sq = Question(
+                        question_number=question['question_id'],
+                        reversed=question['reversed']
+                    )
+                    db.session.add(sq)
+                    db.session.commit()
+                    qs.scale_questions.append(sq)
                 qr = QuestionResult(
-                    result=question['result'],
-                    reversed=question['reversed'],
-                    question_id=question['question_id'],
-                    question_number=question['question_number']
+                    identifier=row['student_identifier'],
+                    result=question['result']
                 )
                 db.session.add(qr)
                 db.session.commit()
-
-                qs.question_results.append(qr)
+                sq.question_results.append(qr)
                 db.session.commit()
-
-            q.questionnaire_scale.append(qs)
-            db.session.commit()
     return str(len(data))
