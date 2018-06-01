@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    schedule.routes
-    ~~~~~~~~~~~~~~~
-
-    Routes used for the schedule overview.
-"""
 from datetime import datetime, timedelta
 from flask import jsonify, redirect, render_template, url_for
 from flask_login import current_user

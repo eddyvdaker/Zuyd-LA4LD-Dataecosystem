@@ -8,7 +8,8 @@
 
 from app import create_app, db
 from app.models import User, Grade, Module, Result, Role, Schedule, \
-    ScheduleItem, Group, Attendance, ApiKey
+    ScheduleItem, Group, Attendance, ApiKey, Questionnaire, \
+    QuestionnaireScale, QuestionResult
 
 
 app = create_app()
@@ -16,7 +17,18 @@ app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Grade': Grade, 'Module': Module,
-            'Result': Result, 'Role': Role, 'Schedule': Schedule,
-            'ScheduleItem': ScheduleItem, 'Group': Group,
-            'Attendance': Attendance, 'ApiKey': ApiKey}
+    return {'db': db,
+            'User': User,
+            'Grade': Grade,
+            'Module': Module,
+            'Result': Result,
+            'Role': Role,
+            'Schedule': Schedule,
+            'ScheduleItem': ScheduleItem,
+            'Group': Group,
+            'Attendance': Attendance,
+            'ApiKey': ApiKey,
+            'Questionnaire': Questionnaire,
+            'QuestionnaireScale': QuestionnaireScale,
+            'QuestionResult': QuestionResult
+            }

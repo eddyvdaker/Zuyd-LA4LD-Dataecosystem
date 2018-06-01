@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    attendance.routes
-    ~~~~~~~~~~~~~~~~~
-
-    Routes and API endpoints used for showing attendance.
-"""
 from flask import jsonify, request, render_template, g, abort
 from flask_babel import _
 from flask_login import current_user, login_required
@@ -12,14 +5,14 @@ from flask_login import current_user, login_required
 from app import db
 from app.attendance import bp
 from app.api.auth import token_auth
+from app.auth.decorator import admin_required
 from app.models import User, ScheduleItem, Attendance
 
 
 @bp.route('/api/attendance/<item_id>', methods=['POST'])
 @token_auth.login_required
+@admin_required
 def api_attend_lesson(item_id):
-    if g.current_user.role.role != 'admin':
-        abort(403)
     data = request.get_json()
     student = User.query.filter_by(card_number=data['cardnr']).first()
     item = ScheduleItem.query.filter_by(id=item_id).first()

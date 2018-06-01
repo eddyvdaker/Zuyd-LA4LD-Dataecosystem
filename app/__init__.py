@@ -69,6 +69,9 @@ def create_app(config_class=Config):
     from app.xapi import bp as xapi_bp
     app.register_blueprint(xapi_bp)
 
+    from app.questionnaires import bp as questionnaires_bp
+    app.register_blueprint(questionnaires_bp)
+
     # Setup logging
     if not app.debug and not app.testing:
         # Email logging

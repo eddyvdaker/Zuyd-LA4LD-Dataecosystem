@@ -1,17 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-    admin.forms
-    ~~~~~~~~~~~
-
-    Forms that are used within the admin panel blueprint of the
-    application.
-"""
-
 from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import SubmitField, StringField, SelectField, DateField, \
-    DateTimeField, BooleanField, TextAreaField
+    DateTimeField, BooleanField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, Email, Length
 
 from app.forms import MultiCheckboxField
@@ -95,6 +86,70 @@ class AddApiKeyForm(FlaskForm):
 class ApiKeyDeleteConfirmationForm(FlaskForm):
     confirm = BooleanField(
         _l('Confirm deletion (this action cannot be reverted)'),
+        validators=[DataRequired()]
+    )
+    submit = SubmitField(_l('Confirm'))
+
+
+class AddQuestionnaireForm(FlaskForm):
+    id = IntegerField(
+        _l('Questionnaire number'),
+        validators=[DataRequired()]
+    )
+    name = StringField(_l('Name'), validators=[DataRequired()])
+    description = TextAreaField(_l('Description'))
+    questionnaire_type = StringField(_l('Type'), validators=[DataRequired()])
+    submit = SubmitField(_l('Submit'))
+
+
+class AddScaleForm(FlaskForm):
+    id = IntegerField(_l('Scale Number'), validators=[DataRequired()])
+    name = StringField(_l('Name'), validators=[DataRequired()])
+    description = TextAreaField(_l('Description'))
+    submit = SubmitField(_l('Submit'))
+
+
+class AddQuestionForm(FlaskForm):
+    id = IntegerField(_l('Question Number'), validators=[DataRequired()])
+    question = StringField(_l('Question'), validators=[DataRequired()])
+    reversed = BooleanField(_l('Reversed'))
+    submit = SubmitField(_l('Submit'))
+
+
+class QuestionnaireDeleteConfirmationField(FlaskForm):
+    confirm = BooleanField(
+        _l('Confirm deletion (this action cannot be reverted)'),
+        validators=[DataRequired()]
+    )
+    confirm2 = BooleanField(
+        _l('I understand that all question results form this questionnaire'
+           'will be deleted as well.'),
+        validators=[DataRequired()]
+    )
+    submit = SubmitField(_l('Confirm'))
+
+
+class ScaleDeleteConfirmationField(FlaskForm):
+    confirm = BooleanField(
+        _l('Confirm deletion (this action cannot be reverted)'),
+        validators=[DataRequired()]
+    )
+    confirm2 = BooleanField(
+        _l('I understand that all question results form this scale'
+           'will be deleted as well.'),
+        validators=[DataRequired()]
+    )
+    submit = SubmitField(_l('Confirm'))
+
+
+class QuestionDeleteConfirmationField(FlaskForm):
+    confirm = BooleanField(
+        _l('Confirm deletion (this action cannot be reverted)'),
+        validators=[DataRequired()]
+    )
+    confirm2 = BooleanField(
+        _l('I understand that all question results form this question'
+           'will be deleted as well.'),
         validators=[DataRequired()]
     )
     submit = SubmitField(_l('Confirm'))

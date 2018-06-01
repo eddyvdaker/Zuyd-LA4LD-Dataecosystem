@@ -288,7 +288,8 @@ class Module(db.Model):
         lazy='dynamic'
     )
     results = db.relationship(
-        'Result', backref='result_module', lazy='dynamic')
+        'Result', backref='result_module', lazy='dynamic'
+    )
 
     def __repr__(self):
         return f'<Module {self.code}>'
@@ -551,6 +552,132 @@ class ApiKey(db.Model):
 
     def __repr__(self):
         return f'<ApiKey {self.id}>'
+
+
+class Questionnaire(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    questionnaire_id = db.Column(db.Integer)
+    name = db.Column(db.String(64))
+    description = db.Column(db.String(128))
+    questionnaire_type = db.Column(db.String(64))
+    questionnaire_scale = db.relationship(
+        'QuestionnaireScale', backref='scale_questionnaire', lazy='dynamic'
+    )
+
+    def __repr__(self):
+        return f'<Questionnaire {self.id}>'
+
+    def to_dict(self, include_scales=True):
+        data = {
+            'id': self.id,
+            'questionnaire_id': self.questionnaire_id,
+            'identifier': self.identifier
+        }
+
+        if include_scales:
+            data['scales'] = [
+                x.to_dict() for x in self.questionnaire_scale.all()
+            ]
+        return data
+
+    def get_questionnaire_for_user(self, user):
+        data = {'questionnaire': self, 'scales': []}
+        for scale in self.questionnaire_scale.all():
+            scale_data = {'scale': scale, 'questions': [], 'score': 0.0}
+            for question in scale.scale_questions.all():
+                result = QuestionResult.query.filter_by(
+                    question=question.id
+                ).filter_by(
+                    identifier=user.hash_identifier()
+                ).first()
+                scale_data['score'] += result.result
+                scale_data['questions'].append({
+                    'question': question, 'result': result
+                })
+            scale_data['score'] /= len(scale_data['questions'])
+            data['scales'].append(scale_data)
+        return data
+
+
+class QuestionnaireScale(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    scale = db.Column(db.Integer)
+    name = db.Column(db.String(64))
+    description = db.Column(db.String(128))
+    questionnaire_id = db.Column(db.Integer, db.ForeignKey('questionnaire.id'))
+    scale_questions = db.relationship(
+        'Question', backref='question_scale', lazy='dynamic'
+    )
+
+    def __repr__(self):
+        return f'<QuestionnaireScale {self.id}>'
+
+    def to_dict(self, include_question_results=True):
+        data = {
+            'id': self.scale_id,
+            'scale': self.scale,
+            'name': self.name,
+            'description': self.description,
+            'questionnaire_id': self.questionnaire_id
+        }
+
+        if include_question_results:
+            data['question_results'] = [
+                x.to_dict() for x in self.question_results.all()
+            ]
+        return data
+
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_number = db.Column(db.Integer)
+    question = db.Column(db.String(254))
+    reversed = db.Column(db.Boolean)
+    scale_id = db.Column(
+        db.Integer, db.ForeignKey('questionnaire_scale.id')
+    )
+    question_results = db.relationship(
+        'QuestionResult', backref='result_question', lazy='dynamic'
+    )
+
+    def __repr__(self):
+        return f'<Question {self.id}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'number': self.question_number,
+            'question': self.question,
+            'reversed': self.reversed,
+            'scale': self.scale_id
+        }
+
+
+class QuestionResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    identifier = db.Column(db.String(128))
+    question = db.Column(db.Integer, db.ForeignKey('question.id'))
+    result = db.Column(db.Float)
+    date = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return f'<QuestionResult {self.id}>'
+
+    def to_dict(self, include_question=True, include_scale=True):
+        data = {
+            'id': self.id,
+            'identifier': self.identifier,
+            'result': db.Float,
+        }
+
+        if include_question:
+            data['question'] = self.result_question.to_dict()
+        else:
+            data['question'] = self.question
+
+        if include_scale:
+            data['scale'] = self.result_question.question_scale.to_dict()
+        return data
 
 
 @login.user_loader

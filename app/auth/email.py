@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    auth.email
-    ~~~~~~~~~~
-
-    Email functionality used during authentication.
-"""
 from flask import current_app, render_template
 
 from app.email import send_mail

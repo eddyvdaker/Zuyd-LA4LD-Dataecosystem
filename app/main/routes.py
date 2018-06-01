@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-    main.routes
-    ~~~~~~~~~~~
-
-    Routes that do not fit with any of the more specific blueprints or are
-    core features of the application.
-"""
 import json
 import os
 from flask import abort, current_app, render_template, send_from_directory, \

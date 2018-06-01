@@ -31,6 +31,11 @@
             <li><a href="{{ url_for('admin.import_schedule') }}">{{ _('Import Schedules') }}</a></li>
             <li><a href="{{ url_for('admin.schedule_overview') }}">{{ _('Schedule Overview') }}</a></li>
         </ul>
+    <h3>{{ _('Questionnaire Settings') }}</h3>
+        <ul>
+            <li><a href="{{ url_for('admin.questionnaires') }}">{{ _('Questionnaires Overview') }}</a></li>
+            <li><a href="{{ url_for('admin.import_questionnaire_results') }}">{{ _('Import Questionnaire Results') }}</a></li>
+        </ul>
     <h3>{{ _('Fact-Store') }}</h3>
         <ul>
             <li><a href="{{ url_for('admin.show_fact_store') }}">{{ _('View Fact-Store') }}</a></li>
