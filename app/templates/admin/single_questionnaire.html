@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div id="questionnaire">
+    <div id="general-info">
+        <ul class="list-unstyled">
+            <li id="name">
+                <strong>{{ _('Name') }}:</strong> {{ questionnaire.name }}
+            </li>
+            <li id="type">
+                <strong>{{ _('Type') }}:</strong> {{ questionnaire.questionnaire_type }}
+            </li>
+            <li id="description">
+                <strong>{{ _('Description') }}:</strong> {{ questionnaire.description }}
+            </li>
+            <li id="scales">
+                <strong>{{ _('Scales') }}:</strong> {{ questionnaire.questionnaire_scale.count() }}
+            </li>
+        </ul>
+        <a id="edit-button" href="{{ url_for('admin.edit_questionnaire', questionnaire_id=questionnaire.id) }}">
+            <button type="button" class="btn btn-dark">{{ _('Edit') }}</button>
+        </a>
+        <a id="add-button" href="{{ url_for('admin.add_scale', questionnaire_id=questionnaire.id) }}">
+            <button type="button" class="btn btn-dark">{{ _('Add Scale') }}</button>
+        </a>
+        <a id="delete-button" href="{{ url_for('admin.delete_questionnaire', questionnaire_id=questionnaire.id) }}">
+            <button type="button" class="btn btn-dark">{{ _('Delete Questionnaire') }}</button>
+        </a><br>
+    </div>
+
+    <div id="scales">
+        {% for scale in questionnaire.questionnaire_scale.all() %}
+        <div id="scale">
+            <hr>
+            <h3>{{ _('Scale') }} {{ scale.scale }}: {{ scale.name }}</h3>
+            <ul class="list-unstyled">
+                <li id="description">
+                    <strong>{{ _('Description') }}:</strong> {{ scale.description }}
+                </li>
+            </ul>
+            <a id="add-button" href="{{ url_for('admin.edit_scale', scale_id=scale.id) }}">
+                <button type="button" class="btn btn-dark">{{ _('Edit Scale') }}</button>
+            </a>
+            <a id="add-button" href="{{ url_for('admin.add_question', scale_id=scale.id) }}">
+                <button type="button" class="btn btn-dark">{{ _('Add Question') }}</button>
+            </a>
+            <a id="add-button" href="{{ url_for('admin.delete_scale', scale_id=scale.id) }}">
+                <button type="button" class="btn btn-dark">{{ _('Delete Scale') }}</button>
+            </a><br><br>
+
+            <div id="question">
+                <table class="table table-striped">
+                    <tr id="header-row">
+                        <th>ID</th>
+                        <th>{{ _('Question') }}</th>
+                        <th>{{ _('Reversed') }}</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    {% for question in scale.scale_questions.all() %}
+                    <tr id="data-row">
+                        <td>{{ question.question_number }}</td>
+                        <td>{{ question.question }}</td>
+                        <td>{{ question.reversed }}</td>
+                        <td><a href="{{ url_for('admin.edit_question', question_id=question.id) }}">
+                            Edit
+                        </a></td>
+                        <td><a href="{{ url_for('admin.delete_question', question_id=question.id) }}">
+                            Delete
+                        </a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

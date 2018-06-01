@@ -10,13 +10,15 @@ from app.admin import bp
 from app.admin.forms import ImportForm, EditUserForm, EditModuleForm, \
     EditScheduleForm, EditScheduleItemForm, EditGroupForm, \
     ManageGroupMembershipForm, ManageModuleMembershipForm, AddApiKeyForm, \
-    ApiKeyDeleteConfirmationForm, AddQuestionnaireForm
+    ApiKeyDeleteConfirmationForm, AddQuestionnaireForm, AddScaleForm, \
+    AddQuestionForm, QuestionnaireDeleteConfirmationField, \
+    ScaleDeleteConfirmationField, QuestionDeleteConfirmationField
 from app.admin.imports import upload_file, import_groups_to_db, \
     import_modules_to_db, import_results_to_db, import_schedules_to_db, \
     import_users_to_db, read_json
 from app.auth.decorator import admin_required
 from app.models import User, Module, Role, Schedule, ScheduleItem, Group, \
-    ApiKey, Questionnaire
+    ApiKey, Questionnaire, QuestionnaireScale, Question, QuestionResult
 
 
 @bp.route('/admin', methods=['GET'])
@@ -659,6 +661,17 @@ def questionnaires():
     )
 
 
+@bp.route('/admin/questionnaire/<questionnaire_id>', methods=['GET'])
+@login_required
+@admin_required
+def questionnaire(questionnaire_id):
+    q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
+    return render_template(
+        'admin/single_questionnaire.html', questionnaire=q,
+        title=_('Admin Panel: Questionnaire') + f' {q.id}'
+    )
+
+
 @bp.route('/admin/add_questionnaire', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -693,7 +706,9 @@ def edit_questionnaire(questionnaire_id):
         q.description = form.description.data
         q.questionnaire_type = form.questionnaire_type.data
         db.session.commit()
-        return redirect(url_for('admin.questionnaires'))
+        return redirect(url_for(
+            'admin.questionnaire', questionnaire_id=questionnaire_id
+        ))
     else:
         form.id.data = q.questionnaire_id
         form.name.data = q.name
@@ -702,4 +717,169 @@ def edit_questionnaire(questionnaire_id):
     return render_template(
         'default-form.html', form=form,
         title=_('Admin Panel: Add Questionnaire')
+    )
+
+
+@bp.route('/admin/add_scale/<questionnaire_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def add_scale(questionnaire_id):
+    form = AddScaleForm()
+    q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
+    if form.validate_on_submit():
+        qs = QuestionnaireScale(
+            scale=form.id.data,
+            name=form.name.data,
+            description=form.description.data
+        )
+        db.session.add(qs)
+        db.session.commit()
+        q.questionnaire_scale.append(qs)
+        db.session.commit()
+        return redirect(url_for(
+            'admin.questionnaire', questionnaire_id=questionnaire_id
+        ))
+    return render_template(
+        'default-form.html', form=form, title=_('Admin Panel: Add Scale')
+    )
+
+
+@bp.route('/admin/edit_scale/<scale_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_scale(scale_id):
+    form = AddScaleForm()
+    qs = QuestionnaireScale.query.filter_by(id=scale_id).first_or_404()
+    if form.validate_on_submit():
+        qs.scale = form.id.data
+        qs.name = form.name.data
+        qs.description = form.description.data
+        db.session.commit()
+        return redirect(url_for(
+            'admin.questionnaire', questionnaire_id=qs.questionnaire_id
+        ))
+    else:
+        form.id.data = qs.scale
+        form.name.data = qs.name
+        form.description.data = qs.description
+    return render_template(
+        'default-form.html', form=form, title=_('Admin Panel: Edit Scale')
+    )
+
+
+@bp.route('/admin/add_question/<scale_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def add_question(scale_id):
+    form = AddQuestionForm()
+    scale = QuestionnaireScale.query.filter_by(id=scale_id).first_or_404()
+    if form.validate_on_submit():
+        q = Question(
+            question_number=form.id.data,
+            question=form.question.data,
+            reversed=form.reversed.data
+        )
+        db.session.add(q)
+        db.session.commit()
+        scale.scale_questions.append(q)
+        db.session.commit()
+        return redirect(url_for(
+            'admin.questionnaire', questionnaire_id=scale.questionnaire_id
+        ))
+    return render_template(
+        'default-form.html', form=form, title=_('Admin Panel: Add Question')
+    )
+
+
+@bp.route('/admin/edit_question/<question_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_question(question_id):
+    form = AddQuestionForm()
+    q = Question.query.filter_by(id=question_id).first_or_404()
+    if form.validate_on_submit():
+        q.question_number = form.id.data
+        q.question = form.question.data
+        q.reversed = form.reversed.data
+        db.session.commit()
+        return redirect(url_for(
+            'admin.questionnaire',
+            questionnaire_id=q.question_scale.scale_questionnaire.id
+        ))
+    else:
+        form.id.data = q.question_number
+        form.question.data = q.question
+        form.reversed.data = q.reversed
+    return render_template(
+        'default-form.html', form=form, title=_('Admin Panel: Edit Question')
+    )
+
+
+@bp.route('/admin/delete_questionnaire/<questionnaire_id>',
+          methods=['GET', 'POST'])
+@login_required
+@admin_required
+def delete_questionnaire(questionnaire_id):
+    form = QuestionnaireDeleteConfirmationField()
+    q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
+    if form.validate_on_submit():
+        for scale in q.questionnaire_scale.all():
+            for question in scale.scale_questions.all():
+                QuestionResult.query.filter_by(question=question.id).delete()
+                db.session.commit()
+            Question.query.filter_by(scale_id=scale.id).delete()
+            db.session.commit()
+        QuestionnaireScale.query.filter_by(questionnaire_id=q.id).delete()
+        db.session.commit()
+        Questionnaire.query.filter_by(id=q.id).delete()
+        db.session.commit()
+        flash('Questionnaire deleted')
+        return redirect(url_for('admin.questionnaires'))
+    return render_template(
+        'admin/delete_questionnaire.html', form=form, questionnaire=q,
+        title=_('Admin Panel: Delete Questionnaire')
+    )
+
+
+@bp.route('/admin/delete_scale/<scale_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def delete_scale(scale_id):
+    form = ScaleDeleteConfirmationField()
+    scale = QuestionnaireScale.query.filter_by(id=scale_id).first_or_404()
+    q_id = scale.questionnaire_id
+    if form.validate_on_submit():
+        for question in scale.scale_questions.all():
+            QuestionResult.query.filter_by(question=question.id).delete()
+            db.session.commit()
+        Question.query.filter_by(scale_id=scale.id).delete()
+        QuestionnaireScale.query.filter_by(id=scale.id).delete()
+        db.session.commit()
+        flash('Scale deleted')
+        return redirect(url_for('admin.questionnaire', questionnaire_id=q_id))
+    return render_template(
+        'admin/delete_scale.html', form=form, scale=scale,
+        title=_('Admin Panel: Delete Scale')
+    )
+
+
+@bp.route('/admin/delete_question/<question_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def delete_question(question_id):
+    form = QuestionDeleteConfirmationField()
+    q = Question.query.filter_by(id=question_id).first_or_404()
+    questionnaire_id = q.question_scale.scale_questionnaire.id
+    if form.validate_on_submit():
+        QuestionResult.query.filter_by(question=q.id).delete()
+        Question.query.filter_by(id=q.id).delete()
+        db.session.commit()
+        flash('Question deleted')
+        return redirect(url_for(
+            'admin.questionnaire', questionnaire_id=questionnaire_id
+        ))
+    return render_template(
+        'admin/delete_question.html', form=form, question=q,
+        questionnaire_id=questionnaire_id,
+        title=_('Admin Panel: Delete Question')
     )

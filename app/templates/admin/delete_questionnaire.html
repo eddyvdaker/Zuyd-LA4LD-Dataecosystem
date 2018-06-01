@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div id="delete-api-key">
+    <p id="confirmation-message">{{ _('Are you sure you want to delete Questionnaire') }}: {{ questionnaire.questionnaire_id }}</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.confirm() }} {{ form.confirm.label }}
+            {% for error in form.confirm.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.confirm2() }} {{ form.confirm2.label }}
+            {% for error in form.confirm2.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    <br><a href="{{ url_for('admin.questionnaire', questionnaire_id=questionnaire.id) }}">{{ _('Back') }}</a>
+</div>
+{% endblock %}
