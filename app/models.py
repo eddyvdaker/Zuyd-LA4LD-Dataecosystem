@@ -592,7 +592,7 @@ class Questionnaire(db.Model):
                 ).first()
                 scale_data['score'] += result.result
                 scale_data['questions'].append({
-                    'question': question, 'result': result.result
+                    'question': question, 'result': result
                 })
             scale_data['score'] /= len(scale_data['questions'])
             data['scales'].append(scale_data)
@@ -658,6 +658,7 @@ class QuestionResult(db.Model):
     identifier = db.Column(db.String(128))
     question = db.Column(db.Integer, db.ForeignKey('question.id'))
     result = db.Column(db.Float)
+    date = db.Column(db.DateTime)
 
     def __repr__(self):
         return f'<QuestionResult {self.id}>'

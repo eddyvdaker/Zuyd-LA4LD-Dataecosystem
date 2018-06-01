@@ -30,6 +30,9 @@
                 <li id="scale-description">
                     <strong>{{ _('Description') }}:</strong> {{ scale['scale'].description }}
                 </li>
+                <li id="scale-date">
+                    <strong>{{ _('Date') }}:</strong> {{ scale['questions'][0]['result'].date.strftime('%Y-%m-%d %H:%M:%S') }}
+                </li>
             </ul>
             <table id=questions-table" class="table table-striped">
                 <tr id="header-row">
@@ -42,7 +45,7 @@
                 <tr id="data-row">
                     <td>{{ question['question'].question_number }}</td>
                     <td>{{ question['question'].question }}</td>
-                    <td>{{ question['result'] }}</td>
+                    <td>{{ question['result'].result }}</td>
                     <td>{{ question['question'].reversed }}</td>
                 </tr>
                 {% endfor %}

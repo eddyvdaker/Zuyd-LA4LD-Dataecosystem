@@ -220,7 +220,8 @@ def generate_mslq_results(mslq):
                     question=Question.query.filter_by(
                         question_number=question['number']
                     ).first().id,
-                    result=randint(1, 7)
+                    result=randint(1, 7),
+                    date=datetime.utcnow()
                 )
                 db.session.add(qr)
                 db.session.commit()

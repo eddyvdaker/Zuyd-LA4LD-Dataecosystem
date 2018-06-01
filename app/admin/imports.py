@@ -265,7 +265,8 @@ def import_questionnaires_to_db(data):
                     qs.scale_questions.append(sq)
                 qr = QuestionResult(
                     identifier=row['student_identifier'],
-                    result=question['result']
+                    result=question['result'],
+                    date=datetime.strptime(scale['date'], '%Y-%m-%d %H:%M:%S')
                 )
                 db.session.add(qr)
                 db.session.commit()
