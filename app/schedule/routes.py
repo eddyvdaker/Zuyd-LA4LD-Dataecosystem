@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    app.schedule.routes
+    ~~~~~~~~~~~~~~~~~~~
+
+    Routes for schedules functionality
+"""
 from datetime import datetime, timedelta
 from flask import jsonify, redirect, render_template, url_for
 from flask_login import current_user
@@ -11,6 +18,7 @@ from app.schedule.forms import SelectSchedule
 
 @bp.route('/schedule', methods=['GET', 'POST'])
 def schedule():
+    """Schedule selection page"""
     form = SelectSchedule()
     schedules = Schedule.query.all()
     choices = []
@@ -37,6 +45,7 @@ def schedule():
 
 @bp.route('/schedule/<schedule_id>')
 def single_schedule(schedule_id):
+    """Single schedule page"""
     selected_schedule = Schedule.query.filter_by(id=schedule_id).first()
     module = Module.query.filter_by(id=selected_schedule.module).first()
     group = Group.query.filter_by(id=selected_schedule.group).first()
@@ -49,6 +58,7 @@ def single_schedule(schedule_id):
 @bp.route('/api/schedules', methods=['GET'])
 @token_auth.login_required
 def api_schedule_overview():
+    """API call for all schedules"""
     schedules = Schedule.query.all()
     items = []
     for s in schedules:
@@ -65,6 +75,7 @@ def api_schedule_overview():
 @bp.route('/api/schedules/schedule/<schedule_id>', methods=['GET'])
 @token_auth.login_required
 def api_single_schedule(schedule_id):
+    """API call for single schedule"""
     s = Schedule.query.filter_by(id=schedule_id).first()
     items = []
     for i in s.items:
@@ -77,6 +88,7 @@ def api_single_schedule(schedule_id):
 @bp.route('/api/schedules/current')
 @token_auth.login_required
 def api_current_schedule_items(in_advance=900):
+    """API call for all current (and very near future) schedule items"""
     schedule_items = ScheduleItem.query.all()
     items = []
     now = datetime.utcnow()

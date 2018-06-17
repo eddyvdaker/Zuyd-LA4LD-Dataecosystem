@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    app.auth.routes
+    ~~~~~~~~~~~~~~~
+
+    Routes for authentication functionality
+"""
 from flask import flash, redirect, render_template, request, url_for
 from flask_babel import _
 from flask_login import login_user, logout_user, current_user, login_required
@@ -13,6 +20,7 @@ from app.models import User
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
+    """Login page"""
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
@@ -31,12 +39,14 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    """Logout link"""
     logout_user()
     return redirect(url_for('main.index'))
 
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
+    """Request a password reset page"""
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = ResetPasswordRequestForm()
@@ -56,6 +66,7 @@ def reset_password_request():
 
 @bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    """Reset password page, works if jwt token is correct"""
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
@@ -75,6 +86,7 @@ def reset_password(token):
 @bp.route('/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
+    """Change password page"""
     form = ChangePasswordForm()
     if form.validate_on_submit():
         if not current_user.check_password(form.old_password.data):

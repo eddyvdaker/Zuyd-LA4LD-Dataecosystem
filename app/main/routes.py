@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    app.main.routes
+    ~~~~~~~~~~~~~~~
+
+    Routes for main functionality
+"""
 import json
 import os
 from flask import abort, current_app, render_template, send_from_directory, \
@@ -8,9 +15,11 @@ from secrets import token_urlsafe
 
 from app.main import bp
 from app.models import Result, Attendance, ScheduleItem, Schedule
+from app.auth.decorator import admin_required
 
 
 def get_modules_data_for_role(modules):
+    """Get module data for user"""
     role_data = []
     for module in modules:
         role_data.append(
@@ -28,6 +37,7 @@ def get_modules_data_for_role(modules):
 
 
 def get_group_data_for_student():
+    """Get groups (including data) for user"""
     group_data = []
     for group in current_user.groups_of_student():
         group_data.append(
@@ -42,6 +52,7 @@ def get_group_data_for_student():
 
 
 def collect_user_data():
+    """Get user data"""
     return {
         "id": current_user.id,
         "username": current_user.username,
@@ -59,6 +70,7 @@ def collect_user_data():
 
 
 def collect_results_data(user_identifier):
+    """Get results data for user"""
     results = Result.query.filter_by(identifier=user_identifier)
     results_data = []
     for result in results:
@@ -79,6 +91,7 @@ def collect_results_data(user_identifier):
 
 
 def collect_schedule_data(user_identifier):
+    """Get schedule data for user"""
     group_ids = [x.id for x in current_user.groups_of_student()]
     schedules = []
     for group_id in group_ids:
@@ -118,17 +131,20 @@ def collect_schedule_data(user_identifier):
 
 @bp.route('/')
 def index():
+    """Home page"""
     return render_template('index.html', title=_('Home Page'))
 
 
 @bp.route('/error/test_500')
 def error_test_500():
+    """Test page for testing 500 errors"""
     abort(500)
 
 
 @bp.route('/profile')
 @login_required
 def profile():
+    """Profile page for user"""
     modules_as_student = current_user.get_modules_of_student()
     modules_as_teacher = current_user.get_modules_of_teacher()
     modules_as_examiner = current_user.get_modules_of_examiner()
@@ -143,15 +159,16 @@ def profile():
 
 @bp.route('/uploads/<filename>')
 @login_required
+@admin_required
 def uploaded_file(filename):
-    if current_user.role.role != 'admin':
-        abort(403)
+    """Generic upload file page"""
     return send_from_directory(current_app.config['IMPORT_FOLDER'], filename)
 
 
 @bp.route('/download/my-data')
 @login_required
 def download_own_data():
+    """Retrieve and download user data"""
     user_identifier = current_user.hash_identifier()
     user_data = {
         'user': collect_user_data(),
