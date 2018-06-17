@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    app.admin.routes
+    ~~~~~~~~~~~~~~~~
+
+    Routes for admin panel
+"""
 import os
 from secrets import token_urlsafe
 from flask import current_app, flash, redirect, render_template, \
@@ -25,6 +32,7 @@ from app.models import User, Module, Role, Schedule, ScheduleItem, Group, \
 @login_required
 @admin_required
 def admin():
+    """Admin panel page"""
     return render_template('admin/admin.html', title=_('Admin Panel'))
 
 
@@ -32,6 +40,7 @@ def admin():
 @login_required
 @admin_required
 def import_users():
+    """Import users page"""
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -66,6 +75,7 @@ def import_users():
 @login_required
 @admin_required
 def users_overview():
+    """Overview of all users"""
     users = User.query.all()
     return render_template(
         'admin/users_overview.html', title=_('Admin Panel: Users Overview'),
@@ -77,6 +87,7 @@ def users_overview():
 @login_required
 @admin_required
 def single_user(user_id):
+    """Details of single user"""
     user = User.query.filter_by(id=user_id).first()
     groups = user.groups_of_student()
     for i, group in enumerate(groups):
@@ -92,6 +103,7 @@ def single_user(user_id):
 @login_required
 @admin_required
 def edit_user(user_id):
+    """Edit single user"""
     form = EditUserForm()
     roles = Role.query.all()
     form.role.choices = [(x.role, x.role) for x in roles]
@@ -118,6 +130,7 @@ def edit_user(user_id):
 @login_required
 @admin_required
 def add_user():
+    """Add new user"""
     form = EditUserForm()
     roles = Role.query.all()
     form.role.choices = [(x.role, x.role) for x in roles]
@@ -140,6 +153,7 @@ def add_user():
 @login_required
 @admin_required
 def import_modules():
+    """Import modules"""
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -158,6 +172,7 @@ def import_modules():
 @login_required
 @admin_required
 def modules_overview():
+    """Overview of all modules"""
     modules = Module.query.all()
     return render_template(
         'admin/modules_overview.html', modules=modules,
@@ -169,6 +184,7 @@ def modules_overview():
 @login_required
 @admin_required
 def edit_module(module_id):
+    """Edit specified module"""
     form = EditModuleForm()
     module = Module.query.filter_by(id=module_id).first()
     if form.validate_on_submit():
@@ -198,6 +214,7 @@ def edit_module(module_id):
 @login_required
 @admin_required
 def add_module():
+    """Add new module"""
     form = EditModuleForm()
     if form.validate_on_submit():
         m = Module(
@@ -221,6 +238,7 @@ def add_module():
 @login_required
 @admin_required
 def import_results():
+    """Import student results"""
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -239,6 +257,7 @@ def import_results():
 @login_required
 @admin_required
 def group_overview():
+    """Overview of all groups"""
     groups = Group.query.all()
     for i, group in enumerate(groups):
         groups[i].modules_list = ', '.join(map(
@@ -253,6 +272,7 @@ def group_overview():
 @login_required
 @admin_required
 def single_group(group_id):
+    """Details of single group"""
     group = Group.query.filter_by(id=group_id).first()
     return render_template(
         'admin/single_group.html', group=group,
@@ -264,6 +284,7 @@ def single_group(group_id):
 @login_required
 @admin_required
 def import_group():
+    """Import groups"""
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
@@ -282,6 +303,7 @@ def import_group():
 @login_required
 @admin_required
 def add_group():
+    """Add group"""
     form = EditGroupForm()
     if form.validate_on_submit():
         group = Group(code=form.code.data, active=form.active.data)
@@ -299,6 +321,7 @@ def add_group():
 @login_required
 @admin_required
 def edit_group(group_id):
+    """Edit specified group"""
     form = EditGroupForm()
     group = Group.query.filter_by(id=group_id).first()
     if form.validate_on_submit():
@@ -338,6 +361,7 @@ def import_schedule():
 @login_required
 @admin_required
 def schedule_overview():
+    """Overview of all schedules"""
     schedules = Schedule.query.all()
     return render_template(
         'admin/schedule_overview.html',
@@ -349,6 +373,7 @@ def schedule_overview():
 @login_required
 @admin_required
 def single_schedule(schedule_id):
+    """Details of single schedule"""
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     module = Module.query.filter_by(id=schedule.module).first()
     group = Group.query.filter_by(id=schedule.group).first()
@@ -362,6 +387,7 @@ def single_schedule(schedule_id):
 @login_required
 @admin_required
 def edit_schedule(schedule_id):
+    """Edit specified schedule"""
     form = EditScheduleForm()
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     modules = Module.query.all()
@@ -394,6 +420,7 @@ def edit_schedule(schedule_id):
 @login_required
 @admin_required
 def add_schedule():
+    """Add a new schedule"""
     form = EditScheduleForm()
     modules = Module.query.all()
     form.module.choices = [
@@ -422,6 +449,7 @@ def add_schedule():
 @login_required
 @admin_required
 def edit_schedule_item(schedule_id, item_id):
+    """Edit specified schedule item"""
     form = EditScheduleItemForm()
     item = ScheduleItem.query.filter_by(id=item_id).first()
     if form.validate_on_submit():
@@ -451,6 +479,7 @@ def edit_schedule_item(schedule_id, item_id):
 @login_required
 @admin_required
 def add_schedule_item(schedule_id):
+    """Add new schedule item"""
     form = EditScheduleItemForm()
     schedule = Schedule.query.filter_by(id=schedule_id).first()
     if form.validate_on_submit():
@@ -476,6 +505,7 @@ def add_schedule_item(schedule_id):
 @login_required
 @admin_required
 def show_logs():
+    """Show application logs"""
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     log_file = os.path.join(base_dir, 'logs/la4ld.log')
     with open(log_file, 'r') as f:
@@ -490,6 +520,7 @@ def show_logs():
 @login_required
 @admin_required
 def download_logs():
+    """Download application logs"""
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     log_file = os.path.join(base_dir, 'logs/la4ld.log')
     return send_file(
@@ -505,6 +536,7 @@ def download_logs():
 @login_required
 @admin_required
 def show_fact_store():
+    """Show fact store"""
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     fact_store_file = os.path.join(base_dir, current_app.config['FACT_STORE'])
     try:
@@ -523,6 +555,7 @@ def show_fact_store():
 @login_required
 @admin_required
 def download_fact_store():
+    """Download fact-store as file"""
     base_dir = os.path.abspath(os.path.dirname('__main__'))
     fact_store_file = os.path.join(
         base_dir, current_app.config['FACT_STORE'])
@@ -543,6 +576,7 @@ def download_fact_store():
 @login_required
 @admin_required
 def manage_group_membership():
+    """Add and remove user to/from groups"""
     groups = Group.query.all()
     users = User.query.all()
     form = ManageGroupMembershipForm()
@@ -571,6 +605,7 @@ def manage_group_membership():
 @login_required
 @admin_required
 def manage_module_membership():
+    """Add/remove user to/from module"""
     modules = Module.query.all()
     users = User.query.all()
     form = ManageModuleMembershipForm()
@@ -608,6 +643,7 @@ def manage_module_membership():
 @login_required
 @admin_required
 def apikey_overview():
+    """Overview of API keys"""
     return render_template(
         'admin/overview_api_keys.html', keys=ApiKey.query.all(),
         title=_('Admin Panel: API Key Overview')
@@ -618,6 +654,7 @@ def apikey_overview():
 @login_required
 @admin_required
 def add_apikey():
+    """Add a new API key"""
     form = AddApiKeyForm()
     if form.validate_on_submit():
         a = ApiKey(key=form.key.data, description=form.description.data)
@@ -637,6 +674,7 @@ def add_apikey():
 @login_required
 @admin_required
 def delete_apikey(key_id):
+    """Delete existing API key"""
     form = ApiKeyDeleteConfirmationForm()
     key = ApiKey.query.filter_by(id=key_id).first()
     if form.validate_on_submit():
@@ -654,6 +692,7 @@ def delete_apikey(key_id):
 @login_required
 @admin_required
 def questionnaires():
+    """Overview of all questionnaires"""
     q = Questionnaire.query.all()
     return render_template(
         'admin/overview_questionnaires.html', questionnaires=q,
@@ -665,6 +704,7 @@ def questionnaires():
 @login_required
 @admin_required
 def questionnaire(questionnaire_id):
+    """Details of single questionnaire"""
     q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
     return render_template(
         'admin/single_questionnaire.html', questionnaire=q,
@@ -676,6 +716,7 @@ def questionnaire(questionnaire_id):
 @login_required
 @admin_required
 def add_questionnaire():
+    """Add new questionnaire"""
     form = AddQuestionnaireForm()
     if form.validate_on_submit():
         q = Questionnaire(
@@ -698,6 +739,7 @@ def add_questionnaire():
 @login_required
 @admin_required
 def edit_questionnaire(questionnaire_id):
+    """Edit existing questionnaire"""
     form = AddQuestionnaireForm()
     q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
     if form.validate_on_submit():
@@ -724,6 +766,7 @@ def edit_questionnaire(questionnaire_id):
 @login_required
 @admin_required
 def add_scale(questionnaire_id):
+    """Add new scale to existing questionnaire"""
     form = AddScaleForm()
     q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
     if form.validate_on_submit():
@@ -748,6 +791,7 @@ def add_scale(questionnaire_id):
 @login_required
 @admin_required
 def edit_scale(scale_id):
+    """Edit specified scale"""
     form = AddScaleForm()
     qs = QuestionnaireScale.query.filter_by(id=scale_id).first_or_404()
     if form.validate_on_submit():
@@ -771,6 +815,7 @@ def edit_scale(scale_id):
 @login_required
 @admin_required
 def add_question(scale_id):
+    """Add new question to existing scale"""
     form = AddQuestionForm()
     scale = QuestionnaireScale.query.filter_by(id=scale_id).first_or_404()
     if form.validate_on_submit():
@@ -795,6 +840,7 @@ def add_question(scale_id):
 @login_required
 @admin_required
 def edit_question(question_id):
+    """Edit specified question"""
     form = AddQuestionForm()
     q = Question.query.filter_by(id=question_id).first_or_404()
     if form.validate_on_submit():
@@ -820,6 +866,7 @@ def edit_question(question_id):
 @login_required
 @admin_required
 def delete_questionnaire(questionnaire_id):
+    """Delete questionnaire and all connected results"""
     form = QuestionnaireDeleteConfirmationField()
     q = Questionnaire.query.filter_by(id=questionnaire_id).first_or_404()
     if form.validate_on_submit():
@@ -845,6 +892,7 @@ def delete_questionnaire(questionnaire_id):
 @login_required
 @admin_required
 def delete_scale(scale_id):
+    """Delete questionnaire scale and all connected results"""
     form = ScaleDeleteConfirmationField()
     scale = QuestionnaireScale.query.filter_by(id=scale_id).first_or_404()
     q_id = scale.questionnaire_id
@@ -867,6 +915,7 @@ def delete_scale(scale_id):
 @login_required
 @admin_required
 def delete_question(question_id):
+    """Delete question and all connected results"""
     form = QuestionDeleteConfirmationField()
     q = Question.query.filter_by(id=question_id).first_or_404()
     questionnaire_id = q.question_scale.scale_questionnaire.id
@@ -889,6 +938,7 @@ def delete_question(question_id):
 @login_required
 @admin_required
 def import_questionnaire_results():
+    """Import questionnaire results"""
     form = ImportForm()
     if form.validate_on_submit():
         file = upload_file(form.file)
