@@ -1,9 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.end_to_end.test_results
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    End-to-end tests for results page
+"""
 from tests.end_to_end.base import EndToEndTest
 
 
 class TestResults(EndToEndTest):
 
     def test_results_page(self):
+        """Test if results page is available and contains correct data"""
         # User goes to login page and logs in
         self.loginUser(self.users['student'], 'la4ld')
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     tools.create_test_data
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -22,6 +23,7 @@ with open(os.path.join(basedir, 'tools/test-data/test-data.json')) as f:
 
 
 def create_roles():
+    """Add roles to db"""
     for role in ['admin', 'student', 'teacher']:
         r = Role(role=role)
         db.session.add(r)
@@ -29,6 +31,7 @@ def create_roles():
 
 
 def create_modules(modules):
+    """Add modules to db"""
     for module in modules:
         m = Module(
             code=module['code'],
@@ -43,6 +46,7 @@ def create_modules(modules):
 
 
 def create_groups(groups):
+    """Add groups to db"""
     for group in groups:
         grp = Group(
             code=group['code'],
@@ -57,6 +61,7 @@ def create_groups(groups):
 
 
 def create_schedules(schedules):
+    """Add schedules, including schedule items, to db"""
     for schedule in schedules:
         s = Schedule(
             description=schedule['description'],
@@ -80,6 +85,7 @@ def create_schedules(schedules):
 
 
 def create_users(users):
+    """Add users to db and add them to groups and modules"""
     for user in users:
         print(user)
         # noinspection PyArgumentList
@@ -115,6 +121,7 @@ def create_users(users):
 
 
 def create_admin():
+    """Add an admin account to db"""
     # noinspection PyArgumentList
     u = User(
         username='admin',
@@ -127,6 +134,7 @@ def create_admin():
 
 
 def generate_results(past_modules, pi_dicts):
+    """Randomly generate results for students and add to db"""
     r = Role.query.filter_by(role='student').first()
     students = User.query.filter_by(role_id=r.id).all()
 
@@ -155,6 +163,7 @@ def generate_results(past_modules, pi_dicts):
 
 
 def generate_attendance(rate=80):
+    """Randomly generate attendance for students (default 80%) and add to db"""
     r = Role.query.filter_by(role='student').first()
     students = User.query.filter_by(role_id=r.id).all()
 
@@ -176,6 +185,7 @@ def generate_attendance(rate=80):
 
 
 def create_questionnaire(mslq):
+    """Add mslq questions to db"""
     q = Questionnaire(
         questionnaire_id=mslq['questionnaire_id'],
         name=mslq['name'],
@@ -209,6 +219,7 @@ def create_questionnaire(mslq):
 
 
 def generate_mslq_results(mslq):
+    """Randomly generate questions for mslq and add to db"""
     r = Role.query.filter_by(role='student').first()
     students = User.query.filter_by(role_id=r.id).all()
 

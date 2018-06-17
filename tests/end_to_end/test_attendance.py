@@ -1,9 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.unit.attendance
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    End-to-end tests for attendance tracking
+"""
 from tests.end_to_end.base import EndToEndTest
 
 
 class TestAttendance(EndToEndTest):
 
     def test_attendance(self):
+        """Test if attendance page is available for student"""
         # User goes to login page and logs in
         self.loginUser(self.users['student'], 'la4ld')
 

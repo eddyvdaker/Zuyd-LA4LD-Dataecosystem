@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.end_to_end.test_admin
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Tests for the administration panel
+"""
 import os
-from time import sleep
-from selenium.webdriver.common.keys import Keys
 
 from tests.end_to_end.base import EndToEndTest
 
@@ -8,6 +13,7 @@ from tests.end_to_end.base import EndToEndTest
 class TestAdmin(EndToEndTest):
 
     def test_admin_panel(self):
+        """Test if admin panel is available"""
         # User goes to login page and logs in
         self.loginUser(self.users['admin'], 'la4ld')
 
@@ -20,6 +26,9 @@ class TestAdmin(EndToEndTest):
         self.assertIn('Admin Panel', text)
 
     def test_log_screen(self):
+        """Test if logged out user going to admin panel is redirected to a
+        login screen
+        """
         # User goes to login page and logs in
         self.loginUser(self.users['admin'], 'la4ld')
 
@@ -52,6 +61,7 @@ class TestAdmin(EndToEndTest):
             os.remove('/tmp/la4ld.log')
 
     def test_user_overview(self):
+        """Test if user overview screen is available"""
         # User goes to login page and logs in
         self.loginUser(self.users['admin'], 'la4ld')
 
@@ -66,46 +76,3 @@ class TestAdmin(EndToEndTest):
             x.find_elements_by_tag_name('td')[1].text for x in rows
         ]
         assert self.users['student'] in rows_username
-
-    # def test_adding_and_deleting_user(self):
-    #     # User goes to login page and logs in
-    #     self.loginUser(self.users['admin'], 'la4ld')
-    #
-    #     # User first checks if the user is not already in the system
-    #     self.browser.get(self.live_server_url + '/admin/users_overview')
-    #
-    #     rows = self.waitFor(
-    #         lambda: self.browser.find_elements_by_id('row')
-    #     )
-    #
-    #     rows_username = [
-    #         x.find_elements_by_tag_name('td')[1].text for x in rows
-    #     ]
-    #
-    #     assert 'TESTUSER' not in rows_username
-    #
-    #     # User goes to add user page and is admin
-    #     self.browser.get(self.live_server_url + '/admin/add_user')
-    #
-    #     username_input = self.browser.find_element_by_id('username')
-    #     email_input = self.browser.find_element_by_id('email')
-    #     card_input = self.browser.find_element_by_id('card_number')
-    #     submit_input = self.browser.find_element_by_id('submit')
-    #
-    #     username_input.send_keys('TESTUSER')
-    #     email_input.send_keys('TESTUSER@la4ld-test.com')
-    #     card_input.send_keys(1234567890987654321)
-    #     submit_input.send_keys(Keys.ENTER)
-    #
-    #     # User checks if the new user has been added
-    #     self.browser.get(self.live_server_url + '/admin/users_overview')
-    #
-    #     rows = self.waitFor(
-    #         lambda: self.browser.find_elements_by_id('row')
-    #     )
-    #
-    #     rows_username = [
-    #         x.find_elements_by_tag_name('td')[1].text for x in rows
-    #     ]
-    #
-    #     assert 'TESTUSER' in rows_username

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    tests.unit_tests.test_errors
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.unit_tests.test_email
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Unit tests for the error handling
+    Unit tests for the email handling
 """
 from tests.unit.base import UnitTest
 from app.email import send_mail

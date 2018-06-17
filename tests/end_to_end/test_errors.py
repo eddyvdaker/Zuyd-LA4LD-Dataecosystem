@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    tests.end-to-end.test_errors
+    tests.end_to_end.test_errors
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     End-to-end tests for error handling
@@ -11,6 +11,9 @@ from tests.end_to_end.base import EndToEndTest
 class TestErrors(EndToEndTest):
 
     def test_403(self):
+        """Test if going to admin panel as non-admin user triggers 403
+        forbidden error
+        """
         # User logs in as student user
         self.loginUser(self.users['student'], 'la4ld')
 
@@ -33,6 +36,8 @@ class TestErrors(EndToEndTest):
         )
 
     def test_404(self):
+        """Test if going to a non-existent page triggers a 404 file not found
+        error"""
         # User goes to non-existing page
         self.browser.get(self.live_server_url + '/209g0932gfhj294tg')
 
@@ -52,6 +57,7 @@ class TestErrors(EndToEndTest):
         )
 
     def test_500(self):
+        """Test if 500 internal server errors are handled"""
         # User goes to the error test page
         self.browser.get(self.live_server_url + '/error/test_500')
 

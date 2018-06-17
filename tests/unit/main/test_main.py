@@ -3,7 +3,7 @@
     tests.unit.main.test_main
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Unit tests for the admin page
+    Unit tests for the main page
 """
 from tests.unit.base import UnitTest
 

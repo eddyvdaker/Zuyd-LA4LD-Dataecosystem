@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.test_data
+    ~~~~~~~~~~~~~~~
+
+    Create data for use during testing.
+"""
 from app.models import User, Role
 
 TEST_DATA = {
@@ -125,6 +132,7 @@ TEST_DATA = {
 
 
 def write_test_data_to_test_db(db, data=TEST_DATA):
+    """Add test data to db"""
     for role in TEST_DATA['roles']:
         r = Role(role=role)
         db.session.add(r)
