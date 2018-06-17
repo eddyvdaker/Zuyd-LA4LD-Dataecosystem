@@ -18,17 +18,21 @@ from app.models import User, Role, Module, Result, Grade, Schedule, \
 class UserModelTest(UnitTest):
 
     def create_test_user(self):
+        """Creates a user for testing purposes"""
+        # noinspection PyArgumentList
         user = User(username='abc', email='abc@abc.com', card_number="123")
         db.session.add(user)
         db.session.commit()
         return user
 
     def create_test_role(self):
+        """Creates a role for testing purposes"""
         role = Role(role='test_role')
         db.session.add(role)
         db.session.commit()
 
     def create_test_module(self):
+        """Creates a module for testing purposes"""
         module = Module(code='tm01')
         db.session.add(module)
         db.session.commit()
@@ -135,6 +139,7 @@ class ModuleModelTest(UnitTest):
 class ResultModulTest(UnitTest):
 
     def test_create_result(self):
+        """Tests if new results can be created"""
         r = Result(identifier='alksdjfklt1034', module=1)
         db.session.add(r)
         db.session.commit()
@@ -147,6 +152,7 @@ class ResultModulTest(UnitTest):
 class ScheduleModelTest(UnitTest):
 
     def test_create_schedule(self):
+        """Tests if new schedules can be created"""
         s = Schedule(description='test desc.', module=1)
         db.session.add(s)
         db.session.commit()

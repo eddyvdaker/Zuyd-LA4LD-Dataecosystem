@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    app.results.routes
+    ~~~~~~~~~~~~~~~~~~
+
+    Routes for results functionality
+"""
 from flask import render_template
 from flask_babel import _
 from flask_login import current_user, login_required
@@ -9,6 +16,7 @@ from app.results import bp
 @bp.route('/results')
 @login_required
 def results():
+    """Show user results page"""
     user = Result.query.filter_by(
         identifier=current_user.hash_identifier())
     user_results = []

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.unit.base
+    ~~~~~~~~~~~~~~~
+
+    A base unittest case to be used as a base for creating unit tests.
+"""
 from unittest import TestCase, main
 
 import app as flask_app

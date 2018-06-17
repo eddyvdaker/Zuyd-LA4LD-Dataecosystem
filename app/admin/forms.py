@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    app.admin.forms
+    ~~~~~~~~~~~~~~~
+
+    Forms for admin panel
+"""
 from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
@@ -9,6 +16,7 @@ from app.forms import MultiCheckboxField
 
 
 class ImportForm(FlaskForm):
+    """Generic import form"""
     file = FileField(_l('File'), validators=[
         FileRequired(),
         FileAllowed(['json'], _l('Incorrect format, JSON required!'))
@@ -17,6 +25,7 @@ class ImportForm(FlaskForm):
 
 
 class EditUserForm(FlaskForm):
+    """Edit/add user form"""
     username = StringField(_l('Username'), validators=[DataRequired()])
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
     role = SelectField(_l('Role'), validators=[DataRequired()])
@@ -25,6 +34,7 @@ class EditUserForm(FlaskForm):
 
 
 class EditModuleForm(FlaskForm):
+    """Edit/add module form"""
     code = StringField(_l('Code'), validators=[DataRequired()])
     name = StringField(_l('Name'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
@@ -35,6 +45,7 @@ class EditModuleForm(FlaskForm):
 
 
 class EditScheduleForm(FlaskForm):
+    """Edit/add schedule form"""
     description = StringField(_l('Description'), validators=[DataRequired()])
     module = SelectField(_l('Module'), validators=[DataRequired()], coerce=int)
     group = SelectField(_l('Group'), validators=[DataRequired()], coerce=int)
@@ -42,6 +53,7 @@ class EditScheduleForm(FlaskForm):
 
 
 class EditScheduleItemForm(FlaskForm):
+    """Edit/add schedule item form"""
     title = StringField(_l('Title'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
     start = DateTimeField(_l('Start'), validators=[DataRequired()])
@@ -51,12 +63,14 @@ class EditScheduleItemForm(FlaskForm):
 
 
 class EditGroupForm(FlaskForm):
+    """Edit/add group form"""
     code = StringField(_l('Group'), validators=[DataRequired()])
     active = BooleanField(_l('Active'))
     submit = SubmitField(_l('Save Changes'))
 
 
 class ManageGroupMembershipForm(FlaskForm):
+    """Manage group membership form"""
     action = SelectField(
         'Action', validators=[DataRequired()],
         choices=[('add', _l('Add')), ('remove', _l('Remove'))])
@@ -66,6 +80,7 @@ class ManageGroupMembershipForm(FlaskForm):
 
 
 class ManageModuleMembershipForm(FlaskForm):
+    """Manage module membership form"""
     action = SelectField(
         'Action', validators=[DataRequired()],
         choices=[('add', _l('Add')), ('remove', _l('Remove'))])
@@ -76,6 +91,7 @@ class ManageModuleMembershipForm(FlaskForm):
 
 
 class AddApiKeyForm(FlaskForm):
+    """Edit/add API Key form"""
     key = StringField(
         _l('Key'), validators=[DataRequired(), Length(min=12, max=512)]
     )
@@ -84,6 +100,7 @@ class AddApiKeyForm(FlaskForm):
 
 
 class ApiKeyDeleteConfirmationForm(FlaskForm):
+    """Confirm API key deletion form"""
     confirm = BooleanField(
         _l('Confirm deletion (this action cannot be reverted)'),
         validators=[DataRequired()]
@@ -92,6 +109,7 @@ class ApiKeyDeleteConfirmationForm(FlaskForm):
 
 
 class AddQuestionnaireForm(FlaskForm):
+    """Add/edit questionnaire form"""
     id = IntegerField(
         _l('Questionnaire number'),
         validators=[DataRequired()]
@@ -103,6 +121,7 @@ class AddQuestionnaireForm(FlaskForm):
 
 
 class AddScaleForm(FlaskForm):
+    """Add/edit scale form"""
     id = IntegerField(_l('Scale Number'), validators=[DataRequired()])
     name = StringField(_l('Name'), validators=[DataRequired()])
     description = TextAreaField(_l('Description'))
@@ -110,6 +129,7 @@ class AddScaleForm(FlaskForm):
 
 
 class AddQuestionForm(FlaskForm):
+    """Add/edit question form"""
     id = IntegerField(_l('Question Number'), validators=[DataRequired()])
     question = StringField(_l('Question'), validators=[DataRequired()])
     reversed = BooleanField(_l('Reversed'))
@@ -117,6 +137,7 @@ class AddQuestionForm(FlaskForm):
 
 
 class QuestionnaireDeleteConfirmationField(FlaskForm):
+    """Confirm questionnaire and connected results deletion form"""
     confirm = BooleanField(
         _l('Confirm deletion (this action cannot be reverted)'),
         validators=[DataRequired()]
@@ -130,6 +151,7 @@ class QuestionnaireDeleteConfirmationField(FlaskForm):
 
 
 class ScaleDeleteConfirmationField(FlaskForm):
+    """Confirm scale and connected results deletion form"""
     confirm = BooleanField(
         _l('Confirm deletion (this action cannot be reverted)'),
         validators=[DataRequired()]
@@ -143,6 +165,7 @@ class ScaleDeleteConfirmationField(FlaskForm):
 
 
 class QuestionDeleteConfirmationField(FlaskForm):
+    """Confirm question and connected results deletion form"""
     confirm = BooleanField(
         _l('Confirm deletion (this action cannot be reverted)'),
         validators=[DataRequired()]

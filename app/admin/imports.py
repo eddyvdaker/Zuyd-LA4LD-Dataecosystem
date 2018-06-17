@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+    app.admin.imports
+    ~~~~~~~~~~~~~~~~~
+
+    Import handling for admin panel
+"""
 import json
 import os
 from datetime import datetime

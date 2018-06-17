@@ -3,7 +3,8 @@
     la4ld
     ~~~~~
 
-    A learning analytics for learning design data ecosystem build using Flask.
+    A learning analytics data ecosystem infrastructure for learning design
+    build using Flask.
 """
 
 from app import create_app, db
@@ -17,6 +18,9 @@ app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
+    """Loads the database and models for interacting with the database from
+    the Flask shell.
+    """
     return {'db': db,
             'User': User,
             'Grade': Grade,

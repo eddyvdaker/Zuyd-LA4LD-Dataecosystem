@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    models
-    ~~~~~~
+    app.models
+    ~~~~~~~~~~
 
     The models for the data stored in the database.
 """
@@ -17,30 +17,35 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login
 
+"""Student to module linking table"""
 student_module = db.Table(
     'student_module',
     db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('module_id', db.Integer, db.ForeignKey('module.id'))
 )
 
+"""Teacher to module linking table"""
 teacher_module = db.Table(
     'teacher_module',
     db.Column('teacher_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('module_id', db.Integer, db.ForeignKey('module.id'))
 )
 
+"""Examiner to module linking table"""
 examiner_module = db.Table(
     'examiner_module',
     db.Column('examiner_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('module_id', db.Integer, db.ForeignKey('module.id'))
 )
 
+"""Module to group linking table"""
 module_group = db.Table(
     'module_group',
     db.Column('module_id', db.Integer, db.ForeignKey('module.id')),
     db.Column('group_id', db.Integer, db.ForeignKey('group.id'))
 )
 
+"""Student to group linking table"""
 student_group = db.Table(
     'student_group',
     db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
@@ -128,12 +133,15 @@ class User(UserMixin, db.Model):
         return data
 
     def set_password(self, password):
+        """Set new password by hashing it and saving the hash in the db"""
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        """Hash password and check if it is the same as hash in the db"""
         return check_password_hash(self.password_hash, password)
 
     def add_to_module(self, module, module_role='student'):
+        """Add user to module as specified role"""
         if module_role == 'student':
             if not self.student_of_module(module):
                 self.module_as_student.append(module)
@@ -145,6 +153,7 @@ class User(UserMixin, db.Model):
                 self.module_as_examiner.append(module)
 
     def remove_from_module(self, module, module_role='student'):
+        """Remove user from module as specified role"""
         if module_role == 'student':
             if self.student_of_module(module):
                 self.module_as_student.remove(module)
@@ -156,30 +165,36 @@ class User(UserMixin, db.Model):
                 self.module_as_examiner.remove(module)
 
     def student_of_module(self, module):
+        """Check if user is student in a module"""
         return self.module_as_student.filter(
             student_module.c.module_id == module.id).count() > 0
 
     def get_modules_of_student(self):
+        """Get all modules a user is student of"""
         return Module.query.join(
             student_module, (student_module.c.module_id == Module.id)).filter(
             student_module.c.student_id == self.id
         ).all()
 
     def teacher_of_module(self, module):
+        """Check if user is teacher in a module"""
         return self.module_as_teacher.filter(
             teacher_module.c.module_id == module.id).count() > 0
 
     def get_modules_of_teacher(self):
+        """Get all modules a user is teacher of"""
         return Module.query.join(
             teacher_module, (teacher_module.c.module_id == Module.id)).filter(
             teacher_module.c.teacher_id == self.id
         ).all()
 
     def examiner_of_module(self, module):
+        """Check if user is examiner of module"""
         return self.module_as_examiner.filter(
             examiner_module.c.module_id == module.id).count() > 0
 
     def get_modules_of_examiner(self):
+        """Get all modules user is examiner of"""
         return Module.query.join(
             examiner_module,
             (examiner_module.c.module_id == Module.id)).filter(
@@ -187,18 +202,22 @@ class User(UserMixin, db.Model):
         ).all()
 
     def add_to_group(self, group):
+        """Add user to group"""
         if not self.student_in_group(group):
             self.groups.append(group)
 
     def remove_from_group(self, group):
+        """Remove user from group"""
         if self.student_in_group(group):
             self.groups.remove(group)
 
     def student_in_group(self, group):
+        """Check if user is in group"""
         return self.groups.filter(
             student_group.c.group_id == group.id).count() > 0
 
     def groups_of_student(self):
+        """Get all groups user is a member of"""
         return Group.query.join(
             student_group,
             (student_group.c.group_id == Group.id)).filter(
@@ -206,6 +225,7 @@ class User(UserMixin, db.Model):
         ).all()
 
     def get_reset_password_token(self, expires_in=600):
+        """Generate a jwt token for password reset"""
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'],
@@ -213,6 +233,7 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     def verify_reset_password_token(token):
+        """Check if supplied jwt token is correct"""
         try:
             id = jwt.decode(
                 token, current_app.config['SECRET_KEY'],
@@ -222,11 +243,15 @@ class User(UserMixin, db.Model):
         return User.query.get(id)
 
     def hash_identifier(self):
+        """Generate user identifier by hashing the users username + the hash
+        key from the config file with SHA512
+        """
         return hashlib.sha512(str(
             self.username + current_app.config['HASH_KEY']).encode('utf-8')
         ).hexdigest()
 
     def get_token(self, expires_in=3600):
+        """Generate API token"""
         now = datetime.utcnow()
         if self.token and self.token_expiration > now + timedelta(seconds=60):
             return self.token
@@ -236,10 +261,14 @@ class User(UserMixin, db.Model):
         return self.token
 
     def revoke_token(self):
+        """Revoke active API token"""
         self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
 
     @staticmethod
     def check_token(token):
+        """Check if token is avaiable and whether it as expired (revoke if
+        expired)
+        """
         user = User.query.filter_by(token=token).first()
         if user is None or user.token_expiration < datetime.utcnow():
             return None
@@ -334,18 +363,21 @@ class Module(db.Model):
         return data
 
     def get_students(self):
+        """Get students of module"""
         return User.query.join(
             student_module, (student_module.c.student_id == User.id)).filter(
             student_module.c.module_id == self.id
         ).all()
 
     def get_teachers(self):
+        """Get teacher of module"""
         return User.query.join(
             teacher_module, (teacher_module.c.teacger_id == User.id)).filter(
             teacher_module.c.module_id == self.id
         ).all()
 
     def get_examiners(self):
+        """Get examiners of module"""
         return User.query.join(
             examiner_module,
             (examiner_module.c.examiner_id == User.id)).filter(
@@ -441,24 +473,29 @@ class Group(db.Model):
         return data
 
     def module_in_group(self, module):
+        """Check if group is linked to a module"""
         return self.modules.filter(
             module_group.c.module_id == module.id).count() > 0
 
     def add_module_to_group(self, module):
+        """Link group to module"""
         if not self.module_in_group(module):
             self.modules.append(module)
 
     def remove_module_from_group(self, module):
+        """Remove link to module"""
         if self.module_in_group(module):
             self.modules.remove(module)
 
     def get_modules_of_group(self):
+        """Get all modules this group is linked to"""
         return Module.query.join(
             module_group, (module_group.c.module_id == Module.id)).filter(
             module_group.c.group_id == self.id
         ).all()
 
     def get_students_of_group(self):
+        """Get all members of group"""
         return User.query.join(
             student_group, (student_group.c.student_id == User.id)).filter(
             student_group.c.group_id == self.id
@@ -518,6 +555,9 @@ class ScheduleItem(db.Model):
         return data
 
     def attended(self, user):
+        """Check if a user with a certain identifier has attended this
+        schedule item
+        """
         attended = Attendance.query.filter_by(
             identifier=user.hash_identifier(),
             schedule_item_id=self.id
@@ -542,6 +582,7 @@ class Attendance(db.Model):
         return data
 
     def get_schedule_item(self):
+        """Get schedule item connected to this attendance record"""
         return ScheduleItem.query.filter_by(id=self.schedule_item_id).first()
 
 
@@ -581,6 +622,9 @@ class Questionnaire(db.Model):
         return data
 
     def get_questionnaire_for_user(self, user):
+        """Get questionnaire including scales, questions and results for
+        a user
+        """
         data = {'questionnaire': self, 'scales': []}
         for scale in self.questionnaire_scale.all():
             scale_data = {'scale': scale, 'questions': [], 'score': 0.0}
@@ -682,4 +726,5 @@ class QuestionResult(db.Model):
 
 @login.user_loader
 def load_user(id):
+    """Specify which model is used to login (USER)"""
     return User.query.get(int(id))

@@ -13,6 +13,7 @@ from time import sleep
 class TestAuthentication(EndToEndTest):
 
     def test_login(self):
+        """Test if user can log in"""
         # User goes to login page
         self.browser.get(self.live_server_url + '/login')
 
@@ -36,6 +37,7 @@ class TestAuthentication(EndToEndTest):
         self.assertIn(f'Hello, {self.users["student"]}', text)
 
     def test_wrong_username(self):
+        """Test login with wrong username"""
         # User goes to login page
         self.browser.get(self.live_server_url + '/login')
 
@@ -55,6 +57,7 @@ class TestAuthentication(EndToEndTest):
         )
 
     def test_wrong_password(self):
+        """Test login with wrong password"""
         # User goes to login page
         self.browser.get(self.live_server_url + '/login')
 
@@ -74,6 +77,7 @@ class TestAuthentication(EndToEndTest):
         )
 
     def test_logout(self):
+        """Test logging out"""
         # User goes to login page
         self.browser.get(self.live_server_url + '/login')
 

@@ -1,10 +1,18 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.end_to_end.test_profile
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    End-to-end tests for the profile page
+"""
 from tests.end_to_end.base import EndToEndTest
-from time import sleep
 
 
 class TestProfile(EndToEndTest):
 
     def test_profile_page(self):
+        """Test if profile page is available and contains correct information
+        """
         # User goes to login page
         self.browser.get(self.live_server_url + '/login')
 

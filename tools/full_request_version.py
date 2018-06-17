@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     A wrapper around the flask application that provides insight in the
-    exact HTTP requests going en and coming out of the application. Used
+    exact HTTP requests going in and coming out of the application. Used
     for debugging purposes.
 """
 import pprint

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    email
-    ~~~~~
+    app.email
+    ~~~~~~~~~
 
     Helper functions for sending emails.
 """
@@ -13,6 +13,7 @@ from app import mail
 
 
 def send_async_email(app, msg):
+    """Send email in a separate thread"""
     with app.app_context():
         mail.send(msg)
 

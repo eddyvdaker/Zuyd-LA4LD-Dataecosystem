@@ -1,9 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+    tests.end_to_end.test_schedule
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    End-to-end tests for the schedules page
+"""
 from tests.end_to_end.base import EndToEndTest
 
 
 class TestSchedule(EndToEndTest):
 
     def test_schedule_selector(self):
+        """Test schedule selection page"""
         # User goes to login page and logs in
         self.loginUser(self.users['student'], 'la4ld')
 
@@ -20,6 +28,7 @@ class TestSchedule(EndToEndTest):
         assert 'ITS1-B2S1' in options_text
 
     def test_schedule_view(self):
+        """Test single schedule page"""
         # User goes to login page and logs in
         self.loginUser(self.users['student'], 'la4ld')
 
