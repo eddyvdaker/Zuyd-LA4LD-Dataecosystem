@@ -12,7 +12,8 @@ from tests.unit.base import UnitTest
 
 from app import db
 from app.models import User, Role, Module, Result, Grade, Schedule, \
-    ScheduleItem
+    ScheduleItem, Questionnaire, QuestionnaireScale, Question, QuestionResult, \
+    Attendance, ApiKey, Group
 
 
 class UserModelTest(UnitTest):
@@ -166,4 +167,81 @@ class ScheduleModelTest(UnitTest):
             schedule=s.id
         )
         db.session.add(i)
+        db.session.commit()
+
+
+class QuestionnaireModelTest(UnitTest):
+
+    def test_create_questionnaire(self):
+        q = Questionnaire(
+            questionnaire_id=1,
+            name="test q",
+            description="test desc",
+            questionnaire_type="test type",
+        )
+        db.session.add(q)
+        db.session.commit()
+
+        qs = QuestionnaireScale(
+            scale=1,
+            name="test scale",
+            description="test scale desc",
+        )
+        db.session.add(qs)
+        db.session.commit()
+
+        q.questionnaire_scale.append(qs)
+        db.session.commit()
+
+        qst = Question(
+            question_number=1,
+            question="test question",
+            reversed=True,
+        )
+        db.session.add(qst)
+        db.session.commit()
+
+        qs.scale_questions.append(qst)
+        db.session.commit()
+
+        qr = QuestionResult(
+            identifier="j03g039rgj3h",
+            question=qst.id,
+            result=3.0,
+            date=datetime.utcnow()
+        )
+        db.session.add(qr)
+        db.session.commit()
+
+
+class AttendanceModelTest(UnitTest):
+
+    def test_create_attendance(self):
+        a = Attendance(
+            identifier="asdgjt84",
+            schedule_item_id=1
+        )
+        db.session.add(a)
+        db.session.commit()
+
+
+class ApiKeyModelTest(UnitTest):
+
+    def test_create_apikey(self):
+        a = ApiKey(
+            key="abcdefg",
+            description="test desc"
+        )
+        db.session.add(a)
+        db.session.commit()
+
+
+class GroupModelTest(UnitTest):
+
+    def test_create_group(self):
+        grp = Group(
+            code="tm1",
+            active=True
+        )
+        db.session.add(grp)
         db.session.commit()
