@@ -101,7 +101,11 @@ class User(UserMixin, db.Model):
 
         if include_student_of:
             data['student_of'] = [
-                x.to_dict for x in self.get_modules_of_student()
+                x.to_dict(
+                    include_students_short=False,
+                    include_groups_short=False
+                )
+                for x in self.get_modules_of_student()
             ]
         elif include_student_of_short:
             data['student_of'] = [
@@ -127,7 +131,10 @@ class User(UserMixin, db.Model):
             ]
 
         if include_groups:
-            data['groups'] = [x.to_dict() for x in self.groups_of_student()]
+            data['groups'] = [
+                x.to_dict(include_students_short=False)
+                for x in self.groups_of_student()
+            ]
         elif include_groups_short:
             data['groups'] = [x.code for x in self.groups_of_student()]
         return data
@@ -625,9 +632,19 @@ class Questionnaire(db.Model):
         """Get questionnaire including scales, questions and results for
         a user
         """
-        data = {'questionnaire': self, 'scales': []}
+        data = {
+            'id': self.questionnaire_id,
+            'questionnaire': self.name,
+            'description': self.description,
+            'type': self.questionnaire_type,
+            'scales': []}
         for scale in self.questionnaire_scale.all():
-            scale_data = {'scale': scale, 'questions': [], 'score': 0.0}
+            scale_data = {
+                'scale': scale.name,
+                'description': scale.description,
+                'questions': [],
+                'score': 0.0
+            }
             for question in scale.scale_questions.all():
                 result = QuestionResult.query.filter_by(
                     question=question.id
@@ -636,7 +653,9 @@ class Questionnaire(db.Model):
                 ).first()
                 scale_data['score'] += result.result
                 scale_data['questions'].append({
-                    'question': question, 'result': result
+                    'question': question.question,
+                    'reversed': str(question.reversed),
+                    'result': result.result
                 })
             scale_data['score'] /= len(scale_data['questions'])
             data['scales'].append(scale_data)
