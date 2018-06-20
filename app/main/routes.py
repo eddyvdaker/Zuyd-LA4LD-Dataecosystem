@@ -14,80 +14,22 @@ from flask_login import current_user, login_required
 from secrets import token_urlsafe
 
 from app.main import bp
-from app.models import Result, Attendance, ScheduleItem, Schedule
+from app.models import Result, Attendance, ScheduleItem, Schedule, \
+    QuestionResult
 from app.auth.decorator import admin_required
 
 
-def get_modules_data_for_role(modules):
-    """Get module data for user"""
-    role_data = []
-    for module in modules:
-        role_data.append(
-            {
-                'id': module.id,
-                'code': module.code,
-                'name': module.name,
-                'description': module.description,
-                'start': module.start.strftime('%Y-%m-%d'),
-                'end': module.end.strftime('%Y-%m-%d'),
-                'faculty': module.faculty
-            },
-        )
-    return role_data
-
-
-def get_group_data_for_student():
-    """Get groups (including data) for user"""
-    group_data = []
-    for group in current_user.groups_of_student():
-        group_data.append(
-            {
-                'id': group.id,
-                'code': group.code,
-                'active': group.active,
-                'modules': [x.id for x in group.get_modules_of_group()]
-            }
-        )
-    return group_data
-
-
-def collect_user_data():
-    """Get user data"""
-    return {
-        "id": current_user.id,
-        "username": current_user.username,
-        "email": current_user.email,
-        "card_number": current_user.card_number,
-        "role": current_user.role.role,
-        'modules_as_student': get_modules_data_for_role(
-            current_user.get_modules_of_student()),
-        'modules_as_teacher': get_modules_data_for_role(
-            current_user.get_modules_of_teacher()),
-        'modules_as_examiner': get_modules_data_for_role(
-            current_user.get_modules_of_examiner()),
-        'groups': get_group_data_for_student()
-    }
-
-
-def collect_results_data(user_identifier):
-    """Get results data for user"""
-    results = Result.query.filter_by(identifier=user_identifier)
-    results_data = []
-    for result in results:
-        result_data = {'id': result.id, 'module': result.module}
-        grades = result.grades.all()
-        grades_data = []
-        for grade in grades:
-            grades_data.append(
-                {
-                    'name': grade.name,
-                    'score': grade.score,
-                    'weight': grade.weight
-                }
-            )
-        result_data['grades'] = grades_data
-        results_data.append(result_data)
-    return results_data
+def get_user_questionnaires(user_identifier):
+    """Returns the questionnaires which has results for the user"""
+    user_questions = QuestionResult.query.filter_by(
+        identifier=user_identifier
+    ).all()
+    user_questionnaires = []
+    for question in user_questions:
+        q = question.result_question.question_scale.scale_questionnaire
+        if q not in user_questionnaires:
+            user_questionnaires.append(q)
+    return user_questionnaires
 
 
 def collect_schedule_data(user_identifier):
@@ -170,12 +112,23 @@ def uploaded_file(filename):
 def download_own_data():
     """Retrieve and download user data"""
     user_identifier = current_user.hash_identifier()
+    user_results = Result.query.filter_by(identifier=user_identifier).all()
+
     user_data = {
-        'user': collect_user_data(),
-        'results': collect_results_data(user_identifier),
+        'user': current_user.to_dict(
+            include_student_of=True,
+            include_teacher_of=True,
+            include_examiner_of=True,
+            include_groups=True
+        ),
+        'results': [x.to_dict() for x in user_results],
         'schedules': collect_schedule_data(user_identifier),
-        'mslq': 'PLACEHOLDER'
+        'questionnaires': [
+            x.get_questionnaire_for_user(current_user)
+            for x in get_user_questionnaires(user_identifier)
+        ]
     }
+    print(user_data)
     file_path = f'{current_app.config["EXPORT_FOLDER"]}{token_urlsafe(6)}'
     if not os.path.exists(current_app.config["EXPORT_FOLDER"]):
         os.makedirs(current_app.config["EXPORT_FOLDER"])
