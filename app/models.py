@@ -657,6 +657,7 @@ class Questionnaire(db.Model):
                     'reversed': str(question.reversed),
                     'result': result.result
                 })
+                scale_data['date'] = result.date.strftime('%Y-%m-%d %H:%M:%S')
             scale_data['score'] /= len(scale_data['questions'])
             data['scales'].append(scale_data)
         return data

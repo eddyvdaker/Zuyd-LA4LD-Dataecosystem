@@ -39,8 +39,8 @@ def questionnaire(questionnaire_id):
     data = Questionnaire.query.filter_by(
         id=questionnaire_id
     ).first().get_questionnaire_for_user(current_user)
-
+    print(data)
     return render_template(
         'questionnaires/questionnaire.html', data=data,
-        title=_('Questionnaire') + f' {data["questionnaire"].id}'
+        title=_('Questionnaire') + f' {data["questionnaire"]}'
     )

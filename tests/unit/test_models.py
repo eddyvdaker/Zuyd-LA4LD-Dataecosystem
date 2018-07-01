@@ -101,6 +101,16 @@ class UserModelTest(UnitTest):
         assert user.examiner_of_module(module)
         assert module in user.get_modules_of_examiner()
 
+    def test_add_to_group(self):
+        """Tests if users can be added to groups"""
+        user = self.create_test_user()
+        group = Group(code='1234', active=True)
+        db.session.add(group)
+        db.session.commit()
+        user.add_to_group(group)
+        assert group in user.groups_of_student()
+        assert user in group.students.all()
+
 
 class RoleModelTest(UnitTest):
 
