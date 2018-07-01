@@ -5,16 +5,16 @@
     <div id="general-info">
         <ul class="list-unstyled">
             <li id="name">
-                <strong>{{ _('Name') }}:</strong> {{ data['questionnaire'].name }}
+                <strong>{{ _('Name') }}:</strong> {{ data['questionnaire'] }}
             </li>
             <li id="type">
-                <strong>{{ _('Type') }}:</strong> {{ data['questionnaire'].questionnaire_type }}
+                <strong>{{ _('Type') }}:</strong> {{ data['type'] }}
             </li>
             <li id="description">
-                <strong>{{ _('Description') }}:</strong> {{ data['questionnaire'].description }}
+                <strong>{{ _('Description') }}:</strong> {{ data['description'] }}
             </li>
             <li id="scales">
-                <strong>{{ _('Scales') }}:</strong> {{ data['questionnaire'].questionnaire_scale.count() }}
+                <strong>{{ _('Scales') }}:</strong> {{ data['scales']|length }}
             </li>
         </ul>
     </div>
@@ -31,22 +31,20 @@
                     <strong>{{ _('Description') }}:</strong> {{ scale['scale'].description }}
                 </li>
                 <li id="scale-date">
-                    <strong>{{ _('Date') }}:</strong> {{ scale['questions'][0]['result'].date.strftime('%Y-%m-%d %H:%M:%S') }}
+                    <strong>{{ _('Date') }}:</strong> {{ scale['date'] }}
                 </li>
             </ul>
             <table id=questions-table" class="table table-striped">
                 <tr id="header-row">
-                    <th>ID</th>
                     <th>{{ _('Question') }}</th>
                     <th>{{ _('Result') }}</th>
                     <th>{{ _('Reversed') }}</th>
                 </tr>
                 {% for question in scale['questions'] %}
                 <tr id="data-row">
-                    <td>{{ question['question'].question_number }}</td>
-                    <td>{{ question['question'].question }}</td>
-                    <td>{{ question['result'].result }}</td>
-                    <td>{{ question['question'].reversed }}</td>
+                    <td>{{ question['question'] }}</td>
+                    <td>{{ question['result'] }}</td>
+                    <td>{{ question['reversed'] }}</td>
                 </tr>
                 {% endfor %}
             </table>
