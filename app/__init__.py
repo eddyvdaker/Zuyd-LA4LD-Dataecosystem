@@ -9,6 +9,7 @@
 from flask import Flask, request, current_app
 from flask_bootstrap import Bootstrap
 from flask_babel import Babel, lazy_gettext as _l
+from flask_cors import CORS
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -28,6 +29,7 @@ login.login_message = _l('Please log in to access this page.')
 mail = Mail()
 babel = Babel()
 bootstrap = Bootstrap()
+cors = CORS()
 
 
 def create_app(config_class=Config):
@@ -40,6 +42,7 @@ def create_app(config_class=Config):
     mail.init_app(app)
     babel.init_app(app)
     bootstrap.init_app(app)
+    cors.init_app(app)
 
     # initialize blueprints
     from app.errors import bp as errors_bp
